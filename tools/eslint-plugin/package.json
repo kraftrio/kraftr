@@ -1,0 +1,56 @@
+{
+  "name": "@kraftr/eslint-plugin",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "docs",
+    "index.d.ts",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "typescript"
+  ],
+  "engines": {
+    "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
+  },
+  "author": "Michel Betancourt",
+  "scripts": {
+    "build": "tsup ./index.ts",
+    "build:watch": "tsup"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "typescript": "4.4.4",
+    "tsup": "5.5.0",
+    "@typescript-eslint/experimental-utils": "5.1.0",
+    "tsutils": "~3.21.0",
+    "@rushstack/eslint-patch": "~1.0.8"
+  },
+  "peerDependencies": {
+    "eslint": "^7.0.0"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "16.10.3",
+    "@types/estree": "0.0.50",
+    "@types/eslint": "7.28.2",
+    "eslint-plugin-security-node": "1.0.14",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-plugin-unicorn": "37.0.1",
+    "@typescript-eslint/types": "5.1.0",
+    "@typescript-eslint/typescript-estree": "5.1.0",
+    "eslint": "^7.0.0",
+    "eslint-plugin-unused-imports": "1.1.5",
+    "@typescript-eslint/eslint-plugin": "^4.0.0",
+    "@typescript-eslint/parser": "^4.0.0"
+  }
+}

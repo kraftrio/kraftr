@@ -1,0 +1,21 @@
+{
+  "name": "@kraftr/errors",
+  "version": "0.1.0",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "inx build",
+    "build:watch": "inx build",
+    "start": "inx"
+  },
+  "devDependencies": {
+    "@kraftr/build": "*",
+    "@kraftr/eslint-plugin": "*",
+    "@types/jest": "27.0.2",
+    "@types/node": "16.10.3",
+    "@rushstack/eslint-patch": "~1.0.8",
+    "tslib": "2.3.1",
+    "eslint": "^7.0.0"
+  }
+}

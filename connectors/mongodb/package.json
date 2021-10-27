@@ -1,0 +1,30 @@
+{
+  "name": "@kraftr/mongodb-connector",
+  "version": "0.1.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "inx build",
+    "build:watch": "inx build",
+    "start": "inx"
+  },
+  "dependencies": {
+    "@kraftr/context": "*",
+    "@kraftr/core": "*",
+    "@kraftr/model": "*",
+    "@kraftr/repository": "*",
+    "@kraftr/sequence": "*",
+    "debug": "4.3.2",
+    "mongoose": "6.0.9",
+    "ts-toolbelt": "9.6.0",
+    "tslib": "2.3.1",
+    "@rushstack/eslint-patch": "~1.0.8"
+  },
+  "devDependencies": {
+    "@kraftr/build": "*",
+    "@kraftr/eslint-plugin": "*",
+    "@types/debug": "4.1.7",
+    "@types/jest": "27.0.2",
+    "@types/node": "16.10.3",
+    "eslint": "^7.0.0"
+  }
+}

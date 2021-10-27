@@ -1,0 +1,39 @@
+{
+  "name": "@kraftr/rest-server",
+  "version": "0.1.0",
+  "files": [
+    "dist",
+    "config"
+  ],
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build:watch": "inx build",
+    "build": "inx build",
+    "start": "inx"
+  },
+  "dependencies": {
+    "@kraftr/core": "*",
+    "@types/debug": "4.1.7",
+    "@types/jest": "27.0.2",
+    "@types/node": "16.10.3",
+    "debug": "4.3.2",
+    "openapi3-ts": "2.0.1",
+    "express": "4.17.1",
+    "route-trie": "3.0.0",
+    "ts-toolbelt": "9.6.0",
+    "koa": "2.13.4",
+    "tslib": "2.3.1",
+    "@rushstack/eslint-patch": "~1.0.8"
+  },
+  "devDependencies": {
+    "@types/express": "4.17.13",
+    "@types/qs": "6.9.7",
+    "@types/express-serve-static-core": "4.17.24",
+    "@kraftr/build": "*",
+    "@kraftr/eslint-plugin": "*",
+    "@types/koa": "2.13.4",
+    "eslint": "^7.0.0"
+  }
+}

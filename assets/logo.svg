@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32.209953mm"
+   height="9.710083mm"
+   viewBox="0 0 121.73841 36.699527"
+   version="1.1"
+   id="svg5"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient19594">
+      <stop
+         style="stop-color:#734dff;stop-opacity:1"
+         offset="0"
+         id="stop19602" />
+      <stop
+         style="stop-color:#aa4dff;stop-opacity:1"
+         offset="1"
+         id="stop19604" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient19594"
+       id="linearGradient19600"
+       x1="503.08649"
+       y1="304.92657"
+       x2="415.13916"
+       y2="303.88882"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-409.43607,-285.93472)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:3.6px;fill:url(#linearGradient19600);fill-opacity:1;stroke:none"
+       x="413.90536"
+       y="313.50449"
+       id="text495"><tspan
+         id="tspan493"
+         x="413.90536"
+         y="313.50449"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Arista 2.0 Alternate Light';-inkscape-font-specification:'Arista 2.0 Alternate Light, ';fill:url(#linearGradient19600);fill-opacity:1">Kraftr</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,29 @@
+{
+  "name": "@kraftr/core",
+  "version": "0.1.0",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "inx build",
+    "build:watch": "inx build",
+    "start": "inx"
+  },
+  "dependencies": {
+    "@kraftr/context": "*",
+    "@kraftr/sequence": "*",
+    "debug": "4.3.2",
+    "ts-toolbelt": "9.6.0",
+    "pretty-error": "3.0.4",
+    "tslib": "2.3.1",
+    "@rushstack/eslint-patch": "~1.0.8"
+  },
+  "devDependencies": {
+    "@kraftr/eslint-plugin": "*",
+    "@types/debug": "4.1.7",
+    "@types/jest": "27.0.2",
+    "@types/node": "16.10.3",
+    "@kraftr/build": "*",
+    "eslint": "^7.0.0"
+  }
+}

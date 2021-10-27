@@ -1,0 +1,40 @@
+{
+  "folders": [
+    {
+      "path": "core/core"
+    },
+    {
+      "path": "core/context"
+    },
+    {
+      "path": "core/repository"
+    },
+    {
+      "path": "core/model"
+    },
+    {
+      "path": "core/sequence"
+    },
+    {
+      "path": "extensions/schema"
+    },
+    {
+      "path": "server/rest"
+    },
+    {
+      "path": "connectors/mongodb"
+    },
+    {
+      "path": "tools/build"
+    },
+    {
+      "path": "tools/eslint-plugin"
+    },
+    {
+      "path": "core/errors"
+    },
+    {
+      "path": "examples/hello-world"
+    }
+  ]
+}

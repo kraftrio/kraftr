@@ -1,0 +1,10 @@
+{
+  "name": "rush-jest",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "jest": "27.2.4",
+    "esbuild": "0.12.10",
+    "esbuild-jest": "0.5.0"
+  }
+}

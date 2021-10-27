@@ -1,0 +1,35 @@
+{
+  "search.exclude": {
+    "common/**": true,
+    "**/.pnp.*": true,
+    "**/dist": true,
+    "**/node_modules": true
+  },
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "eslint.packageManager": "pnpm",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "editor.tabSize": 2,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/node_modules": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    ".vscode": true,
+    "**/dist": true,
+    "**/.*": true
+  },
+  "editor.formatOnSave": true,
+  "jest.autoRun": {
+    "watch": true,
+    "onSave": "test-file"
+  },
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "jest.jestCommandLine": "common/autoinstallers/rush-jest/node_modules/.bin/jest",
+}
