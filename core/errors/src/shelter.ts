@@ -1,4 +1,5 @@
 import { OkErr, Err, Ok, OkErrPromise } from './result';
+import { ErrorMetadata, ValueMetadata } from './types';
 import { isPromiseLike } from './utils';
 
 function handleError(error: unknown): Err<Error> {
@@ -17,9 +18,13 @@ function handleError(error: unknown): Err<Error> {
  * @returns the result of the function execution wrapped
  */
 export function shelter(unSafeFn: () => undefined): OkErr<null, Error>;
-export async function shelter<E>(unSafeFn: Promise<E>): OkErrPromise<E, Error>;
-export async function shelter<E>(unSafeFn: () => Promise<E>): OkErrPromise<E, Error>;
-export function shelter<E>(unSafeFn: () => E): OkErr<E, Error>;
+export async function shelter<E>(
+  unSafeFn: Promise<E>
+): OkErrPromise<ValueMetadata<E>, ErrorMetadata<E>>;
+export async function shelter<E>(
+  unSafeFn: () => Promise<E>
+): OkErrPromise<ValueMetadata<E>, ErrorMetadata<E>>;
+export function shelter<E>(unSafeFn: () => E): OkErr<ValueMetadata<E>, ErrorMetadata<E>>;
 
 export function shelter<E>(
   unSafeFn: (() => E | Promise<E>) | Promise<E>

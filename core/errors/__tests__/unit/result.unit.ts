@@ -1,11 +1,12 @@
-import { Err, Ok, shelter, useErrors } from '../../src';
+/* eslint-disable unicorn/consistent-function-scoping */
+import { Err, Ok, shelter, guard } from '../../src';
 
 describe('@kraftr/errors: Result tests', function () {
-  describe('useError()', function () {
+  describe('guard()', function () {
     it('throw error if there is result without check', function () {
       // eslint-disable-next-line unicorn/consistent-function-scoping
       const unhandleError = () =>
-        useErrors(() => {
+        guard(() => {
           const _ = Err(Error);
         });
 
@@ -14,7 +15,7 @@ describe('@kraftr/errors: Result tests', function () {
     it('works if every error is handle properly', function () {
       // eslint-disable-next-line unicorn/consistent-function-scoping
       const handledError = () =>
-        useErrors(() => {
+        guard(() => {
           const err = Err(Error);
           if (err.isErr && !err.isOk) {
             // Inform or anything else
@@ -74,7 +75,7 @@ describe('@kraftr/errors: Result tests', function () {
     });
   });
 
-  describe('safe()', function () {
+  describe('shelter()', function () {
     it('returns the value when is no error', function () {
       const res = shelter(() => {
         return 100;

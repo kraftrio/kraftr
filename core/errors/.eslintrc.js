@@ -2,8 +2,8 @@
 require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
-  extends: ['plugin:@inxt/all'],
-  plugins: ['@inxt'],
+  extends: ['plugin:@kraftr/all'],
+  plugins: ['@kraftr'],
   parserOptions: {
     project: './tsconfig.json',
     tsconfigRootDir: __dirname

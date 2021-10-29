@@ -2,11 +2,11 @@ import { ErrorCtor, TSError } from './types';
 
 const unhadleErrors = new Set<Err<Error>>();
 
-export function useErrors(unSafeFn: () => undefined): OkErr<null, Error>;
-export async function useErrors<E>(app: () => Promise<E>): Promise<E>;
-export function useErrors<E>(app: () => E): E;
+export function guard(unSafeFn: () => undefined): OkErr<null, Error>;
+export async function guard<E>(app: () => Promise<E>): Promise<E>;
+export function guard<E>(app: () => E): E;
 
-export function useErrors<E>(app: (() => Promise<E>) | (() => E)): Promise<E> | E {
+export function guard<E>(app: (() => Promise<E>) | (() => E)): Promise<E> | E {
   const value = app();
   const errors = [...unhadleErrors];
   unhadleErrors.clear();
