@@ -1,59 +1,8 @@
 import { F } from 'ts-toolbelt';
-import { Binding } from './binding';
-import { BindingScope, isPromise } from './utils';
-import { BindingAddress } from './injection';
+import { Binding } from '../bindings/binding';
+import { BindingScope } from '../utils';
+import { BindingAddress } from '../bindings';
 import { EventEmitter } from 'tsee';
-import { ContextNotFound } from './errors';
-
-let currentContext: Context | undefined;
-
-/**
- * Get the actual context can throw an exception since try running injection outside of context is undesirable
- * @returns Actual context
- */
-export function getContext(): Context {
-  if (!currentContext) {
-    throw new ContextNotFound();
-  }
-  return currentContext;
-}
-
-export function setContext(ctx: Context): void {
-  currentContext = ctx;
-}
-
-export function openContext(): void {
-  currentContext = new Context();
-}
-
-export function closeContext(): void {
-  currentContext = undefined;
-}
-
-export function useContext<T>(
-  ctx: Context,
-  fn: F.Function<[Context], Promise<T>>
-): Promise<T>;
-export function useContext<T>(ctx: Context, fn: F.Function<[Context], T>): T;
-
-export function useContext<T>(
-  ctx: Context,
-  fn: F.Function | F.Function<[Context], Promise<T>>
-): T | Promise<T> {
-  const oldCtx = currentContext;
-  currentContext = ctx;
-  const result = fn(ctx);
-
-  if (isPromise(result)) {
-    return result.then((value) => {
-      currentContext = oldCtx;
-      return value;
-    });
-  }
-
-  currentContext = oldCtx;
-  return result;
-}
 
 type ContextEvents = {
   add: (bind: Binding) => void;
@@ -188,13 +137,4 @@ export class Context extends EventEmitter<ContextEvents> {
     }
     return binding as Binding<ValueType>;
   }
-}
-
-export function createContext<T>(fn: F.Function<[Context], Promise<T>>): Promise<T>;
-export function createContext<T>(fn: F.Function<[Context], T>): T;
-
-export function createContext<T>(
-  fn: F.Function<[Context], Promise<T> | T>
-): Promise<T> | T {
-  return useContext(new Context(currentContext), fn);
 }

@@ -1,16 +1,13 @@
 import { C, F, O } from 'ts-toolbelt';
-import { Context, getContext, useContext } from './context';
-import { BindingScope } from './utils';
+import { Context, getContext } from '../context';
+import { BindingScope } from '../utils';
 import debugFactory from 'debug';
-import { BindingAddress } from '.';
+import { BindingAddress } from '../bindings';
+import { isFunction } from '../utils';
 import { EventEmitter } from 'tsee';
-import { Err } from '@kraftr/errors';
-import { ContextNotFound, ScopeNotFound, SourceNotDefined } from './errors';
+import { Throws } from '@kraftr/errors';
+import { ContextNotFound, LockError, SourceNotDefined } from '../errors';
 const debug = debugFactory('kraftr:context:binding');
-
-function isFunction(value: unknown): value is F.Function {
-  return typeof value === 'function';
-}
 
 /**
  * Type of the binding source
@@ -23,31 +20,19 @@ export enum BindingType {
   /**
    * A function to get the value
    */
-  DYNAMIC_VALUE = 'DynamicValue',
+  FUNCTION = 'Function',
   /**
    * A class to be instantiated as the value
    */
   CLASS = 'Class'
 }
 
-export function useScope(
-  scope: string,
-  fnScoped: F.Function
-): Err<ScopeNotFound> | undefined {
-  const ctx = getContext();
-  const resolvedCtx = ctx.value()?.getScopedContext(scope);
-  if (!resolvedCtx) {
-    return Err(ScopeNotFound);
-  }
-  useContext(resolvedCtx, fnScoped);
-}
-
 export type ConstantBindingSource<T> = {
-  type: BindingType.CONSTANT | BindingType.DYNAMIC_VALUE;
+  type: BindingType.CONSTANT | BindingType.FUNCTION;
   value: T;
 };
 export type DynamicValueBindingSource<T> = {
-  type: BindingType.DYNAMIC_VALUE;
+  type: BindingType.FUNCTION;
   value: F.Function<[], T>;
 };
 export type ClassBindingSource<T extends O.Object> = {
@@ -55,7 +40,7 @@ export type ClassBindingSource<T extends O.Object> = {
   value: C.Class<[], T>;
 };
 export type EmptyBindingSource = {
-  type: BindingType.DYNAMIC_VALUE;
+  type: BindingType.FUNCTION;
   value: null;
 };
 
@@ -69,41 +54,94 @@ type BindingEvents<T> = {
   change: (bindings: [T, T], changes: number) => void;
 };
 
+type Lock<T> = Omit<T, 'lock' | 'with'> & {
+  unlock: () => T;
+};
+
+type WidenLiterals<T> = T extends boolean
+  ? boolean
+  : T extends string
+  ? string
+  : T extends number
+  ? number
+  : T;
+
+type SourceTypeFn = 'class' | 'dynamic' | 'constant';
+
 export class Binding<BoundValue = unknown> extends EventEmitter<
   BindingEvents<BindingSource<BoundValue>>
 > {
   public scope: string = BindingScope.TRANSIENT;
   public tagMap: Map<string, unknown> = new Map();
 
+  private _memoized = false;
   private _cache: WeakMap<Context, BoundValue> = new WeakMap();
   private _source: BindingSource<BoundValue> = {
-    type: BindingType.DYNAMIC_VALUE,
+    type: BindingType.FUNCTION,
     value: null
   };
   private _changes = 0;
+  private _locked = false;
 
   constructor(public key: BindingAddress<BoundValue>) {
     super();
   }
 
-  with(value: BindingSource<BoundValue>['value']): this {
+  /**
+   * @throws LockError
+   * @param value value to bind to the key
+   * @returns this (chainable)
+   */
+  with<V extends BoundValue>(
+    value: BindingSource<V>['value']
+  ): Binding<WidenLiterals<V>> & Throws<LockError> {
+    if (this._locked) {
+      throw new LockError(this.key);
+    }
     const ctx = getContext();
-    if (!ctx.value()!.contains(this.key)) {
-      ctx.value()!.add(this as Binding);
+    if (!ctx.contains(this.key)) {
+      ctx.add(this as Binding);
     }
     const oldSource = this._source;
     this._source.value = value;
 
     this.emit('change', [oldSource, this._source], this._changes);
+    return this as never;
+  }
+
+  /**
+   * Cache the result even with transient and is only recomputed when dependencies changes (inner binds)
+   * @param value
+   */
+  memoize(value = true): this {
+    this._memoized = value;
     return this;
   }
 
-  constant(): this {
+  lock(): Lock<this> {
+    this._locked = true;
+    const newBind = new Binding(this.key);
+    Object.assign(newBind, this);
+    Object.assign(newBind, {
+      unlock: () => {
+        this._locked = false;
+      }
+    });
+    newBind._source.value = this._source.value;
+    return newBind as unknown as Lock<this>;
+  }
+
+  constant(): Omit<this, SourceTypeFn> {
     this._source.type = BindingType.CONSTANT;
     return this;
   }
 
-  class(): this {
+  dynamic(): Omit<this, SourceTypeFn> {
+    this._source.type = BindingType.FUNCTION;
+    return this;
+  }
+
+  class(): Omit<this, SourceTypeFn> {
     this._source.type = BindingType.CLASS;
     return this;
   }
@@ -118,15 +156,22 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
     return this;
   }
 
-  value(providedCtx?: Context): BoundValue {
+  /**
+   * @throws SourceNotDefined | ContextNotFound
+   * @param altCtx alternative provided context to use
+   * @returns bound value
+   */
+  value(
+    altCtx?: Context
+  ): (BoundValue | null) & Throws<SourceNotDefined | ContextNotFound> {
     /* istanbul ignore if */
     if (debug.enabled) {
       debug('Get value for binding %s', this.key);
     }
-    if (!this._source.value) {
+    if (this._source.value === undefined) {
       throw new SourceNotDefined(this.key);
     }
-    const ctx = getContext() ?? providedCtx;
+    const ctx = getContext() ?? altCtx;
 
     const resolutionCtx = this.getResolutionContext(ctx);
 
@@ -135,7 +180,7 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
     }
 
     const cache = this._cache.get(resolutionCtx);
-    if (cache && this.scope !== BindingScope.TRANSIENT) {
+    if (cache !== undefined && this.scope !== BindingScope.TRANSIENT) {
       return cache;
     }
 
@@ -146,7 +191,7 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
     } else if (isFunction(this._source.value)) {
       value = this._source.value();
     } else {
-      value = this._source.value;
+      value = this._source.value as BoundValue;
     }
     if (this.scope !== BindingScope.TRANSIENT) {
       this._cache.set(resolutionCtx, value);
@@ -156,10 +201,11 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
 
   /**
    * Locate and validate the resolution context
+   * @throws ContextNotFound
    * @param ctx - Current context
    * @param options - Resolution options
    */
-  private getResolutionContext(ctx: Context): Context {
+  private getResolutionContext(ctx: Context): Context & Throws<ContextNotFound> {
     const resolutionCtx = ctx.getResolutionContext(this as Binding);
     if (!resolutionCtx) {
       throw new ContextNotFound();

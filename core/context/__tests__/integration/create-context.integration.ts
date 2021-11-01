@@ -1,8 +1,7 @@
-import { createContext } from '../../src/context';
-import { inject, provide } from '../../src/injection';
-import { BindingScope } from '../../src/utils';
-
-describe('createContext', () => {
+/* eslint-disable security-node/detect-insecure-randomness */
+/* eslint-disable unicorn/consistent-function-scoping */
+import { createContext, inject, provide, BindingScope } from '../../src';
+describe('@kraftr/context:', () => {
   describe('basic features', () => {
     it('inject return the function result', () => {
       createContext(() => {
@@ -143,7 +142,8 @@ describe('createContext', () => {
   describe('application behavior', () => {
     it('return the same value from while is inside the same scope', () => {
       createContext(() => {
-        const fn = () => Math.floor(Math.random() * 100);
+        let val = 0;
+        const fn = () => val++;
 
         provide('test').with(fn).in(BindingScope.APPLICATION);
 
@@ -167,7 +167,8 @@ describe('createContext', () => {
 
     it('return the same value from while is inside the same scope', () => {
       createContext(() => {
-        const fn = () => Math.floor(Math.random() * 100);
+        let val = 0;
+        const fn = () => val++;
         let value;
         let value2;
         provide('test').with(fn).in(BindingScope.APPLICATION);

@@ -1,3 +1,5 @@
+import { F } from 'ts-toolbelt';
+
 export enum BindingScope {
   TRANSIENT = 'Transient',
   SINGLETON = 'Singleton',
@@ -22,22 +24,12 @@ export type ValueOrPromise<T> = T | PromiseLike<T>;
  *
  * @param value - The value to check.
  */
-export function isPromiseLike<T>(
-  value: T | PromiseLike<T> | undefined
-): value is PromiseLike<T> {
-  if (!value) return false;
-  if (typeof value !== 'object' && typeof value !== 'function') return false;
-  return typeof (value as PromiseLike<T>).then === 'function';
-}
-
-/**
- * Check whether a value is a Promise-like instance.
- * Recognizes both native promises and third-party promise libraries.
- *
- * @param value - The value to check.
- */
-export function isPromise<T>(value: T | Promise<T> | undefined): value is Promise<T> {
+export function isPromiseLike<T>(value: T | Promise<T> | undefined): value is Promise<T> {
   if (!value) return false;
   if (typeof value !== 'object' && typeof value !== 'function') return false;
   return typeof (value as Promise<T>).then === 'function';
+}
+
+export function isFunction(value: unknown): value is F.Function {
+  return typeof value === 'function';
 }
