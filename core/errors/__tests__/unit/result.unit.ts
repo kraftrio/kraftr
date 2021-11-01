@@ -1,7 +1,6 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import { Err, Ok, shelter, guard } from '../../src';
-
-describe('@kraftr/errors: Result tests', function () {
+describe('@kraftr/errors:', function () {
   describe('guard()', function () {
     it('throw error if there is result without check', function () {
       // eslint-disable-next-line unicorn/consistent-function-scoping
@@ -9,7 +8,6 @@ describe('@kraftr/errors: Result tests', function () {
         guard(() => {
           const _ = Err(Error);
         });
-
       expect(unhandleError).toThrowError(Error);
     });
     it('works if every error is handle properly', function () {

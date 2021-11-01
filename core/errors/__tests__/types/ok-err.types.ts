@@ -1,11 +1,11 @@
 import { OkErr, shelter } from '../../src';
-import { Throw, ErrorMetadata, ValueMetadata } from '../../src/types';
+import { Throws, ErrorMetadata, ValueMetadata } from '../../src/types';
 import { AnyObject, check, checks, extend, Pass } from './utils';
 
-type Value1 = number & Throw<Error>;
+type Value1 = number & Throws<Error>;
 
-function parse(_: string): Record<string, unknown> & Throw<SyntaxError> {
-  return {} as Record<string, unknown> & Throw<SyntaxError>;
+function parse(_: string): Record<string, unknown> & Throws<SyntaxError> {
+  return {} as Record<string, unknown> & Throws<SyntaxError>;
 }
 const res = shelter(() => parse(''));
 

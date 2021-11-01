@@ -166,10 +166,10 @@ if(bad.isErr) {
 But not always is comfortable to have to works with objects, so there is anything we can do?
 
 ```ts
-import { Ok, Err, Throw } from '@kraftr/errors'
+import { Ok, Err, Throws } from '@kraftr/errors'
 import db, { Connection, ConnectionError } from 'any-db'
 
-function connectToDb(): Connection & Throw<ConnectionError> {
+function connectToDb(): Connection & Throws<ConnectionError> {
   return db.connect('url') // can throw error
 }
 
@@ -184,7 +184,7 @@ You can either provide type errors for third party functions or the builtin func
 ```ts
 declare global {
   interface JSON {
-    parse(text: object): Record<string, unknown> & Throw<SyntaxError>
+    parse(text: object): Record<string, unknown> & Throws<SyntaxError>
   }
 }
 const parsed = shelter(() => JSON.parse('{;'))

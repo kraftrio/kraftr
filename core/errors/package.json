@@ -7,14 +7,19 @@
   "scripts": {
     "build": "inx build",
     "build:watch": "inx build",
-    "start": "inx"
+    "start": "inx",
+    "test": "jest",
+    "test:types": "tsc --noEmit"
   },
   "devDependencies": {
     "@kraftr/build": "*",
     "@kraftr/eslint-plugin": "*",
     "@types/jest": "27.0.2",
     "@types/node": "16.10.3",
-    "@rushstack/eslint-patch": "~1.0.8",
+    "jest": "27.3.1",
+    "esbuild": "0.13.10",
+    "esbuild-jest": "0.5.0",
+    "@rushstack/eslint-patch": "1.0.8",
     "tslib": "2.3.1",
     "eslint": "^7.0.0"
   }
