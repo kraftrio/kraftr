@@ -1,10 +1,10 @@
 import { Plugin } from 'vite';
 import chalk from 'chalk';
-export type VitePluginkraftrConfig = {
+export type VitePluginKraftrConfig = {
   path?: string;
 };
 
-export function VitePluginkraftr(config?: VitePluginkraftrConfig): Plugin {
+export function VitePluginKraftr(config?: VitePluginKraftrConfig): Plugin {
   const basePath = config?.path ?? './src/app.ts';
   return {
     apply: 'serve',
@@ -32,8 +32,8 @@ export function VitePluginkraftr(config?: VitePluginkraftrConfig): Plugin {
           // eslint-disable-next-line unicorn/no-process-exit
           process.exit(1);
         }
+        app.start();
       });
-
       watcher.on('all', async (evnt) => {
         if (['add', 'addDir', 'change', 'unlink', 'unlinkDir'].includes(evnt)) {
           app = (await ssrLoadModule(basePath))['default'];

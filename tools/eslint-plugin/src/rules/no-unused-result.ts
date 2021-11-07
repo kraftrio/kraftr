@@ -2,7 +2,7 @@ import { unionTypeParts } from 'tsutils';
 import type { Rule } from 'eslint';
 import type { ParserServices } from '@typescript-eslint/parser';
 import type { TypeChecker, Node } from 'typescript';
-import { AST_NODE_TYPES, TSESTree } from '@typescript-eslint/experimental-utils';
+import type { TSESTree } from '@typescript-eslint/experimental-utils';
 
 function isResultLike(checker: TypeChecker, node: Node): boolean {
   const type = checker.getTypeAtLocation(node);
@@ -24,7 +24,7 @@ function isResultLike(checker: TypeChecker, node: Node): boolean {
 
 function isUnhandledResult(parserService: ParserServices, node: TSESTree.Node): boolean {
   const checker = parserService.program.getTypeChecker();
-  if (node.type === AST_NODE_TYPES.SequenceExpression) {
+  if (node.type === 'SequenceExpression') {
     return node.expressions.some((item) => isUnhandledResult(parserService, item));
   }
 
@@ -32,16 +32,16 @@ function isUnhandledResult(parserService: ParserServices, node: TSESTree.Node): 
     return false;
   }
 
-  if (node.type === AST_NODE_TYPES.CallExpression) {
+  if (node.type === 'CallExpression') {
     return !(
-      node.callee.type === AST_NODE_TYPES.MemberExpression &&
-      node.callee.property.type === AST_NODE_TYPES.Identifier &&
+      node.callee.type === 'MemberExpression' &&
+      node.callee.property.type === 'Identifier' &&
       node.callee.property.name === 'value' &&
       node.arguments.length === 0
     );
   }
 
-  if (node.type === AST_NODE_TYPES.ConditionalExpression) {
+  if (node.type === 'ConditionalExpression') {
     return (
       isUnhandledResult(parserService, node.alternate) ||
       isUnhandledResult(parserService, node.consequent)
@@ -49,9 +49,9 @@ function isUnhandledResult(parserService: ParserServices, node: TSESTree.Node): 
   }
 
   if (
-    node.type === AST_NODE_TYPES.MemberExpression ||
-    node.type === AST_NODE_TYPES.Identifier ||
-    node.type === AST_NODE_TYPES.NewExpression
+    node.type === 'MemberExpression' ||
+    node.type === 'Identifier' ||
+    node.type === 'NewExpression'
   ) {
     // If it is just a property access chain or a `new` call (e.g. `foo.bar` or
     // `new Promise()`), the promise is not handled because it doesn't have the
@@ -65,10 +65,11 @@ export const noUnusedResult = {
   meta: {
     type: 'problem',
     messages: {
-      'not-handle-result': 'Result must be handled appropriately or explicitly marked as ignored with the `non-null` (!) operator'
+      'not-handle-result':
+        'Result must be handled appropriately or explicitly marked as ignored with the `non-null` (!) operator'
     }
   },
-  create: function(context: Rule.RuleContext): Rule.RuleListener {
+  create: function (context: Rule.RuleContext): Rule.RuleListener {
     const parserServices = context.parserServices as ParserServices;
     return {
       ExpressionStatement(node) {
@@ -81,4 +82,4 @@ export const noUnusedResult = {
       }
     };
   }
-}
+};

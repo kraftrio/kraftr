@@ -1,11 +1,14 @@
 import { defineConfig } from 'vite';
-import { VitePluginkraftr } from './src/vite-plugin';
+import { VitePluginKraftr } from './src/vite-plugin';
 import dts from 'vite-plugin-dts';
 // eslint-disable-next-line security-node/detect-non-literal-require-calls, @typescript-eslint/no-var-requires, unicorn/prefer-module
 const { name, dependencies, devDependencies } = require(process.cwd() + '/package.json');
 import autoExternal from 'rollup-plugin-auto-external';
-
-const allDeps = [...Object.keys(dependencies), ...Object.keys(devDependencies)];
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+const allDeps = [
+  ...Object.keys(dependencies ?? []),
+  ...Object.keys(devDependencies ?? [])
+];
 
 export default defineConfig({
   server: {
@@ -28,17 +31,20 @@ export default defineConfig({
               return [dep, parts!];
             })
           ),
-          'node:util': 'node_util'
+          'node:util': 'node_util',
+          'node:http': 'node_http',
+          'node:events': 'node_events'
         }
       },
-      external: ['node:util']
+      external: ['node:util', 'node:http', 'node:events']
     }
   },
   plugins: [
+    nodeResolve(),
     autoExternal({
       builtins: true
     }),
-    VitePluginkraftr(),
+    VitePluginKraftr(),
     dts({
       include: ['./src'],
       copyDtsFiles: true,

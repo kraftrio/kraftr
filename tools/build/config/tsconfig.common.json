@@ -2,11 +2,10 @@
   "compilerOptions": {
     "incremental": false,
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleResolution": "Node",
     "lib": ["ES2021"],
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
     "resolveJsonModule": true,
     "sourceMap": true,
     "importHelpers": true,
@@ -23,5 +22,6 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "exclude": ["node_modules", "./node_modules"]
 }
