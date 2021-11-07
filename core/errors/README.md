@@ -204,7 +204,7 @@ if(parsed.isErr) {
 
 </br>
 
-For unchecked exceptions use 'Throw' as type then people can get type suggestion, for checked exceptions you should use Ok & Err or you can just use 'Throw' anywhere and keep using as plain js and when you wanna know a type uses a shelter.
+For unchecked exceptions use 'Return' as type then people can get type suggestion, for checked exceptions you should use Ok & Err or you can just use 'Return' everywhere and keep using as plain js and when you wanna know a type uses a shelter.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
