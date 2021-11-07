@@ -17,18 +17,19 @@ This library is part of the kraftr framework (which is under development), until
 
 </br>
 
-- [1.1. ❗Requirements](#11-requirements)
-- [1.2. 🚀 Install](#12--install)
-- [1.3. 👨‍💻 Usage](#13--usage)
-- [1.4. 💪 Strongly typed](#14--strongly-typed)
-- [1.5. 🚶‍♂️ When to use](#15-️-when-to-use)
-- [1.6. 📚 Acknowledgments](#16--acknowledgments)
-- [1.7. 🔍 Related Projects](#17--related-projects)
-- [1.8. 🤝 License](#18--license)
+- [1. ❗Requirements](#1-requirements)
+- [2. 🚀 Install](#2--install)
+- [3. 👨‍💻 Usage](#3--usage)
+- [4. 💪 Strongly typed](#4--strongly-typed)
+- [5. 🚶‍♂️ When to use](#5-️-when-to-use)
+- [6. Enforce the usage](#6-enforce-the-usage)
+- [7. 📚 Acknowledgments](#7--acknowledgments)
+- [8. 🔍 Related Projects](#8--related-projects)
+- [9. 🤝 License](#9--license)
 
 </br>
 
-## 1.1. ❗Requirements
+## 1. ❗Requirements
 
 </br>
 
@@ -38,7 +39,7 @@ This library is part of the kraftr framework (which is under development), until
 <p align="right">
 (<a href="#top">back to top</a>)</p>
 
-## 1.2. 🚀 Install
+## 2. 🚀 Install
 
 </br>
 
@@ -46,7 +47,7 @@ This library is part of the kraftr framework (which is under development), until
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## 1.3. 👨‍💻 Usage
+## 3. 👨‍💻 Usage
 
 </br>
 @kraft/errors allow keep 2 types of exceptions `UncheckedExceptions` and `CheckedExceptions`.
@@ -119,7 +120,7 @@ I know, up to here it seems like shelter is just a sugar syntax for try..catch b
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## 1.4. 💪 Strongly typed
+## 4. 💪 Strongly typed
 
 </br>
 
@@ -163,17 +164,17 @@ if(bad.isErr) {
 
 ```
 
-But not always is comfortable to have to works with objects, so there is anything we can do?
+But what if we want just work as normal and get typed errors in some situations?
 
 ```ts
-import { Ok, Err, Throws } from '@kraftr/errors'
+import { Ok, Err, Return } from '@kraftr/errors'
 import db, { Connection, ConnectionError } from 'any-db'
 
-function connectToDb(): Connection & Throws<ConnectionError> {
+function connectToDb(): Return<Connection, ConnectionError> {
   return db.connect('url') // can throw error
 }
 
-const connection: OkErr<Connection, ConnectionError> = shelter(connectToDb)
+const connection = shelter(connectToDb) //  OkErr<Connection, ConnectionError>
 if(connection.isErr) {
   connection.error // properly typed as ConnectionError
 }
@@ -184,7 +185,7 @@ You can either provide type errors for third party functions or the builtin func
 ```ts
 declare global {
   interface JSON {
-    parse(text: object): Record<string, unknown> & Throws<SyntaxError>
+    parse(text: object): Return<Record<string, unknown>, SyntaxError>
   }
 }
 const parsed = shelter(() => JSON.parse('{;'))
@@ -195,7 +196,7 @@ if(parsed.isErr) {
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## 1.5. 🚶‍♂️ When to use
+## 5. 🚶‍♂️ When to use
 
 </br>
 
@@ -209,7 +210,14 @@ For unchecked exceptions use 'Throw' as type then people can get type suggestion
 
 </br>
 
-## 1.6. 📚 Acknowledgments
+## 6. Enforce the usage
+
+this library has 2 developed eslint rules to enforce the usages
+
+- no-unused-result // result objects should be handled
+- return-throw // functions with throw should have it type in the return signature
+
+## 7. 📚 Acknowledgments
 
 - [Checked and Unchecked Exceptions in Java](https://www.baeldung.com/java-checked-unchecked-exceptions)
 - [Expressive error handling in TypeScript and benefits for domain-driven design
@@ -222,7 +230,7 @@ For unchecked exceptions use 'Throw' as type then people can get type suggestion
 
 </br>
 
-## 1.7. 🔍 Related Projects
+## 8. 🔍 Related Projects
 
 - [neverthrow](https://github.com/supermacro/neverthrow)
 - [type-safe-errors](https://github.com/wiktor-obrebski/type-safe-errors)
@@ -231,7 +239,7 @@ For unchecked exceptions use 'Throw' as type then people can get type suggestion
 
 </br>
 
-## 1.8. 🤝 License
+## 9. 🤝 License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 

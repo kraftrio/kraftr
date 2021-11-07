@@ -22,6 +22,7 @@ describe('@kraftr/errors:', function () {
       expect(handledError).not.toThrowError();
     });
   });
+
   describe('Ok()', function () {
     it('returns the value when is ok', function () {
       const result = Ok(23);

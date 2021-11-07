@@ -20,11 +20,7 @@ type Equals<F, S> = F extends S ? (S extends F ? Pass : Fail) : Fail;
  */
 export declare function check<Type, Expect, Outcome extends Bool>(
   debug?: Type
-): Equals<Equals<Type, Expect>, Outcome>;
-
-export declare function extend<Type, Expect, Outcome extends Bool>(
-  debug?: Type
-): Equals<Type extends Expect ? Pass : Fail, Outcome>;
+): Equals<Equals<[Type], [Expect]>, Outcome>;
 
 /**
  * Validates a batch of [[check]]

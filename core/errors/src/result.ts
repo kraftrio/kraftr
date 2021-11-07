@@ -1,12 +1,15 @@
-import { ErrorCtor, TSError } from './types';
+/* eslint-disable unicorn/prevent-abbreviations */
+import { ErrorCtor, TSError, Return } from './types';
 
 const unhadleErrors = new Set<Err<Error>>();
 
-export function guard(unSafeFn: () => undefined): OkErr<null, Error>;
-export async function guard<E>(app: () => Promise<E>): Promise<E>;
-export function guard<E>(app: () => E): E;
+export function guard(unSafeFunction: () => undefined): Return<undefined, Error>;
+export async function guard<E>(app: () => Promise<E>): Promise<Return<E, Error>>;
+export function guard<E>(app: () => E): Return<E, Error>;
 
-export function guard<E>(app: (() => Promise<E>) | (() => E)): Promise<E> | E {
+export function guard<E>(
+  app: (() => Promise<E>) | (() => E)
+): Return<Promise<E> | E, Error> {
   const value = app();
   const errors = [...unhadleErrors];
   unhadleErrors.clear();
@@ -27,13 +30,15 @@ export type Ok<V> = Result<V, null>;
  * @public
  * Value with the error wrapped
  */
-export type Err<E extends Error> = Result<null, E>;
+export type Err<E extends Error = Error, V = unknown> = Result<null, E> & {
+  valueOr: (a: V) => V;
+};
 
 /**
  * Sugar type for Promise<Ok<Value> | Err<Error>>
  */
-export type OkErrPromise<O, E extends Error> = Promise<Ok<O> | Err<E>>;
-export type OkErr<O, E extends Error> = Ok<O> | Err<E>;
+export type OkErrPromise<O, E extends Error> = Promise<Ok<O> | Err<E, O>>;
+export type OkErr<O, E extends Error> = Ok<O> | Err<E, O>;
 
 /**
  * @public
@@ -58,7 +63,7 @@ export class Result<Value, E extends Error | null> {
 
   /**
    * @public
-   * Use this to know if value can be used safely
+   * Check result don't contain errors
    */
   get isOk(): E extends Error ? false : true {
     unhadleErrors.delete(this as never);
@@ -87,23 +92,32 @@ export class Result<Value, E extends Error | null> {
    * @public
    * Rethrow caught error
    */
-  release(): void {
+  release(): Return<void, E extends Error ? E : never> {
     unhadleErrors.delete(this as never);
     if (this.isErr) {
       throw this.error;
     }
   }
 
+  valueOr(onError: Value): Value {
+    if (this.isErr) {
+      unhadleErrors.delete(this as never);
+      return onError;
+    }
+    return this.value() as Value;
+  }
+
   /**
    * @public
    * Could throw an exception for safe use check first with isOk
    */
-  value(): E extends Error ? void : Value {
+  value(): E extends Error ? Return<never, E> : Value {
     unhadleErrors.delete(this as never);
     if (this.isErr) {
+      // eslint-disable-next-line @kraftr/returns-throw
       throw this.error;
     }
-    return this._value as E extends Error ? void : Value;
+    return this._value as E extends Error ? Return<never, E> : Value;
   }
 }
 
@@ -138,7 +152,7 @@ export function Err<N extends Err<Error>>(result: N): N;
  *
  * @public
  * @param name Error name
- * @param message Additional message to show
+ * @param message to show
  * @returns An Err result with the error wrapped
  */
 export function Err<N extends string, M extends string>(
@@ -150,7 +164,7 @@ export function Err<N extends string, M extends string>(
  *
  * @public
  * @param name Error name
- * @param message Additional message to show
+ * @param message show
  * @returns An Err result with the error wrapped
  */
 export function Err<E extends ErrorCtor, M extends string>(
@@ -167,20 +181,20 @@ export function Err<E extends ErrorCtor, M extends string>(
 export function Err<E extends Error>(error: E): Err<E>;
 
 export function Err(
-  errorOrNameOrErr: Error | string | ErrorCtor | Err<Error>,
+  errorOrNameOrError: Error | string | ErrorCtor | Err<Error>,
   message?: string
 ): Err<Error> {
   let error: Error;
-  if (typeof errorOrNameOrErr === 'string') {
+  if (typeof errorOrNameOrError === 'string') {
     error = new Error(message);
-    error.name = errorOrNameOrErr;
-  } else if ('isErr' in errorOrNameOrErr) {
-    return errorOrNameOrErr;
-  } else if (errorOrNameOrErr instanceof Error) {
-    error = errorOrNameOrErr;
+    error.name = errorOrNameOrError;
+  } else if ('isErr' in errorOrNameOrError) {
+    return errorOrNameOrError;
+  } else if (errorOrNameOrError instanceof Error) {
+    error = errorOrNameOrError;
   } else {
-    error = new errorOrNameOrErr(message);
+    error = new errorOrNameOrError(message);
   }
 
-  return new Result(null, error) as Result<null, Error>;
+  return new Result(null, error) as Err;
 }

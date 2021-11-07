@@ -10,9 +10,24 @@ export type TSError<N extends string | ErrorCtor, M extends string> = N extends 
 
 declare const errors: unique symbol;
 
-export type Throws<T extends Error = Error> = {
-  [errors]?: T;
+type MetaError<ErrorType extends Error> = {
+  [errors]: ErrorType;
 };
 
-export type ValueMetadata<T> = T extends infer V & Throws<Error> ? V : T;
-export type ErrorMetadata<T> = T extends Throws<infer E> ? E : Error;
+export type Throws<ErrorType extends Error, ReturnType> = [ReturnType] extends [null]
+  ? [null] extends [ReturnType]
+    ? MetaError<ErrorType>
+    : [ReturnType] extends [never]
+    ? MetaError<ErrorType> & void
+    : never
+  : [ReturnType] extends [undefined]
+  ? MetaError<ErrorType>
+  : MetaError<ErrorType> & ReturnType;
+
+export type Return<ReturnTypes, ErrorTypes extends Error> =
+  | ReturnTypes
+  | Throws<ErrorTypes, ReturnTypes>;
+
+export type ValueMetadata<T> = Exclude<T, MetaError<any>>;
+
+export type ErrorMetadata<T> = T extends MetaError<infer E> ? E : never;

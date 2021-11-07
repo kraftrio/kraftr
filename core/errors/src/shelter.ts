@@ -2,7 +2,7 @@ import { OkErr, Err, Ok, OkErrPromise } from './result';
 import { ErrorMetadata, ValueMetadata } from './types';
 import { isPromiseLike } from './utils';
 
-function handleError(error: unknown): Err<Error> {
+function handleError(error: unknown): Err {
   if (error instanceof Error) {
     return Err(error as Error);
   }
@@ -19,10 +19,10 @@ function handleError(error: unknown): Err<Error> {
  */
 export function shelter(unSafeFn: () => undefined): OkErr<null, Error>;
 export async function shelter<E>(
-  unSafeFn: Promise<E>
+  unSafePromise: Promise<E>
 ): OkErrPromise<ValueMetadata<E>, ErrorMetadata<E>>;
 export async function shelter<E>(
-  unSafeFn: () => Promise<E>
+  unSafeFunction: () => Promise<E>
 ): OkErrPromise<ValueMetadata<E>, ErrorMetadata<E>>;
 export function shelter<E>(unSafeFn: () => E): OkErr<ValueMetadata<E>, ErrorMetadata<E>>;
 
@@ -38,6 +38,6 @@ export function shelter<E>(
 
     return Ok(value);
   } catch (error) {
-    return handleError(error);
+    return handleError(error) as Err<Error, E>;
   }
 }
