@@ -1,5 +1,4 @@
-// This is a workaround for https://github.com/eslint/eslint/issues/3458
-const { useESlint } = require('@kraftr/eslint-plugin/dist/eslint');
+const { useESlint } = require('@kraftr/eslint-plugin/dist/eslint.cjs');
 
 module.exports = useESlint({
   extends: ['plugin:@kraftr/lib'],
@@ -8,5 +7,5 @@ module.exports = useESlint({
     project: './tsconfig.json',
     tsconfigRootDir: __dirname
   },
-  ignorePatterns: ['.eslintrc.js']
+  ignorePatterns: ['.eslintrc.cjs']
 });

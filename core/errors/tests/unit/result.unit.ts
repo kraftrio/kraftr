@@ -1,5 +1,5 @@
 /* eslint-disable unicorn/consistent-function-scoping */
-import { Err, Ok, shelter, guard } from '../../src';
+import { Err, Ok, shelter, guard, Return } from '../../src';
 describe('@kraftr/errors:', function () {
   describe('guard()', function () {
     it('throw error if there is result without check', function () {
@@ -52,7 +52,7 @@ describe('@kraftr/errors:', function () {
     });
 
     it('allow Err receive constructor as param', function () {
-      const result = Err(TypeError, 'invalid param');
+      const result = Err(TypeError, 'another invalid param');
 
       expect(result.isErr).toBeTruthy();
       expect(() => result.value()).toThrow(/invalid param/);
@@ -85,7 +85,7 @@ describe('@kraftr/errors:', function () {
     });
 
     it('wraps the error when is threw', function () {
-      const res = shelter(() => {
+      const res = shelter((): Return<never, Error> => {
         throw new Error('Error');
       });
 
@@ -94,9 +94,9 @@ describe('@kraftr/errors:', function () {
     });
 
     it('handle async functions rejection', async function () {
-      const res = await shelter(() => {
+      const res = await shelter((): Promise<Return<never, Error>> => {
         return new Promise((_, reject) => {
-          reject(new Error('invalid promise'));
+          reject(new Error('another invalid promise'));
         });
       });
 

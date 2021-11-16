@@ -8,6 +8,8 @@ class TestError extends Error {
 checks([
   check<ErrorMetadata<Return<number | null, TestError>>, TestError, Pass>(),
   check<ValueMetadata<Return<number | null, TestError>>, number | null, Pass>(),
+
+  check<ValueMetadata<Return<number, TestError>>, number | null, Fail>(),
   check<ValueMetadata<Return<number | null, TestError>>, number, Fail>(),
 
   check<ErrorMetadata<Return<number, TestError>>, TestError, Pass>(),
@@ -23,5 +25,11 @@ checks([
   check<ValueMetadata<Return<number, TestError>>, number, Pass>(),
   check<ValueMetadata<Return<undefined, TestError>>, undefined, Pass>(),
   check<ValueMetadata<Return<void, TestError>>, void, Pass>(),
-  check<ValueMetadata<Return<null, TestError>>, null, Pass>()
+  check<ValueMetadata<Return<null, TestError>>, null, Pass>(),
+
+  check<ValueMetadata<Return<any, TestError>>, any, Pass>(),
+  check<ValueMetadata<Return<any, TestError>>, never, Fail>(),
+
+  check<ErrorMetadata<Return<any, TestError>>, Error, Pass>(),
+  check<ErrorMetadata<Return<any, TestError>>, never, Fail>()
 ]);

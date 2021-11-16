@@ -1,3 +1,3 @@
-import { useJest } from '@kraftr/build';
-
+import { jest } from '@kraftr/build';
+const { useJest } = jest;
 export default useJest();
