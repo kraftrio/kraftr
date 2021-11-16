@@ -42,11 +42,31 @@ new TSESLint.RuleTester({
     }
     ` + THROW_TYPE,
     `// it's ok if has a union
-    function test<E>(val: E): Return<E, Error> {
+    function test<E>(val: E): Return<E | string, Error> {
       if(x) {
         throw new Error('')
       }
       return 23;
+    }
+    ` + THROW_TYPE,
+    `// it's ok if is a class getter
+    class Dog {
+      get name(): Return<string, Error> {
+        if(this.isDead) {
+          throw new Error('')
+        }
+        return 'dog';
+      }
+    }
+    ` + THROW_TYPE,
+    `// it's ok if is a class method
+    class Dog {
+      name(): Return<string, Error> {
+        if(this.isDead) {
+          throw new Error('')
+        }
+        return 'dog';
+      }
     }
     ` + THROW_TYPE
   ],

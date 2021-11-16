@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "incremental": false,
     "target": "ESNext",
-    "module": "CommonJS",
+    "module": "ES2020",
     "moduleResolution": "Node",
     "lib": ["ES2021"],
-    "declaration": false,
+    "outDir": "dist",
     "resolveJsonModule": true,
+    "composite": true,
     "sourceMap": true,
     "importHelpers": true,
     "downlevelIteration": true,
@@ -21,7 +21,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "checkJs": true,
     "forceConsistentCasingInFileNames": true
-  },
-  "exclude": ["node_modules", "./node_modules"]
+  }
 }

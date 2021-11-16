@@ -1,5 +1,6 @@
 import type { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
 import { unionTypeParts } from 'tsutils';
+import { Type } from 'typescript';
 import { getTSServices, MessagesIds, TSServices } from '../utils';
 
 function isThrowType(services: TSServices, node?: TSESTree.Node): boolean {
@@ -8,10 +9,15 @@ function isThrowType(services: TSServices, node?: TSESTree.Node): boolean {
   }
   const tsNodeMap = services.parserServices.esTreeNodeToTSNodeMap.get(node);
   const functionType = services.checker.getTypeAtLocation(tsNodeMap);
-  const functionSignatures = functionType.getCallSignatures();
-  const types = functionSignatures.flatMap((signature) =>
-    unionTypeParts(signature.getReturnType())
-  );
+  let types: Type[] = [];
+  if (node.parent?.type === 'MethodDefinition' && node.parent.kind === 'get') {
+    types = unionTypeParts(functionType);
+  } else {
+    const functionSignatures = functionType.getCallSignatures();
+    types = functionSignatures.flatMap((signature) =>
+      unionTypeParts(signature.getReturnType())
+    );
+  }
 
   return types
     .flatMap((type) => type.getProperties())

@@ -1,3 +1,5 @@
 {
-  "extends": "./config/tsconfig.common.json"
+  "extends": "./shared/tsconfig.common.json",
+  "exclude": ["node_modules"],
+  "include": ["**/*.ts", "package.json"]
 }

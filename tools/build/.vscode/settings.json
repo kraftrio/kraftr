@@ -10,7 +10,7 @@
     "**/node_modules": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-    "**/dist": true
+    "**/dist": false
   },
   "editor.formatOnSave": true
 }

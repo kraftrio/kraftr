@@ -1,13 +1,14 @@
 {
   "name": "@kraftr/eslint-plugin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "files": [
     "dist/"
   ],
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "sideEffects": false,
   "keywords": [
     "eslint",
     "eslintplugin",
@@ -19,8 +20,9 @@
   },
   "author": "Michel Betancourt",
   "scripts": {
-    "build": "tsup --format cjs,esm ./src/index.ts ./src/eslint.ts --dts-resolve",
-    "build:watch": "tsup --format cjs,esm ./src/index.ts ./src/eslint.ts --dts-resolve",
+    "build": "craft build ./src/index.ts ./src/eslint.ts",
+    "build:watch": "craft build ./src/index.ts ./src/eslint.ts",
+    "lint": "eslint **/*.ts --ext ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:types": "tsc --noEmit"
@@ -29,40 +31,39 @@
     "access": "public"
   },
   "dependencies": {
-    "typescript": "4.4.4",
-    "@typescript-eslint/experimental-utils": "5.3.0",
-    "tsutils": "3.21.0",
-    "deepmerge": "4.2.2",
-    "json-schema": "0.3.0",
-    "@typescript-eslint/scope-manager": "5.3.0",
-    "@typescript-eslint/types": "5.1.0",
-    "@typescript-eslint/typescript-estree": "5.1.0",
-    "@typescript-eslint/eslint-plugin": "^4.0.0",
-    "@typescript-eslint/parser": "^4.0.0",
-    "@rushstack/eslint-patch": "~1.0.8",
-    "eslint-plugin-write-good-comments": "~0.1.3"
+    "@rushstack/eslint-patch": "^1.0.8",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/experimental-utils": "^5.3.0",
+    "@typescript-eslint/parser": "^5.3.1",
+    "@typescript-eslint/scope-manager": "^5.3.0",
+    "@typescript-eslint/types": "^5.1.0",
+    "@typescript-eslint/typescript-estree": "^5.1.0",
+    "deepmerge": "^4.2.2",
+    "eslint-plugin-write-good-comments": "^0.1.3",
+    "json-schema": "^0.4.0",
+    "tsutils": "^3.21.0",
+    "eslint": "^8.2.0",
+    "typescript": "next"
   },
-  "peerDependencies": {
-    "eslint": "^7.0.0"
-  },
-  "license": "MIT",
+  "license": "^MIT",
   "devDependencies": {
-    "@types/node": "16.10.3",
-    "@types/estree": "0.0.50",
-    "tsup": "5.5.0",
-    "@types/eslint": "7.28.2",
-    "@jest/types": "27.2.5",
-    "jest": "27.3.1",
-    "esbuild": "0.13.10",
-    "esbuild-jest": "0.5.0",
-    "eslint-plugin-security-node": "1.0.14",
-    "eslint-config-prettier": "^7.0.0",
-    "eslint-config-problems": "5.0.0",
-    "eslint-config-hardcore": "23.0.0",
-    "eslint-plugin-sonarjs": "0.10.0",
-    "eslint-plugin-unicorn": "37.0.1",
-    "eslint": "^7.0.0",
-    "tslib": "2.3.1",
-    "eslint-plugin-unused-imports": "1.1.5"
+    "@kraftr/build": "workspace:^0.2.0",
+    "@jest/types": "^27.2.5",
+    "@types/eslint": "^7.28.2",
+    "@types/estree": "^0.0.50",
+    "@types/node": "^16.11.7",
+    "esbuild": "^0.13.10",
+    "typescript": "next",
+    "esbuild-jest": "^0.5.0",
+    "eslint-config-hardcore": "^23.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-problems": "^5.0.0",
+    "eslint-plugin-security-node": "^1.0.14",
+    "eslint-plugin-sonarjs": "^0.10.0",
+    "eslint-plugin-unicorn": "^38.0.1",
+    "eslint-plugin-unused-imports": "^1.1.5",
+    "jest": "^27.3.1",
+    "tslib": "^2.3.1",
+    "tsup": "^5.6.0"
   }
 }
