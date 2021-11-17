@@ -53,12 +53,14 @@
     {
       "packageName": "@kraftr/build",
       "projectFolder": "tools/build",
-      "shouldPublish": true
+      "shouldPublish": true,
+      "cyclicDependencyProjects": ["@kraftr/eslint-plugin"]
     },
     {
       "packageName": "@kraftr/eslint-plugin",
       "projectFolder": "tools/eslint-plugin",
-      "shouldPublish": true
+      "shouldPublish": true,
+      "cyclicDependencyProjects": ["@kraftr/errors"]
     },
     {
       "packageName": "@kraftr/errors",
