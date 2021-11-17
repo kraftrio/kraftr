@@ -1,6 +1,13 @@
 # Change Log - @kraftr/errors
 
-This log was last generated on Wed, 17 Nov 2021 04:11:55 GMT and should not be manually modified.
+This log was last generated on Wed, 17 Nov 2021 06:11:21 GMT and should not be manually modified.
+
+## 0.1.3
+Wed, 17 Nov 2021 06:11:21 GMT
+
+### Patches
+
+- "Err" with one parameter should use it as msg
 
 ## 0.1.2
 Wed, 17 Nov 2021 04:11:55 GMT
