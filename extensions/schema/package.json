@@ -15,7 +15,7 @@
     "@kraftr/sequence": "*",
     "@types/debug": "4.1.7",
     "@types/jest": "27.0.2",
-    "@types/node": "16.10.3",
+    "@types/node": "16.11.6",
     "ajv": "8.6.3",
     "debug": "4.3.2",
     "ts-toolbelt": "9.6.0",
