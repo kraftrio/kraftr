@@ -24,9 +24,28 @@
     }
   },
   "main": "./dist/index.cjs",
+  "publishConfig": {
+    "access": "public"
+  },
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "type": "module",
+  "keywords": [
+    "backend",
+    "tooling",
+    "typescript",
+    "nodejs",
+    "framework"
+  ],
+  "homepage": "https://github.com/kraftrio/kraftr",
+  "repository": {
+    "directory": "tools/build",
+    "type": "git",
+    "url": "https://github.com/kraftrio/kraftr"
+  },
+  "bugs": {
+    "url": "https://github.com/kraftrio/kraftr/issues"
+  },
   "sideEffects": false,
   "scripts": {
     "build": "node ./bin/craft.mjs",
