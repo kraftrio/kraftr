@@ -13,9 +13,25 @@
       "require": "./dist/index.cjs"
     }
   },
+  "keywords": [
+    "tooling",
+    "error",
+    "handling",
+    "nodejs",
+    "framework"
+  ],
+  "homepage": "https://github.com/kraftrio/kraftr",
+  "repository": {
+    "directory": "tools/errors",
+    "type": "git",
+    "url": "https://github.com/kraftrio/kraftr"
+  },
+  "bugs": {
+    "url": "https://github.com/kraftrio/kraftr/issues"
+  },
   "scripts": {
-    "build": "craft build",
-    "build:watch": "craft build",
+    "build": "craft build ./src/index.ts",
+    "build:watch": "craft build ./src/index.ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:types": "tsc --noEmit"

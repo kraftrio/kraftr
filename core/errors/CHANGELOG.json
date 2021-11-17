@@ -1,0 +1,45 @@
+{
+  "name": "@kraftr/errors",
+  "entries": [
+    {
+      "version": "0.3.0",
+      "tag": "@kraftr/errors_v0.3.0",
+      "date": "Tue, 16 Nov 2021 22:03:45 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "some refactor and type improves"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@kraftr/build\" from `^0.2.0` to `^0.3.0`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/eslint-plugin\" from `^0.2.0` to `^0.3.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.2.0",
+      "tag": "@kraftr/errors_v0.2.0",
+      "date": "Tue, 16 Nov 2021 21:58:12 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "first release"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@kraftr/build\" from `^*` to `^0.2.0`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/eslint-plugin\" from `^*` to `^0.2.0`"
+          }
+        ]
+      }
+    }
+  ]
+}
