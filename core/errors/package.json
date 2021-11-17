@@ -24,8 +24,8 @@
     "node": ">=16.0.0"
   },
   "devDependencies": {
-    "@kraftr/build": "workspace:^*",
-    "@kraftr/eslint-plugin": "workspace:^*",
+    "@kraftr/build": "workspace:^0.2.0",
+    "@kraftr/eslint-plugin": "workspace:^0.2.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.7",
     "jest": "^27.3.1",

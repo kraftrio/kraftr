@@ -1,54 +1,55 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush.schema.json",
-  "rushVersion": "5.55.1",
+  "rushVersion": "5.56.0",
   "pnpmVersion": "6.19.0",
   "nodeSupportedVersionRange": ">=16.0.0",
   "pnpmOptions": {
-    "strictPeerDependencies": true,
+    "strictPeerDependencies": false,
     "preventManualShrinkwrapChanges": true,
-    "pnpmStore": "global"
+    "pnpmStore": "global",
+    "useWorkspaces": true
   },
   "projects": [
-    {
-      "packageName": "@kraftr/core",
-      "projectFolder": "core/core",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@kraftr/context",
-      "projectFolder": "core/context",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@kraftr/repository",
-      "projectFolder": "core/repository",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@kraftr/model",
-      "projectFolder": "core/model",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@kraftr/sequence",
-      "projectFolder": "core/sequence",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@kraftr/schema-extension",
-      "projectFolder": "extensions/schema",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@kraftr/rest-server",
-      "projectFolder": "server/rest",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@kraftr/mongodb-connector",
-      "projectFolder": "connectors/mongodb",
-      "shouldPublish": true
-    },
+    // {
+    //   "packageName": "@kraftr/core",
+    //   "projectFolder": "core/core",
+    //   "shouldPublish": true
+    // },
+    // {
+    //   "packageName": "@kraftr/context",
+    //   "projectFolder": "core/context",
+    //   "shouldPublish": true
+    // },
+    // {
+    //   "packageName": "@kraftr/repository",
+    //   "projectFolder": "core/repository",
+    //   "shouldPublish": true
+    // },
+    // {
+    //   "packageName": "@kraftr/model",
+    //   "projectFolder": "core/model",
+    //   "shouldPublish": true
+    // },
+    // {
+    //   "packageName": "@kraftr/sequence",
+    //   "projectFolder": "core/sequence",
+    //   "shouldPublish": true
+    // },
+    // {
+    //   "packageName": "@kraftr/schema-extension",
+    //   "projectFolder": "extensions/schema",
+    //   "shouldPublish": true
+    // },
+    // {
+    //   "packageName": "@kraftr/rest-server",
+    //   "projectFolder": "server/rest",
+    //   "shouldPublish": true
+    // },
+    // {
+    //   "packageName": "@kraftr/mongodb-connector",
+    //   "projectFolder": "connectors/mongodb",
+    //   "shouldPublish": true
+    // },
     {
       "packageName": "@kraftr/build",
       "projectFolder": "tools/build",
@@ -63,12 +64,17 @@
       "packageName": "@kraftr/errors",
       "projectFolder": "core/errors",
       "shouldPublish": true
-    },
-    {
-      "packageName": "hello-world-example",
-      "projectFolder": "examples/hello-world",
-      "shouldPublish": false
     }
+    // {
+    //   "packageName": "hello-world-example",
+    //   "projectFolder": "templates/hello-world",
+    //   "shouldPublish": false
+    // },
+    // {
+    //   "packageName": "@nemobile/backend",
+    //   "projectFolder": "templates/nemobile",
+    //   "shouldPublish": false
+    // }
   ],
   "ensureConsistentVersions": true,
   "projectFolderMinDepth": 1,
