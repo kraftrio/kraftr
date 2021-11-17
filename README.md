@@ -24,6 +24,8 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7d29dcbe0d604543bfde66e63b375a7d)](https://app.codacy.com/gh/kraftrio/kraftr?utm_source=github.com&utm_medium=referral&utm_content=kraftrio/kraftr&utm_campaign=Badge_Grade_Settings)
+
 Make sure you have the following installed:
 - [Node.js](https://nodejs.org/en/download/) >= 16 
 
