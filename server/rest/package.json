@@ -17,7 +17,7 @@
     "@kraftr/core": "*",
     "@types/debug": "4.1.7",
     "@types/jest": "27.0.2",
-    "@types/node": "16.10.3",
+    "@types/node": "16.11.6",
     "debug": "4.3.2",
     "openapi3-ts": "2.0.1",
     "express": "4.17.1",
