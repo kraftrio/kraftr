@@ -58,6 +58,16 @@ describe('@kraftr/errors:', function () {
       expect(() => result.value()).toThrow(/invalid param/);
     });
 
+    it('when is called with one string argument create a default Error using it as message', function () {
+      const result = Err('MESSAGE');
+      const result2 = Err(new Error('MESSAGE'));
+
+      expect(result.error.message).toBe('MESSAGE');
+      expect(result.error.name).toBe('Error');
+      expect(result.error.name).toEqual(result2.error.name);
+      expect(result.error.message).toEqual(result2.error.message);
+    });
+
     it('throw an error when is released', function () {
       const result = Err(TypeError, 'invalid param');
 

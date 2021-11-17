@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@kraftr/errors",
+      "comment": "\"Err\" with one parameter should use it as msg",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@kraftr/errors"
+}

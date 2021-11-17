@@ -1,4 +1,4 @@
-import { Cast } from '.';
+import { Cast, Throws } from '.';
 import { ErrorCtor, TSError, Return } from './types';
 
 const unhadleErrors = new Set<Err<Error>>();
@@ -124,15 +124,13 @@ export class Result<Value, E extends Error | null> {
    * @public
    * Could throw an exception for safe use check first with isOk
    */
-  value(): E extends Error ? void | Return<never, E> : Return<Value, never> {
+  value(): E extends Error ? void | Throws<E> : Value {
     unhadleErrors.delete(this as never);
     if (this.isErr) {
       // eslint-disable-next-line @kraftr/returns-throw
       throw this.error;
     }
-    return this._value as E extends Error
-      ? void | Return<never, E>
-      : Return<Value, never>;
+    return this._value as E extends Error ? void | Throws<E> : Value;
   }
 }
 
@@ -178,6 +176,15 @@ export function Ok<Value>(value: Value | Ok<Value>): Ok<Value> {
 export function Err<ErrInstance extends Err<Error>>(result: ErrInstance): ErrInstance;
 
 /**
+ * This function create a Result instance as Err wrapping an Error with the message
+ *
+ * @public
+ * @param message to show
+ * @returns An Err result with the error wrapped
+ */
+export function Err<Msg extends string>(message: Msg): Err<TSError<'Error', Msg>>;
+
+/**
  * Create a default error with a name and message
  *
  * @public
@@ -187,8 +194,9 @@ export function Err<ErrInstance extends Err<Error>>(result: ErrInstance): ErrIns
  */
 export function Err<Name extends string, Msg extends string>(
   name: Name,
-  message?: Msg
+  message: Msg
 ): Err<TSError<Name, Msg>>;
+
 /**
  * Create a default error with a name and message
  *
@@ -224,8 +232,8 @@ export function Err(
 ): Err<Error> {
   let error: Error;
   if (typeof errorOrNameOrClass === 'string') {
-    error = new Error(message);
-    error.name = errorOrNameOrClass;
+    error = new Error(message ?? errorOrNameOrClass);
+    error.name = message ? errorOrNameOrClass : 'Error';
   } else if ('isErr' in errorOrNameOrClass) {
     return errorOrNameOrClass;
   } else if (errorOrNameOrClass instanceof Error) {

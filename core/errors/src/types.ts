@@ -3,14 +3,20 @@
  * Error constructor type
  */
 export type ErrorCtor = new (message?: string) => Error;
+type NoString<T, Fallback> = string extends T ? Fallback : T;
 
 /**
- * Error instance with name a message typed
+ * Type for error instances
  * @public
  */
-export type TSError<N extends string | ErrorCtor, M extends string> = N extends ErrorCtor
-  ? { message: M } & InstanceType<N>
-  : { name: N; message: M } & Error;
+export type TSError<
+  Name extends string | ErrorCtor = string,
+  Msg extends string = string
+> = Name extends ErrorCtor
+  ? {
+      message: NoString<Msg, ''>;
+    } & InstanceType<Name>
+  : { name: NoString<Name, 'Error'>; message: NoString<Msg, ''> } & Error;
 
 declare const errors: unique symbol;
 

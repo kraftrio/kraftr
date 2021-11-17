@@ -1,4 +1,4 @@
-import { OkErr, OkErrPromise, Return, shelter } from '../../src';
+import { OkErr, OkErrPromise, Return, shelter, TSError } from '../../src';
 import { check, checks, Fail, Pass } from './utils';
 
 const sh1 = shelter(() => {});
@@ -16,5 +16,29 @@ checks([
   check<typeof sh3, OkErrPromise<unknown, Error>, Pass>(),
   check<typeof sh4, OkErr<void, Error>, Pass>(),
   check<typeof sh5, OkErr<never, Error>, Fail>(),
-  check<typeof sh5, OkErr<any, Error>, Pass>()
+  check<typeof sh5, OkErr<any, Error>, Pass>(),
+  check<
+    TSError<'ReadError', "file doesn't exists">,
+    {
+      name: 'ReadError';
+      message: "file doesn't exists";
+    } & Error,
+    Pass
+  >(),
+  check<
+    TSError<'ReadError'>,
+    {
+      name: 'ReadError';
+      message: '';
+    } & Error,
+    Pass
+  >(),
+  check<
+    TSError,
+    {
+      name: 'Error';
+      message: '';
+    } & Error,
+    Pass
+  >()
 ]);

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@kraftr/build",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@kraftr/build"
+}
