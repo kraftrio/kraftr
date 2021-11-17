@@ -1,6 +1,6 @@
 {
   "name": "@kraftr/errors",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -40,8 +40,8 @@
     "node": ">=16.0.0"
   },
   "devDependencies": {
-    "@kraftr/build": "workspace:^0.2.0",
-    "@kraftr/eslint-plugin": "workspace:^0.2.0",
+    "@kraftr/build": "workspace:^0.4.0",
+    "@kraftr/eslint-plugin": "workspace:^0.2.2",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.7",
     "jest": "^27.3.1",
