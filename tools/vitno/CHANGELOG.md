@@ -1,13 +1,6 @@
 # Change Log - @kraftr/build
 
-This log was last generated on Thu, 25 Nov 2021 09:03:15 GMT and should not be manually modified.
-
-## 0.5.0
-Thu, 25 Nov 2021 09:03:15 GMT
-
-### Minor changes
-
-- changed typescript to a stable version and exposed craft utils
+This log was last generated on Wed, 17 Nov 2021 04:11:55 GMT and should not be manually modified.
 
 ## 0.4.0
 Wed, 17 Nov 2021 04:11:55 GMT

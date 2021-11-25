@@ -2,18 +2,6 @@
   "name": "@kraftr/build",
   "entries": [
     {
-      "version": "0.5.0",
-      "tag": "@kraftr/build_v0.5.0",
-      "date": "Thu, 25 Nov 2021 09:03:15 GMT",
-      "comments": {
-        "minor": [
-          {
-            "comment": "changed typescript to a stable version and exposed craft utils"
-          }
-        ]
-      }
-    },
-    {
       "version": "0.4.0",
       "tag": "@kraftr/build_v0.4.0",
       "date": "Wed, 17 Nov 2021 04:11:55 GMT",

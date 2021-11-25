@@ -1,6 +1,11 @@
 # Change Log - @kraftr/errors
 
-This log was last generated on Wed, 17 Nov 2021 06:11:21 GMT and should not be manually modified.
+This log was last generated on Thu, 25 Nov 2021 09:03:15 GMT and should not be manually modified.
+
+## 0.1.4
+Thu, 25 Nov 2021 09:03:15 GMT
+
+_Version update only_
 
 ## 0.1.3
 Wed, 17 Nov 2021 06:11:21 GMT
