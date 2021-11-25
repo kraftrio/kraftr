@@ -54,8 +54,8 @@ export function libraryPreset(config?: LibraryPresetConfig): PluginOption[] {
     tsconfigPaths(config?.tsconfigPaths),
     config?.installer?.enabled === false ? null : installer(config?.installer),
     dts(),
-    config?.apiExtractor?.enabled === true ? apiExtractor(config?.apiExtractor) : null,
     ...autoExternal(config?.autoExternal),
+    config?.apiExtractor?.enabled === true ? apiExtractor(config?.apiExtractor) : null,
     libraryPlugin,
     license(config?.license ?? {})
   ];

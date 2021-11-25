@@ -13,7 +13,7 @@ import {
 import { version } from '../package.json';
 import ts from 'typescript';
 const cli = cac('craft');
-import { defineConfig, libraryPreset } from './craft';
+import { defineConfig, libraryPreset } from './craft/craft';
 // global options
 type GlobalCLIOptions = {
   '--'?: string[];

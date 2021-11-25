@@ -21,21 +21,25 @@ const LOCKS: Record<string, PackageManager> = {
   'pnpm-lock.yaml': 'pnpm',
   'yarn.lock': 'yarn',
   'package-lock.json': 'npm',
-  '.rush': 'rush'
+  'rush.json': 'rush'
 };
 
 async function detectPackageManager(cwd: string) {
   const { findUp, pathExists } = await import('find-up');
+
   const keys = Object.keys(LOCKS);
   const result = await findUp(
     async (directory) => {
       for (const key of keys) {
-        if (await pathExists(path.join(directory, key))) {
-          return key;
+        const fullPath = path.join(directory, key);
+        const result = await pathExists(fullPath);
+        if (result) {
+          return fullPath;
         }
       }
+      return;
     },
-    { type: 'directory', cwd }
+    { cwd }
   );
 
   return result ? LOCKS[path.basename(result)]! : 'npm';
@@ -97,9 +101,8 @@ export function installer(config?: InstallerPluginConfig): Plugin {
   let isInstalledAny = false;
 
   const loadDeps = async () => {
-    const ora = await import('ora');
-    spinner = ora.default();
-    pkg = (await loadPackageJSON()) as typeof pkg;
+    spinner = await import('ora').then((mod) => mod.default());
+    pkg = await loadPackageJSON().then((v) => v as typeof pkg);
 
     Object.keys(pkg.dependencies ?? {})
       .concat(Object.keys(pkg.devDependencies ?? {}))
@@ -133,6 +136,7 @@ export function installer(config?: InstallerPluginConfig): Plugin {
           spinner.succeed(chalk`Installed: {cyan ${importee}}`);
         } catch (error) {
           spinner.fail(chalk`Not installed {cyan ${importee}}`);
+          throw error;
         }
       }
       return null;

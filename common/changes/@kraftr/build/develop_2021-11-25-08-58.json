@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@kraftr/build",
+      "comment": "changed typescript to a stable version and exposed craft utils",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@kraftr/build"
+}

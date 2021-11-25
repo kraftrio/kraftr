@@ -1,2 +1,4 @@
 export * from './vite-plugin';
-export * from './jest';
+import * as jest from './jest';
+
+export { jest };

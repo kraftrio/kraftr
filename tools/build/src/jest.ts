@@ -1,10 +1,10 @@
 import type { Config } from '@jest/types';
 import merge from 'deepmerge';
 
-export { Config };
+type JestConfig = Config.InitialOptions & {};
 
-export function useJest(config: Config.InitialOptions = {}): Config.InitialOptions {
-  const byDefault: Config.InitialOptions = {
+function useJest(config: JestConfig = {}) {
+  const byDefault: JestConfig = {
     verbose: true,
     transform: {
       '^.+\\.tsx?$': [
@@ -20,3 +20,5 @@ export function useJest(config: Config.InitialOptions = {}): Config.InitialOptio
 
   return merge(byDefault, config);
 }
+
+export { useJest };

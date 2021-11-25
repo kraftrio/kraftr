@@ -21,6 +21,7 @@ export function autoExternal(config?: AutoExternalPluginConfig): Plugin[] {
         if (source.startsWith('node:')) {
           return { id: source, external: true };
         }
+
         return null;
       }
     },
