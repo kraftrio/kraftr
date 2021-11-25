@@ -12,22 +12,22 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@kraftr/errors": "*",
-    "debug": "4.3.2",
-    "ts-toolbelt": "9.6.0",
-    "tslib": "2.3.1",
-    "@rushstack/eslint-patch": "~1.0.8"
+    "@kraftr/errors": "workspace:^0.1.4",
+    "debug": "^4.3.2",
+    "ts-toolbelt": "^9.6.0",
+    "tslib": "^2.3.1",
+    "@rushstack/eslint-patch": "^1.0.8"
   },
   "devDependencies": {
-    "@kraftr/eslint-plugin": "*",
-    "@types/debug": "4.1.7",
-    "@types/jest": "27.0.2",
-    "@types/node": "16.10.3",
-    "tsee": "1.3.2",
-    "@kraftr/build": "*",
-    "jest": "27.3.1",
-    "esbuild": "0.13.10",
-    "esbuild-jest": "0.5.0",
-    "eslint": "^7.0.0"
+    "@kraftr/build": "workspace:^0.5.0",
+    "@kraftr/eslint-plugin": "workspace:^0.2.3",
+    "@types/debug": "^4.1.7",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.7",
+    "tsee": "^1.3.2",
+    "jest": "^27.3.1",
+    "esbuild": "^0.13.10",
+    "esbuild-jest": "^0.5.0",
+    "eslint": "^8.2.0"
   }
 }

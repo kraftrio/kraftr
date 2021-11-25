@@ -1,6 +1,6 @@
 {
   "name": "@kraftr/eslint-plugin",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "",
   "files": [
     "dist/"
@@ -55,22 +55,23 @@
     "json-schema": "^0.4.0",
     "tsutils": "^3.21.0",
     "eslint": "^8.2.0",
-    "typescript": "^4.4.0"
+    "typescript": "^4.5.2"
   },
   "license": "^MIT",
   "devDependencies": {
-    "@kraftr/build": "workspace:^0.4.0",
+    "@kraftr/build": "workspace:^0.5.0",
     "@jest/types": "^27.2.5",
     "@types/eslint": "^7.28.2",
     "@types/estree": "^0.0.50",
     "@types/node": "^16.11.7",
     "esbuild": "^0.13.10",
-    "typescript": "^4.4.0",
+    "typescript": "^4.5.2",
     "esbuild-jest": "^0.5.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-sonarjs": "^0.10.0",
     "eslint-plugin-unicorn": "^38.0.1",
     "eslint-plugin-unused-imports": "^2.0.0",
+    "ts-node": "^10.4.0",
     "jest": "^27.3.1",
     "tslib": "^2.3.1",
     "tsup": "^5.6.0"
