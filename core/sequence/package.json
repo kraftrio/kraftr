@@ -15,7 +15,7 @@
     "toposort": "2.0.2",
     "ts-toolbelt": "9.6.0",
     "tslib": "2.3.1",
-    "@rushstack/eslint-patch": "~1.0.8"
+    "@rushstack/eslint-patch": "~1.1.0"
   },
   "devDependencies": {
     "@kraftr/eslint-plugin": "*",
