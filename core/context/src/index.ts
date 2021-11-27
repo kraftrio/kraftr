@@ -1,3 +1,3 @@
-export * from './context';
-export * from './bindings';
-export * from './utils';
+export * from './context/index.js';
+export * from './bindings/index.js';
+export * from './utils.js';

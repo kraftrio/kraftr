@@ -1,16 +1,15 @@
-import { F } from 'ts-toolbelt';
 import { isPromiseLike } from '../utils';
 import { ContextNotFound, ScopeNotFound } from '../errors';
-import { Throws } from '@kraftr/errors';
+import type { Return } from '@kraftr/errors';
 import { Context } from './context';
 
 let currentContext: Context | undefined;
 
 /**
- * Get the actual context can throw an exception since try running injection outside of context is undesirable
+ * Get the actual context can throw an exception since try running injection without context is undesirable
  * @returns Actual context
  */
-export function getContext(): Context & Throws<ContextNotFound> {
+export function getContext(): Return<Context, ContextNotFound> {
   if (!currentContext) {
     throw new ContextNotFound();
   }
@@ -35,7 +34,7 @@ export function useContext<T>(ctx: Context, fn: (ctx: Context) => T): T;
 
 export function useContext<T>(
   ctx: Context,
-  fn: F.Function | ((ctx: Context) => Promise<T>)
+  fn: (ctx: Context) => Promise<T> | T
 ): T | Promise<T> {
   const oldCtx = currentContext;
   currentContext = ctx;
@@ -72,8 +71,8 @@ export function createContext<T>(
 
 export function useScope(
   scope: string,
-  fnScoped: F.Function
-): void & Throws<ScopeNotFound> {
+  fnScoped: () => void
+): Return<void, ScopeNotFound> {
   const ctx = getContext();
   const resolvedCtx = ctx.getScopedContext(scope);
   if (!resolvedCtx) {

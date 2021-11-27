@@ -1,5 +1,3 @@
-import { F } from 'ts-toolbelt';
-
 export enum BindingScope {
   TRANSIENT = 'Transient',
   SINGLETON = 'Singleton',
@@ -8,7 +6,7 @@ export enum BindingScope {
 }
 
 /**
- * Representing a value or promise. This type is used to represent results of
+ * Representing a value or promise. This type represent results of
  * synchronous/asynchronous resolution of values.
  *
  * Note that we are using PromiseLike instead of native Promise to describe
@@ -30,6 +28,6 @@ export function isPromiseLike<T>(value: T | Promise<T> | undefined): value is Pr
   return typeof (value as Promise<T>).then === 'function';
 }
 
-export function isFunction(value: unknown): value is F.Function {
+export function isFunction(value: unknown): value is () => unknown {
   return typeof value === 'function';
 }

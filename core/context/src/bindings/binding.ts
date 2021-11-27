@@ -1,16 +1,15 @@
-import { C, F, O } from 'ts-toolbelt';
-import { Context, getContext } from '../context';
+import { Context, getContext } from '../context/index.js';
 import { BindingScope } from '../utils';
 import debugFactory from 'debug';
 import { BindingAddress } from '../bindings';
 import { isFunction } from '../utils';
 import { EventEmitter } from 'tsee';
-import { Throws } from '@kraftr/errors';
+import type { Return } from '@kraftr/errors';
 import { ContextNotFound, LockError, SourceNotDefined } from '../errors';
 const debug = debugFactory('kraftr:context:binding');
 
 /**
- * Type of the binding source
+ * Binding sources
  */
 export enum BindingType {
   /**
@@ -22,7 +21,7 @@ export enum BindingType {
    */
   FUNCTION = 'Function',
   /**
-   * A class to be instantiated as the value
+   * Class constructor
    */
   CLASS = 'Class'
 }
@@ -33,11 +32,11 @@ export type ConstantBindingSource<T> = {
 };
 export type DynamicValueBindingSource<T> = {
   type: BindingType.FUNCTION;
-  value: F.Function<[], T>;
+  value: () => T;
 };
-export type ClassBindingSource<T extends O.Object> = {
+export type ClassBindingSource<T extends Object> = {
   type: BindingType.CLASS;
-  value: C.Class<[], T>;
+  value: new () => T;
 };
 export type EmptyBindingSource = {
   type: BindingType.FUNCTION;
@@ -47,7 +46,7 @@ export type EmptyBindingSource = {
 type BindingSource<T> =
   | ConstantBindingSource<T>
   | DynamicValueBindingSource<T>
-  | (T extends O.Object ? ClassBindingSource<T> : never)
+  | (T extends Object ? ClassBindingSource<T> : never)
   | EmptyBindingSource;
 
 type BindingEvents<T> = {
@@ -65,8 +64,6 @@ type WidenLiterals<T> = T extends boolean
   : T extends number
   ? number
   : T;
-
-type SourceTypeFn = 'class' | 'dynamic' | 'constant';
 
 export class Binding<BoundValue = unknown> extends EventEmitter<
   BindingEvents<BindingSource<BoundValue>>
@@ -89,12 +86,12 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
 
   /**
    * @throws LockError
-   * @param value value to bind to the key
+   * @param value - to bind to the key
    * @returns this (chainable)
    */
   with<V extends BoundValue>(
     value: BindingSource<V>['value']
-  ): Binding<WidenLiterals<V>> & Throws<LockError> {
+  ): Return<Binding<WidenLiterals<V>>, LockError> {
     if (this._locked) {
       throw new LockError(this.key);
     }
@@ -110,7 +107,7 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
   }
 
   /**
-   * Cache the result even with transient and is only recomputed when dependencies changes (inner binds)
+   * Cache the result even with transient, recompute the value when dependencies changes  (inner binds)
    * @param value
    */
   memoize(value = true): this {
@@ -131,17 +128,17 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
     return newBind as unknown as Lock<this>;
   }
 
-  constant(): Omit<this, SourceTypeFn> {
+  constant(): this {
     this._source.type = BindingType.CONSTANT;
     return this;
   }
 
-  dynamic(): Omit<this, SourceTypeFn> {
+  dynamic(): this {
     this._source.type = BindingType.FUNCTION;
     return this;
   }
 
-  class(): Omit<this, SourceTypeFn> {
+  class(): this {
     this._source.type = BindingType.CLASS;
     return this;
   }
@@ -161,9 +158,7 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
    * @param altCtx alternative provided context to use
    * @returns bound value
    */
-  value(
-    altCtx?: Context
-  ): (BoundValue | null) & Throws<SourceNotDefined | ContextNotFound> {
+  value(altCtx?: Context): Return<BoundValue, SourceNotDefined | ContextNotFound> {
     /* istanbul ignore if */
     if (debug.enabled) {
       debug('Get value for binding %s', this.key);
@@ -200,12 +195,12 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
   }
 
   /**
-   * Locate and validate the resolution context
+   * Locate and chock for the resolution context
    * @throws ContextNotFound
    * @param ctx - Current context
    * @param options - Resolution options
    */
-  private getResolutionContext(ctx: Context): Context & Throws<ContextNotFound> {
+  private getResolutionContext(ctx: Context): Return<Context, ContextNotFound> {
     const resolutionCtx = ctx.getResolutionContext(this as Binding);
     if (!resolutionCtx) {
       throw new ContextNotFound();

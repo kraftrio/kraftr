@@ -5,7 +5,7 @@ export type BindingFilter = {
 };
 
 /**
- * A function to check if a given tag value is matched for `filterByTag`
+ * A function to check if a given tag value match for `filterByTag`
  */
 export type TagValueMatcher = {
   /**

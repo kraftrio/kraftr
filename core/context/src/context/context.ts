@@ -1,4 +1,3 @@
-import { F } from 'ts-toolbelt';
 import { Binding } from '../bindings/binding';
 import { BindingScope } from '../utils';
 import { BindingAddress } from '../bindings';
@@ -24,7 +23,7 @@ export class Context extends EventEmitter<ContextEvents> {
     this.registry.set(bind.key.toString(), bind);
   }
 
-  find<ValueType>(filter: F.Function): Binding<ValueType>[] | undefined {
+  find<ValueType>(filter: (bind: Binding) => boolean): Binding<ValueType>[] | undefined {
     const bindings: Binding[] = [];
     for (const bind of this.registry.values()) {
       if (filter(bind)) {
@@ -50,7 +49,7 @@ export class Context extends EventEmitter<ContextEvents> {
   }
 
   /**
-   * Check if a key is bound in the context or its ancestors
+   * Check if a key is in the context or its ancestors
    * @param key - Binding key
    */
   isBound(key: BindingAddress): boolean {
@@ -85,7 +84,7 @@ export class Context extends EventEmitter<ContextEvents> {
   }
 
   /**
-   * Locate the resolution context for the given binding. Only bindings in the
+   * Locate the resolution context for the given binding. Bindings in the
    * resolution context and its ancestors are visible as dependencies to resolve
    * the given binding
    * @param binding - Binding object
@@ -127,6 +126,7 @@ export class Context extends EventEmitter<ContextEvents> {
     if (this._parent) {
       return this._parent.getOwnerContext(key);
     }
+    return undefined;
   }
 
   get<ValueType>(key: BindingAddress<ValueType>): Binding<ValueType> | undefined {
