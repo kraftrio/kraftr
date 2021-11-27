@@ -10,14 +10,31 @@
     "useWorkspaces": true
   },
   "projects": [
+    {
+      "packageName": "@kraftr/context",
+      "projectFolder": "core/context",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@kraftr/build",
+      "projectFolder": "tools/build",
+      "shouldPublish": true,
+      "cyclicDependencyProjects": ["@kraftr/eslint-plugin"]
+    },
+    {
+      "packageName": "@kraftr/eslint-plugin",
+      "projectFolder": "tools/eslint-plugin",
+      "shouldPublish": true,
+      "cyclicDependencyProjects": ["@kraftr/errors"]
+    },
+    {
+      "packageName": "@kraftr/errors",
+      "projectFolder": "core/errors",
+      "shouldPublish": true
+    }
     // {
     //   "packageName": "@kraftr/core",
     //   "projectFolder": "core/core",
-    //   "shouldPublish": true
-    // },
-    // {
-    //   "packageName": "@kraftr/context",
-    //   "projectFolder": "core/context",
     //   "shouldPublish": true
     // },
     // {
@@ -50,23 +67,6 @@
     //   "projectFolder": "connectors/mongodb",
     //   "shouldPublish": true
     // },
-    {
-      "packageName": "@kraftr/build",
-      "projectFolder": "tools/build",
-      "shouldPublish": true,
-      "cyclicDependencyProjects": ["@kraftr/eslint-plugin"]
-    },
-    {
-      "packageName": "@kraftr/eslint-plugin",
-      "projectFolder": "tools/eslint-plugin",
-      "shouldPublish": true,
-      "cyclicDependencyProjects": ["@kraftr/errors"]
-    },
-    {
-      "packageName": "@kraftr/errors",
-      "projectFolder": "core/errors",
-      "shouldPublish": true
-    }
     // {
     //   "packageName": "hello-world-example",
     //   "projectFolder": "templates/hello-world",

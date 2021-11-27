@@ -1,4 +1,3 @@
 {
-  "extends": "@kraftr/build/shared/tsconfig.common.json",
-  "include": ["**/*.m?s", "**/*.c?s"]
+  "extends": "@kraftr/build/shared/tsconfig.common.json"
 }
