@@ -1,10 +1,17 @@
 {
   "name": "@kraftr/context",
   "version": "0.1.0",
-  "main": "./dist/index.umd.js",
   "type": "module",
-  "module": "./dist/index.es.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
   "scripts": {
     "build": "craft build",
     "build:watch": "craft build",
