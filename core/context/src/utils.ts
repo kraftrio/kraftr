@@ -1,5 +1,6 @@
 export enum BindingScope {
   TRANSIENT = 'Transient',
+  METADATA = 'Metadata',
   SINGLETON = 'Singleton',
   SERVER = 'Server',
   APPLICATION = 'Application'

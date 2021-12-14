@@ -1,6 +1,5 @@
-import { Binding } from '../bindings/binding';
 import { BindingScope } from '../utils';
-import { BindingAddress } from '../bindings';
+import type { BindingAddress, Binding } from '../bindings';
 import { EventEmitter } from 'tsee';
 
 type ContextEvents = {
@@ -68,6 +67,7 @@ export class Context extends EventEmitter<ContextEvents> {
     if (this._parent) {
       return this._parent.getScopedContext(scope);
     }
+    return undefined;
   }
 
   /**
@@ -76,7 +76,7 @@ export class Context extends EventEmitter<ContextEvents> {
    */
   isVisibleTo(ctx: Context): boolean {
     let current: Context | undefined = ctx;
-    while (current != null) {
+    while (current !== undefined) {
       if (current === this) return true;
       current = current._parent;
     }
@@ -109,12 +109,12 @@ export class Context extends EventEmitter<ContextEvents> {
     keyOrBinding: BindingAddress | Readonly<Binding<unknown>>
   ): Context | undefined {
     const key: BindingAddress =
-      keyOrBinding instanceof Binding
+      typeof keyOrBinding === 'object' && 'key' in keyOrBinding
         ? keyOrBinding.key
         : (keyOrBinding as BindingAddress);
 
     if (this.contains(key)) {
-      if (keyOrBinding instanceof Binding) {
+      if (typeof keyOrBinding !== 'string') {
         if (this.registry.get(key.toString()) === keyOrBinding) {
           return this;
         }

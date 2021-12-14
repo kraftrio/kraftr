@@ -5,8 +5,10 @@ export namespace BindingKey {
 }
 declare const type: unique symbol;
 
-export type BindingAddress<T = unknown> = string & {
-  [type]?: T;
-};
+export type BindingAddress<T = unknown> =
+  | string
+  | ({
+      [type]: T;
+    } & string);
 
 export type AddressValue<T> = T extends BindingAddress<infer V> ? V : never;

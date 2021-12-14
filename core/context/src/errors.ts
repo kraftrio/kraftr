@@ -9,8 +9,10 @@ export class ScopeNotFound extends Error {
  * Use of binds without context
  */
 export class ContextNotFound extends Error {
-  override readonly name = 'SourceNotDefined';
-  override readonly message = 'The resolution context is not found';
+  override readonly name = 'ContextNotFound';
+  constructor(msg?: string) {
+    super(msg ?? 'Context not found');
+  }
 }
 
 /**

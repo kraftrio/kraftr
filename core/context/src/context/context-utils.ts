@@ -20,8 +20,11 @@ export function setContext(ctx: Context): void {
   currentContext = ctx;
 }
 
-export function openContext(): void {
+export function openContext(scope?: string): void {
   currentContext = new Context();
+  if (scope) {
+    currentContext.scope = scope;
+  }
 }
 
 export function closeContext(): void {
@@ -51,12 +54,12 @@ export function useContext<T>(
   return result;
 }
 
-export function createContext(fn: (ctx: Context) => void, scope?: string): void;
 export function createContext<T>(
   fn: (ctx: Context) => Promise<T>,
   scope?: string
 ): Promise<T>;
 export function createContext<T>(fn: (ctx: Context) => T, scope?: string): T;
+export function createContext(fn: (ctx: Context) => void, scope?: string): void;
 
 export function createContext<T>(
   fn: (ctx: Context) => Promise<T> | T,

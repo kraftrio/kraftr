@@ -1,12 +1,11 @@
-import { Context, getContext } from '../context/index.js';
+import { Context, getContext } from '../context';
 import { BindingScope } from '../utils';
-import debugFactory from 'debug';
 import { BindingAddress } from '../bindings';
 import { isFunction } from '../utils';
 import { EventEmitter } from 'tsee';
 import type { Return } from '@kraftr/errors';
 import { ContextNotFound, LockError, SourceNotDefined } from '../errors';
-const debug = debugFactory('kraftr:context:binding');
+// const debug = debugFactory('kraftr:context:binding');
 
 /**
  * Binding sources
@@ -43,7 +42,7 @@ export type EmptyBindingSource = {
   value: null;
 };
 
-type BindingSource<T> =
+export type BindingSource<T> =
   | ConstantBindingSource<T>
   | DynamicValueBindingSource<T>
   | (T extends Object ? ClassBindingSource<T> : never)
@@ -64,6 +63,7 @@ type WidenLiterals<T> = T extends boolean
   : T extends number
   ? number
   : T;
+type NoInfer<A> = [A][A extends any ? 0 : never];
 
 export class Binding<BoundValue = unknown> extends EventEmitter<
   BindingEvents<BindingSource<BoundValue>>
@@ -89,15 +89,9 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
    * @param value - to bind to the key
    * @returns this (chainable)
    */
-  with<V extends BoundValue>(
-    value: BindingSource<V>['value']
-  ): Return<Binding<WidenLiterals<V>>, LockError> {
+  with(value: BindingSource<BoundValue>['value']): Return<this, LockError> {
     if (this._locked) {
       throw new LockError(this.key);
-    }
-    const ctx = getContext();
-    if (!ctx.contains(this.key)) {
-      ctx.add(this as Binding);
     }
     const oldSource = this._source;
     this._source.value = value;
@@ -160,9 +154,9 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
    */
   value(altCtx?: Context): Return<BoundValue, SourceNotDefined | ContextNotFound> {
     /* istanbul ignore if */
-    if (debug.enabled) {
-      debug('Get value for binding %s', this.key);
-    }
+    // if (debug.enabled) {
+    //   debug('Get value for binding %s', this.key);
+    // }
     if (this._source.value === undefined) {
       throw new SourceNotDefined(this.key);
     }
@@ -195,30 +189,33 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
   }
 
   /**
-   * Locate and chock for the resolution context
+   * Locate and check for the resolution context
    * @throws ContextNotFound
    * @param ctx - Current context
    * @param options - Resolution options
    */
   private getResolutionContext(ctx: Context): Return<Context, ContextNotFound> {
     const resolutionCtx = ctx.getResolutionContext(this as Binding);
-    if (!resolutionCtx) {
-      throw new ContextNotFound();
-    }
-    if (this.scope !== BindingScope.TRANSIENT && !resolutionCtx) {
+
+    if (!resolutionCtx && this.scope !== BindingScope.TRANSIENT) {
       const msg =
         `Binding "${this.key}" in context "${ctx.name}" cannot` +
         ` be resolved in scope "${this.scope}"`;
       throw new ContextNotFound(msg);
     }
 
+    if (!resolutionCtx) {
+      throw new ContextNotFound('Resolution context not found');
+    }
+
     const ownerCtx = ctx.getOwnerContext(this.key);
-    if (ownerCtx != null && !ownerCtx.isVisibleTo(resolutionCtx)) {
+    if (ownerCtx !== undefined && !ownerCtx.isVisibleTo(resolutionCtx)) {
       const msg =
         `Resolution context "${resolutionCtx?.name}" does not have ` +
         `visibility to binding "${this.key} (scope:${this.scope})" in context "${ownerCtx.name}"`;
       throw new ContextNotFound(msg);
     }
+
     return resolutionCtx;
   }
 }

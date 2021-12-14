@@ -1,8 +1,8 @@
-import { BindingScope } from '../utils.js';
-import { Binding } from './binding.js';
-import { getContext } from '../context/index.js';
-import { ContextNotFound, KeyNotFound } from '../errors.js';
-import { BindingAddress } from './binding-utils.js';
+import { BindingScope } from '../utils';
+import { Binding } from './binding';
+import { getContext } from '../context/index';
+import { ContextNotFound, KeyNotFound } from '../errors';
+import { BindingAddress } from './binding-utils';
 import type { Return } from '@kraftr/errors';
 
 /**
@@ -53,11 +53,10 @@ export function ref<ValueType, Property extends keyof ValueType>(
   key: BindingAddress<ValueType>,
   property: Property
 ): Binding<ValueType[Property]> {
-  // .with(() => inject<AddressValue<Key>, Property>(key, property))
-  return provide<ValueType>(`${key}.$${property}`)
-    .with(() => inject(key, property) as never)
+  return provide(`${key}.$${property}`)
+    .with(() => inject(key, property))
     .in(BindingScope.TRANSIENT)
-    .memoize();
+    .memoize() as Binding<ValueType[Property]>;
 }
 
 /**
@@ -73,7 +72,7 @@ export function provide<BoundValue>(
 
   if (!bind) {
     bind = new Binding<BoundValue>(key);
+    ctx.add(bind as Binding);
   }
-  ctx.add(bind as Binding);
   return bind;
 }
