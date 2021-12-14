@@ -1,23 +1,22 @@
 import { Context, useContext, provide, BindingScope } from '@kraftr/context';
 import { createSequence, Sequence } from '@kraftr/sequence';
-import { CoreBindings } from './keys';
-
-import { F } from 'ts-toolbelt';
+import { CoreBindings } from './binding-keys';
+import { StartupData } from './types';
 
 export type Plugin = {
-  install: F.Function;
+  install: () => void;
 };
 
 export function usePlugin(plugin: Plugin): void {
   plugin.install();
 }
-export type kraftrApp = {
+export type Application = {
   restart: () => void;
   middleware: (...input: unknown[]) => void;
 };
-export function createApp(fn: () => void): kraftrApp {
+export function createApp(fn: () => void): Application {
   let appContext: Context;
-  let appSequence: Sequence<void>;
+  let appSequence: Sequence<StartupData>;
 
   const init = () => {
     appContext = new Context();
@@ -41,7 +40,7 @@ export function createApp(fn: () => void): kraftrApp {
       useContext(appContext, function inputHandler() {
         provide(CoreBindings.APP_INPUT).with(input);
 
-        return appSequence.execute();
+        return appSequence.execute({ appContext });
       })
   };
 }

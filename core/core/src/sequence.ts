@@ -1,7 +1,7 @@
 import { createSequence } from '@kraftr/sequence';
-import { AppBindings } from './bindings';
+import { CoreBindings } from './binding-keys';
 import { AppGroups } from './sequence-groups';
 
-export const AppLifecycle = createSequence<void>(AppBindings.APP_SEQUENCE, [
+export const AppLifecycle = createSequence<void>(CoreBindings.APP_SEQUENCE, [
   AppGroups.RUNNER
 ]);
