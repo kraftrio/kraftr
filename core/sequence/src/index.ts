@@ -1,2 +1,2 @@
 export * from './sequence';
-export * as tests from './test-utils';
+export * as tests from './tests';

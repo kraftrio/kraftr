@@ -1,10 +1,17 @@
 import { closeContext, openContext } from '@kraftr/context';
 import { createSequence } from '../../src/sequence';
+import { describe, it, expect, afterEach, beforeEach } from 'vitest';
 
-describe('createSequence', () => {
-  it('run every function in the sequence', async () => {
+describe('new Sequence():', () => {
+  afterEach(() => {
+    closeContext();
+  });
+  beforeEach(() => {
     openContext();
-    const sequence = createSequence<string>('test-chain', []);
+  });
+
+  it('run every function in the sequence', async () => {
+    const sequence = createSequence<string>('test-chain1', []);
     sequence.add({
       group: 'b',
       downstream: ['c'],
@@ -35,12 +42,10 @@ describe('createSequence', () => {
     const result = await sequence.execute('');
 
     expect(result).toEqual('abc');
-    closeContext();
   });
 
   it('run sequences with one handler', async () => {
-    openContext();
-    const sequence = createSequence<string>('test-chain', ['b']);
+    const sequence = createSequence<string>('test-chain2', ['b']);
     sequence.add({
       group: 'b',
       ex: async (s: string, next) => {
@@ -52,12 +57,10 @@ describe('createSequence', () => {
     const result = await sequence.execute('');
 
     expect(result).toEqual('abc');
-    closeContext();
   });
 
   it('run the sequence when there is not a defaultGroup defined', async () => {
-    openContext();
-    const sequence = createSequence<string>('test-chain', []);
+    const sequence = createSequence<string>('test-chain3', []);
     sequence.add({
       group: 'b',
       ex: async (s: string, next) => {
@@ -69,13 +72,10 @@ describe('createSequence', () => {
     const result = await sequence.execute('');
 
     expect(result).toEqual('abc');
-    closeContext();
   });
 
   it('run every function in the sequence in both way', async () => {
-    openContext();
-
-    const sequence = createSequence<string>('test-chain', ['b', 'c']);
+    const sequence = createSequence<string>('test-chain4', ['b', 'c']);
 
     sequence.add({
       group: 'b',
@@ -107,13 +107,10 @@ describe('createSequence', () => {
 
     const result = await sequence.execute('');
 
-    expect(result).toBe('abcba');
-    closeContext();
+    expect(result).toEqual('abcba');
   });
 
   it('nested sequences', async () => {
-    openContext();
-
     const mayusInverser = createSequence<string>('mayus-chain', ['mayus']);
     const mainSequence = createSequence<string>('main-chain', ['postprocessor']);
 
@@ -126,7 +123,7 @@ describe('createSequence', () => {
     mayusInverser.add({
       group: 'inverser',
       upstream: ['mayus'],
-      ex: async (s, next) => next(s.split('').reverse().join(''))
+      ex: async (s, next) => next([...s].reverse().join(''))
     });
 
     mainSequence.add({
@@ -142,7 +139,6 @@ describe('createSequence', () => {
 
     const result = await mainSequence.execute('this is the ');
 
-    expect(result).toBe('DROW LANIF EHT SI SIHT');
-    closeContext();
+    expect(result).toEqual('DROW LANIF EHT SI SIHT');
   });
 });

@@ -1,5 +1,5 @@
 import { closeContext, openContext } from '@kraftr/context';
-import { ExecutableSequence } from '.';
+import { ExecutableMiddleware } from './sequence';
 
 type SequenceValues<T> = {
   returnValue: T;
@@ -7,7 +7,7 @@ type SequenceValues<T> = {
 };
 
 export async function testSequence<T>(
-  sequence: ExecutableSequence<T>,
+  sequence: ExecutableMiddleware<T>,
   data: T,
   useOwnContext = true
 ): Promise<SequenceValues<T>> {

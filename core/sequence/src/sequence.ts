@@ -9,42 +9,51 @@ import {
   provide
 } from '@kraftr/context';
 import { sortListOfGroups } from './sorter';
-import { F } from 'ts-toolbelt';
 
 type NextFn<Data = unknown> = (data: Data) => Promise<Data>;
-export type SequenceFn<Data = unknown> = (
+export type Middleware<Data = unknown> = (
   data: Data,
   next: NextFn<Data>
 ) => Promise<Data>;
 
-export type Executor<Data = unknown> = {
-  run: SequenceFn<Data>;
-};
-export type ExecutableSequence<Data = unknown> = SequenceFn<Data> | Executor<Data>;
+export type ExecutableMiddleware<Data = unknown> = Middleware<Data> | Sequence<Data>;
 
-export function toSequenceFn<Data>(fnOrSeq?: ExecutableSequence<Data>): SequenceFn<Data> {
+function orderBinds(binds: Binding[]): BindingAddress[][] {
+  const ordersFromDependencies: BindingAddress[][] = [];
+  for (const bind of binds) {
+    const group: string = bind.tagMap.get('group') as string;
+
+    const groupsBefore: string[] = (bind.tagMap.get('upstream') as string[]) ?? [];
+    groupsBefore.forEach((d) => ordersFromDependencies.push([d, group]));
+
+    const groupsAfter: string[] = (bind.tagMap.get('downstream') as string[]) ?? [];
+    groupsAfter.forEach((d) => ordersFromDependencies.push([group, d]));
+  }
+  return ordersFromDependencies;
+}
+
+export function toSequenceFn<Data>(
+  fnOrSeq?: ExecutableMiddleware<Data>
+): Middleware<Data> {
   if (!fnOrSeq) {
     return (data, next) => next(data);
   }
 
-  if ('run' in fnOrSeq) {
-    return fnOrSeq.run.bind(fnOrSeq);
-  } else {
-    return fnOrSeq;
-  }
+  return 'run' in fnOrSeq ? fnOrSeq.run.bind(fnOrSeq) : fnOrSeq;
 }
 
 export type SequenceOptions<Data> = {
-  group: BindingAddress;
-  downstream?: BindingAddress[];
-  upstream?: BindingAddress[];
-  ex: SequenceFn<Data> | Executor<Data>;
+  group: BindingAddress<ExecutableMiddleware<Data>>;
+  downstream?: BindingAddress<ExecutableMiddleware<Data>>[];
+  upstream?: BindingAddress<ExecutableMiddleware<Data>>[];
+  ex: ExecutableMiddleware<Data>;
 };
 
-export class Sequence<Data> implements Executor<Data> {
+export class Sequence<Data> {
   public groups: BindingAddress[] = [];
-  private _defaultSequences: SequenceOptions<Data>[] = [];
-  private _ctxInits: WeakSet<Context> = new WeakSet();
+
+  #defaultSequences: SequenceOptions<Data>[] = [];
+  #ctxInits: WeakSet<Context> = new WeakSet();
 
   constructor(
     public chainName: BindingAddress,
@@ -53,20 +62,29 @@ export class Sequence<Data> implements Executor<Data> {
     this.groups = defaultGroups;
   }
 
-  build(opts: SequenceOptions<Data>[]): Sequence<Data> {
+  /**
+   * Prepare with a default sequence array without be inside a context
+   * @param options as defaults
+   * @returns this
+   */
+  prepare(options: SequenceOptions<Data>[]): Sequence<Data> {
     if (!this.groups.length) {
-      this.groups = opts.map((o) => o.group);
+      this.groups = options.map((o) => o.group);
     }
-    this._defaultSequences = opts;
+    this.#defaultSequences = options;
     return this;
   }
 
-  add(opts: SequenceOptions<Data>): Sequence<Data> {
-    const bind = provide(opts.group).in(BindingScope.SINGLETON).with(opts.ex).constant();
+  add(option: SequenceOptions<Data>): Sequence<Data> {
+    const bind = provide(option.group)
+      .in(BindingScope.SINGLETON)
+      .with(option.ex)
+      .constant();
+
     bind.tagMap.set('extensionFor', this.chainName);
-    bind.tagMap.set('group', opts.group);
-    bind.tagMap.set('upstream', opts.upstream);
-    bind.tagMap.set('downstream', opts.downstream);
+    bind.tagMap.set('group', option.group);
+    bind.tagMap.set('upstream', option.upstream);
+    bind.tagMap.set('downstream', option.downstream);
 
     return this;
   }
@@ -77,9 +95,9 @@ export class Sequence<Data> implements Executor<Data> {
 
   execute(initialData: Data): Promise<Data> {
     const context = getContext();
-    if (!this._ctxInits.has(context)) {
-      this._defaultSequences.forEach(this.add.bind(this));
-      this._ctxInits.add(context);
+    if (!this.#ctxInits.has(context)) {
+      this.#defaultSequences.forEach(this.add.bind(this));
+      this.#ctxInits.add(context);
     }
 
     const binds = context.find(
@@ -90,52 +108,40 @@ export class Sequence<Data> implements Executor<Data> {
 
     if (!binds) return new Promise((resolve) => resolve(initialData));
 
-    const bindsByGroup = Object.fromEntries(
-      binds.map((bind) => [bind.tagMap.get('group'), bind])
-    ) as Record<string, Binding<ExecutableSequence<Data>>>;
-
     // Calculate orders from middleware dependencies
-    const ordersFromDependencies: BindingAddress[][] = [];
-
-    for (const bind of binds) {
-      const group: string = bind.tagMap.get('group') as string;
-
-      const groupsBefore: string[] = (bind.tagMap.get('upstream') as string[]) ?? [];
-      groupsBefore.forEach((d) => ordersFromDependencies.push([d, group]));
-
-      const groupsAfter: string[] = (bind.tagMap.get('downstream') as string[]) ?? [];
-      groupsAfter.forEach((d) => ordersFromDependencies.push([group, d]));
-    }
-
+    const ordersFromDependencies = orderBinds(binds);
     const orderedGroups = sortListOfGroups(...ordersFromDependencies, this.groups);
 
     /**
-     * If there is not groups defined just run all binds associated with
-     * this sequence without care about order
+     * When there is no a group, run all the bindings associated with
+     * this sequence without care about the order
      */
     if (orderedGroups.length === 0 && binds.length > 0) {
       orderedGroups.push(...binds.map((b) => b.key));
     }
 
-    const executeFn: F.Function = (
-      bindAddresses: BindingAddress[],
-      fallback: Data
-    ): NextFn<Data> => {
-      const key = bindAddresses[0];
-      const nextAdresses = bindAddresses.slice(1);
-      if (!key) return async (data) => data;
+    const bindsByGroup = Object.fromEntries(
+      binds.map((bind) => [bind.tagMap.get('group'), bind])
+    ) as Record<string, Binding<ExecutableMiddleware<Data>>>;
 
-      const bind = bindsByGroup[key];
-      const sequenceFn = toSequenceFn(bind?.getOrPropagate());
-
-      return async (data: Data) =>
-        sequenceFn(data ?? fallback, executeFn(nextAdresses, data));
-    };
-
-    const executor = executeFn(orderedGroups);
+    const executor = executeFn(bindsByGroup, orderedGroups, initialData);
 
     return executor(initialData);
   }
+}
+
+function executeFn<Data>(
+  bindsByGroup: Record<string, Binding<ExecutableMiddleware<Data>>>,
+  [address, ...nextAdresses]: BindingAddress[],
+  fallback: Data
+): NextFn<Data> {
+  if (!address) return async (data) => data;
+
+  const bind = bindsByGroup[address];
+  const sequenceFn = toSequenceFn(bind?.value());
+
+  return async (data?: Data) =>
+    sequenceFn(data ?? fallback, executeFn(bindsByGroup, nextAdresses, data ?? fallback));
 }
 
 export function createSequence<Data>(
