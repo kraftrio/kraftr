@@ -1,11 +1,10 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush.schema.json",
   "rushVersion": "5.56.0",
-  "pnpmVersion": "6.19.0",
+  "pnpmVersion": "6.23.6",
   "nodeSupportedVersionRange": ">=16.0.0",
   "pnpmOptions": {
     "strictPeerDependencies": false,
-    "preventManualShrinkwrapChanges": true,
     "pnpmStore": "global",
     "useWorkspaces": true
   },
@@ -31,12 +30,22 @@
       "packageName": "@kraftr/errors",
       "projectFolder": "core/errors",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@kraftr/sequence",
+      "projectFolder": "core/sequence",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@kraftr/core",
+      "projectFolder": "core/core",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@kraftr/rest",
+      "projectFolder": "server/rest",
+      "shouldPublish": true
     }
-    // {
-    //   "packageName": "@kraftr/core",
-    //   "projectFolder": "core/core",
-    //   "shouldPublish": true
-    // },
     // {
     //   "packageName": "@kraftr/repository",
     //   "projectFolder": "core/repository",
@@ -48,18 +57,8 @@
     //   "shouldPublish": true
     // },
     // {
-    //   "packageName": "@kraftr/sequence",
-    //   "projectFolder": "core/sequence",
-    //   "shouldPublish": true
-    // },
-    // {
     //   "packageName": "@kraftr/schema-extension",
     //   "projectFolder": "extensions/schema",
-    //   "shouldPublish": true
-    // },
-    // {
-    //   "packageName": "@kraftr/rest-server",
-    //   "projectFolder": "server/rest",
     //   "shouldPublish": true
     // },
     // {
