@@ -13,26 +13,26 @@
     }
   },
   "scripts": {
-    "build": "craft build",
-    "build:watch": "craft build",
+    "build": "craft build --silent ./src/index.ts",
+    "build:watch": "craft stub ./src/index.ts",
     "start": "craft",
-    "test": "jest",
+    "test": "vitest open",
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@kraftr/errors": "workspace:^0.1.4",
     "tsee": "^1.3.2",
-    "debug": "^4.3.2"
+    "debug": "^4.3.2",
+    "deepmerge": "^4.2.2",
+    "tsup": "^5.6.0"
   },
   "devDependencies": {
-    "uvu": "^0.5.2",
     "@kraftr/build": "workspace:^0.5.0",
     "@kraftr/eslint-plugin": "workspace:^0.2.3",
-    "@types/debug": "^4.1.7",
     "@types/node": "^16.11.7",
+    "vitest": "latest",
+    "@types/debug": "^4.1.7",
     "tslib": "^2.3.1",
-    "esbuild": "^0.13.10",
-    "esbuild-jest": "^0.5.0",
     "eslint": "^8.2.0"
   }
 }
