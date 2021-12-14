@@ -1,5 +1,4 @@
-import { Cast, Throws } from '.';
-import { ErrorCtor, TSError, Return } from './types';
+import { ErrorCtor, TSError, Return, Throws } from './types';
 
 const unhadleErrors = new Set<Err<Error>>();
 
@@ -111,13 +110,13 @@ export class Result<Value, E extends Error | null> {
    * @param onError return this as fallback on any error
    * @returns Value | Fallback
    */
-  valueOr(onError: Cast<Value, Object>): typeof onError {
+  valueOr<T>(onError: T): T | Value {
     unhadleErrors.delete(this as never);
     if (this.isErr) {
       unhadleErrors.delete(this as never);
       return onError;
     }
-    return this._value as Cast<Value, Object>;
+    return this._value;
   }
 
   /**

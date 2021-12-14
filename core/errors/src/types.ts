@@ -34,7 +34,7 @@ export type Cast<A1, A2> = [A1 extends A2 ? A1 : never] extends [never]
   ? A1
   : never;
 
-type Any = {
+export type Any = {
   [k: string]: never;
   [k: number]: never;
   [k: symbol]: never;
@@ -51,7 +51,7 @@ export type Throws<ErrorTypes extends Error> = MetaError<ErrorTypes> & Any;
  */
 export type Return<ReturnTypes, ErrorTypes extends Error> =
   | ReturnTypes
-  | Throws<ErrorTypes>;
+  | (MetaError<ErrorTypes> & Cast<ReturnTypes, Object>);
 
 /**
  * @public

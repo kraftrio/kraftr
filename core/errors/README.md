@@ -6,6 +6,8 @@
 
 Very lightweight library with no dependencies to handle errors in a typed way
 
+[Playground Link](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgFQBZQgdwM4BoUDKAolBlPgGoCGANgK4CmAsgzFQCZVv4lktuducbKgY0YDcnADyAax6k4AXzgAzDCDgByAAKyoVVTCgB6SWWxaAsAChbqugDsAxjGARHcRx4ByDAOZcwABuDAAUwbSMAFxedCAARpIAlLGO8UlQcAA+KOhY2AA8yMSk0IVaPhmScMDYXgFBoVoAfC2ItnC1qhFRDHCFcAAMyR02XV0w+ZgNM7zQYZXVWXUNgW7NyZ3K21CsdFCekfQMtkq2ts4e2PB72ACMcAC8Xr6NG+EATCO2MACeYH65mgABEuFRHi95lB+BxwYV-oCIKo4Hd7i1fgD+sdGGC2JC4NQTrDBFQEVjkaiGA8MXYbA4XG4PK9HH51iEGAB1YBTaG9E5pZapOKJGq5NAYHCFaHtBDbYA9HH9QYjMYTOBTSWzOB8pailb1RzvDlaLbjHbmvYwA5HPpnC50q6OG5U7CfZ4stlNLk81B875mxFAspQPFUd1QkMk+FByl3T60oNwJVhiOEvrRtjkpEo+O02wmExwTC+4SicSSS7XW7UgDMHpEYgkUDCYVGT3a3lZxtCYU+teSZsLcGgxdLvDgVEc7BksnsTlc7k8Xa9H25UzkvH5MRFmVGcvNCu3yuG++2XStNp1pEWVX1tUNPYYpu250t+0Os+PZrfw6dLruesXhXJ911QTcb37M1bEAgA6JU21gmAICIAAPSAjUcNxaDbOA-wgOgaBnTUsEnTxgSgGC63gvo2wAQiQlD0I8BgsOAHDRmHYB-G8PYyOI6ZujgCiHSPOC6jkM932wWsaJORDkLQjDWOwmhcOHQEoFUBhXBoP4RznGwVDEbB+gPC9qIovCi2cURnFkDVUFWIN7RsIA)
+
 </br>
 
 >🚨🚨 ALERT 🚨🚨</br>
@@ -167,7 +169,7 @@ if(bad.isErr) {
 But what if we want just work as normal and get typed errors in some situations?
 
 ```ts
-import { Ok, Err, Return } from '@kraftr/errors'
+import { Ok, Err, Return, Throws } from '@kraftr/errors'
 import db, { Connection, ConnectionError } from 'any-db'
 
 function connectToDb(): Return<Connection, ConnectionError> {
@@ -185,7 +187,7 @@ You can either provide type errors for third party functions or the builtin func
 ```ts
 declare global {
   interface JSON {
-    parse(text: object): Return<Record<string, unknown>, SyntaxError>
+    parse(text: object): Record<string, unknown> | Throws<SyntaxError>
   }
 }
 const parsed = shelter(() => JSON.parse('{;'))

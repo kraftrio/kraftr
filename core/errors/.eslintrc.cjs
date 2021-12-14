@@ -5,7 +5,8 @@ module.exports = useESlint({
   plugins: ['@kraftr'],
   parserOptions: {
     project: './tsconfig.json',
-    tsconfigRootDir: __dirname
+    tsconfigRootDir: __dirname,
+    extraFileExtensions: ['cjs']
   },
   ignorePatterns: ['.eslintrc.cjs']
 });
