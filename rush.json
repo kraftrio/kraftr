@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush.schema.json",
-  "rushVersion": "5.56.0",
-  "pnpmVersion": "6.23.6",
+  "rushVersion": "5.58.0",
+  "pnpmVersion": "6.24.2",
   "nodeSupportedVersionRange": ">=16.0.0",
   "pnpmOptions": {
     "strictPeerDependencies": false,
@@ -45,7 +45,7 @@
       "packageName": "@kraftr/rest",
       "projectFolder": "server/rest",
       "shouldPublish": true
-    }
+    },
     // {
     //   "packageName": "@kraftr/repository",
     //   "projectFolder": "core/repository",
@@ -66,11 +66,11 @@
     //   "projectFolder": "connectors/mongodb",
     //   "shouldPublish": true
     // },
-    // {
-    //   "packageName": "hello-world-example",
-    //   "projectFolder": "templates/hello-world",
-    //   "shouldPublish": false
-    // },
+    {
+      "packageName": "hello-world-example",
+      "projectFolder": "examples/hello-world",
+      "shouldPublish": false
+    }
     // {
     //   "packageName": "@nemobile/backend",
     //   "projectFolder": "templates/nemobile",
