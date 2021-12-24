@@ -1,7 +1,5 @@
-import { createSequence } from '@kraftr/sequence';
-import { CoreBindings } from './binding-keys';
-import { AppGroups } from './sequence-groups';
+import { Sequence } from '@kraftr/sequence';
 
-export const AppLifecycle = createSequence<void>(CoreBindings.APP_SEQUENCE, [
-  AppGroups.RUNNER
-]);
+export class AppSequence extends Sequence<unknown> {
+  override chain = 'AppSequence';
+}

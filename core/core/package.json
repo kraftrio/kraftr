@@ -15,8 +15,8 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "build": "craft build --silent ./src/index.ts",
-    "build:watch": "craft build ./src/index.ts",
+    "build": "craft build --silent",
+    "build:watch": "craft build --silent --stub",
     "test": "vitest",
     "test:types": "tsc --noEmit"
   },
@@ -45,6 +45,7 @@
     "@types/node": "^16.11.7",
     "tslib": "^2.3.1",
     "vitest": "latest",
+    "vite": "^2.6.14",
     "eslint": "^8.2.0"
   }
 }
