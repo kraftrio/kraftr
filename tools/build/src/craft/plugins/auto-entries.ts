@@ -1,7 +1,5 @@
-import { Plugin } from 'vite';
 import { loadPackageJSON } from 'local-pkg';
-import merge from 'deepmerge';
-import path from 'path';
+import { Plugin } from 'vite';
 
 export type EntriesPluginConfig = {
   cwd?: string;
@@ -16,19 +14,22 @@ export function autoEntries(pluginConfig?: EntriesPluginConfig): Plugin {
   return {
     name: 'auto-entries',
     async config(config) {
-      if (config.build?.rollupOptions?.input) return;
+      const input = config.build?.rollupOptions?.input;
+
+      if (!input || input?.length > 0) return;
       const pkg = (await loadPackageJSON(
         pluginConfig?.cwd
       )) as typeof import('../../../package.json');
       if (!pkg.exports) return;
-      config = {};
+
+      config = config ?? {};
       config.build ??= {};
       config.build.rollupOptions ??= {};
-      if (config.build.rollupOptions > 0) {
-        return;
-      }
+
       const exportValues = Object.values(pkg.exports);
-      let output = (config.build.rollupOptions.output ??= []);
+      const rollupOptions = config.build.rollupOptions;
+
+      let output = (rollupOptions.output ??= []);
       if (!Array.isArray(output)) {
         output = [output];
       }
@@ -36,12 +37,14 @@ export function autoEntries(pluginConfig?: EntriesPluginConfig): Plugin {
       config.build.rollupOptions.input = exportValues.map(
         (exportEntry) => exportEntry.source
       );
-      if (exportValues.find((exportEntry) => exportEntry.import)) {
+
+      if (output.length === 0 && exportValues.find((export_) => export_.import)) {
         output.push({ format: 'esm', entryFileNames: `[name].mjs` });
       }
-      if (exportValues.find((exportEntry) => exportEntry.require)) {
+      if (output.length === 0 && exportValues.find((export_) => export_.require)) {
         output.push({ format: 'cjs', entryFileNames: `[name].cjs` });
       }
+      rollupOptions.output = output;
     }
   };
 }

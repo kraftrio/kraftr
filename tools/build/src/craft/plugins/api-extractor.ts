@@ -111,6 +111,7 @@ export function apiExtractor(pluginOptions?: ApiExtractorPluginOptions): Plugin 
   let generated = false;
   return {
     name: 'api-extractor',
+    apply: 'build',
     configResolved(config) {
       mode = config.mode;
       const input = config.build.rollupOptions.input as string[];

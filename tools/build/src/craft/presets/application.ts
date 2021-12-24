@@ -8,7 +8,6 @@ const applicationPlugin: Plugin = {
   config: () =>
     ({
       build: {
-        sourcemap: 'inline',
         lib: {},
         rollupOptions: {
           output: [

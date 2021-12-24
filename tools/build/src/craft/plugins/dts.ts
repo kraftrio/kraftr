@@ -22,6 +22,7 @@ export function dts(config?: DTSPluginConfig): Plugin {
   let generated = false;
   return {
     name: 'dts',
+    apply: 'build',
     buildStart() {
       files = new Set();
       generated = false;
@@ -46,7 +47,6 @@ export function dts(config?: DTSPluginConfig): Plugin {
           merge(
             {
               declaration: true,
-              declarationMap: true,
               emitDeclarationOnly: true,
               outDir: dir
             },
@@ -61,7 +61,8 @@ export function dts(config?: DTSPluginConfig): Plugin {
         (filePath, code, _, __, sourceFiles) => {
           const fileName = path.relative(dir, filePath);
           const facadeModuleId = sourceFiles?.[0]?.fileName!;
-
+          const srcName = path.relative(dir, facadeModuleId);
+          const file = bundle[srcName];
           bundle[fileName] = {
             type: 'chunk',
             code,
@@ -71,7 +72,7 @@ export function dts(config?: DTSPluginConfig): Plugin {
             exports: [],
             isDynamicEntry: true,
             isEntry: false,
-            isImplicitEntry: false,
+            isImplicitEntry: true,
             facadeModuleId,
             referencedFiles: [],
             modules: {},

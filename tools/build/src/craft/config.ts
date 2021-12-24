@@ -1,16 +1,30 @@
 import merge from 'deepmerge';
-import { isPromise } from 'node:util/types';
-import { ConfigEnv, UserConfig, UserConfigExport } from 'vite';
-import { loadPackageJSON } from 'local-pkg';
 import fg from 'fast-glob';
+import { loadPackageJSON } from 'local-pkg';
+import { isPromise } from 'node:util/types';
+import { Command } from 'soly';
+import { ConfigEnv, Plugin, UserConfig, UserConfigExport } from 'vite';
+
+type PackageJSON = Partial<typeof import('../../package.json')>;
+
+export type CraftPluginOption =
+  | (Plugin & {
+      commands?: Record<string, (cmd: Command) => void>;
+    })
+  | false
+  | null
+  | undefined;
+
+export type CraftPlugins = (CraftPluginOption | CraftPluginOption[])[];
 
 /**
  * @public
  * extended from vite to provide extra options
  */
-export type CraftConfig = {
+export type CraftConfig = UserConfig & {
   entries: string[] | string;
-} & UserConfig;
+  plugins?: CraftPlugins;
+};
 
 /**
  * @public
@@ -23,14 +37,15 @@ export type CraftConfigExport =
 
 /**
  * @public
- * @param config - CraftConfig to use to configure craft
+ * @param config - CraftConfig to use to configure Craft
  * @returns UserConfigExport object
  */
 export function defineConfig(config: CraftConfigExport): UserConfigExport {
   return async (env) => {
-    const pkg = (await loadPackageJSON()) as typeof import('../../package.json');
+    const pkg = (await loadPackageJSON()) as PackageJSON;
 
     let returnConfig: CraftConfig;
+
     if (isPromise(config)) {
       returnConfig = await config;
     } else if (typeof config === 'function') {
@@ -45,11 +60,11 @@ export function defineConfig(config: CraftConfigExport): UserConfigExport {
       build: {
         lib: {
           name: pkg.name,
-          entry: pkg.main
+          entry: pkg.main ?? 'lib'
         },
         rollupOptions: {
           input: await fg(entries),
-          output: { entryFileNames: '[name].[format].js' }
+          output: []
         }
       },
       optimizeDeps: {

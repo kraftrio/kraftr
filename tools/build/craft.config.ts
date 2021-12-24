@@ -1,6 +1,6 @@
-import { libraryPreset, defineConfig } from './src/craft/craft';
+import { libraryPreset, defineConfig } from './src/craft';
 
 export default defineConfig({
-  entries: ['./src/index.ts', './src/cli.ts', './src/craft/craft.ts'],
+  entries: ['./src/index.ts', './src/craft/cli.ts'],
   plugins: [libraryPreset()]
 });

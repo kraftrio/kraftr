@@ -1,6 +1,6 @@
 import merge from 'deepmerge';
-import { Plugin } from 'vite';
 import Externals from 'rollup-plugin-auto-external';
+import { Plugin } from 'vite';
 
 /**
  * @public

@@ -1,27 +1,34 @@
+import license, { Options as LicensePluginConfig } from 'rollup-plugin-license';
 import { Plugin, PluginOption, UserConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
 import {
+  apiExtractor,
   autoExternal,
   AutoExternalPluginConfig,
-  apiExtractor,
   TSConfigPathsConfig
 } from '../plugins';
-import license, { Options as LicensePluginConfig } from 'rollup-plugin-license';
 import { ApiExtractorPluginOptions } from '../plugins/api-extractor';
-import { DTSPluginConfig, dts } from '../plugins/dts';
 import { installer, InstallerPluginConfig } from '../plugins/auto-install';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { dts, DTSPluginConfig } from '../plugins/dts';
 
 const libraryPlugin: Plugin = {
   name: 'library-preset',
   config: () =>
     ({
       build: {
-        sourcemap: 'inline',
         lib: {},
         rollupOptions: {
           output: [
-            { format: 'es', entryFileNames: '[name].mjs', chunkFileNames: '[name].mjs' },
-            { format: 'cjs', entryFileNames: '[name].cjs', chunkFileNames: '[name].cjs' }
+            {
+              format: 'es',
+              entryFileNames: '[name].mjs',
+              chunkFileNames: 'chunks/[name].mjs'
+            },
+            {
+              format: 'cjs',
+              entryFileNames: '[name].cjs',
+              chunkFileNames: 'chunks/[name].cjs'
+            }
           ]
         }
       }

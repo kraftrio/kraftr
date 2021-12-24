@@ -1,4 +1,14 @@
-export * from './vite-plugin';
-import * as jest from './jest';
+export * from './craft';
+import { pino } from 'pino';
 
-export { jest };
+export function createLogger() {
+  return pino({
+    level: 'debug',
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true
+      }
+    }
+  });
+}
