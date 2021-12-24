@@ -1,11 +1,11 @@
-import { Context, getContext } from '../context';
-import { BindingScope } from '../utils';
-import { BindingAddress } from '../bindings';
-import { isFunction } from '../utils';
-import { EventEmitter } from 'tsee';
 import type { Return } from '@kraftr/errors';
-import { ContextNotFound, LockError, SourceNotDefined } from '../errors';
-// const debug = debugFactory('kraftr:context:binding');
+import EventEmitter from 'node:events';
+import { isPromise } from 'node:util/types';
+import { BindingAddress } from '../bindings';
+import { Context, getContext } from '../context';
+import { ContextNotFound, SourceNotDefined } from '../errors';
+import { isAny, isAnyObject, isBoolean, isString } from '../types';
+import { isFunction } from '../utils';
 
 /**
  * Binding sources
@@ -25,6 +25,14 @@ export enum BindingType {
   CLASS = 'Class'
 }
 
+export enum BindingScope {
+  TRANSIENT = 'Transient',
+  METADATA = 'Metadata',
+  SINGLETON = 'Singleton',
+  SERVER = 'Server',
+  APPLICATION = 'Application'
+}
+
 export type ConstantBindingSource<T> = {
   type: BindingType.CONSTANT | BindingType.FUNCTION;
   value: T;
@@ -38,7 +46,7 @@ export type ClassBindingSource<T extends Object> = {
   value: new () => T;
 };
 export type EmptyBindingSource = {
-  type: BindingType.FUNCTION;
+  type: BindingType.CONSTANT;
   value: null;
 };
 
@@ -48,56 +56,78 @@ export type BindingSource<T> =
   | (T extends Object ? ClassBindingSource<T> : never)
   | EmptyBindingSource;
 
-type BindingEvents<T> = {
-  change: (bindings: [T, T], changes: number) => void;
-};
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export interface TagMap<Shape = Record<string, unknown>> extends Map<string, unknown> {
+  delete(key: keyof Shape & string): boolean;
+  has(key: keyof Shape & string): boolean;
+  forEach(
+    callbackfn: (
+      value: Shape[keyof Shape],
+      key: keyof Shape & string,
+      map: TagMap<Shape>
+    ) => void,
+    thisArg?: unknown
+  ): void;
+  get<Key extends keyof Shape & string>(key: Key): Shape[Key];
+  set<Key extends keyof Shape & string>(key: Key, value: Shape[Key]): this;
+}
 
-type Lock<T> = Omit<T, 'lock' | 'with'> & {
-  unlock: () => T;
-};
-
-type WidenLiterals<T> = T extends boolean
-  ? boolean
-  : T extends string
-  ? string
-  : T extends number
-  ? number
-  : T;
-type NoInfer<A> = [A][A extends any ? 0 : never];
-
-export class Binding<BoundValue = unknown> extends EventEmitter<
-  BindingEvents<BindingSource<BoundValue>>
-> {
+export class Binding<
+  BoundValue = unknown,
+  Tags extends Record<string, unknown> = Record<string, unknown>
+> extends EventEmitter {
   public scope: string = BindingScope.TRANSIENT;
-  public tagMap: Map<string, unknown> = new Map();
+  public tagMap?: TagMap<Tags>;
 
-  private _memoized = false;
-  private _cache: WeakMap<Context, BoundValue> = new WeakMap();
-  private _source: BindingSource<BoundValue> = {
-    type: BindingType.FUNCTION,
+  #memoized = false;
+  #cache: WeakMap<Context, BoundValue> = new WeakMap();
+  #source: BindingSource<BoundValue> = {
+    type: BindingType.CONSTANT,
     value: null
   };
-  private _changes = 0;
-  private _locked = false;
+  #initialized = false;
+  isLocked = false;
 
   constructor(public key: BindingAddress<BoundValue>) {
     super();
   }
 
+  get type() {
+    return this.#source.type;
+  }
+
   /**
    * @throws LockError
    * @param value - to bind to the key
-   * @returns this (chainable)
+   * @returns this
    */
-  with(value: BindingSource<BoundValue>['value']): Return<this, LockError> {
-    if (this._locked) {
-      throw new LockError(this.key);
+  with(value: BindingSource<BoundValue>['value']): this {
+    if (isPromise(value)) {
+      // Promises are a construct primarily intended for flow control:
+      // In an algorithm with steps 1 and 2, we want to wait for the outcome
+      // of step 1 before starting step 2.
+      //
+      // Promises are NOT a tool for storing values that may become available
+      // in the future, depending on the success or a failure of a background
+      // async task.
+      //
+      // Values stored in bindings are typically accessed only later,
+      // in a different turn of the event loop or the Promise micro-queue.
+      // As a result, when a promise is stored via `.with()` and is rejected
+      // later, then more likely than not, there will be no error (catch)
+      // handler registered yet, and Node.js will print
+      // "Unhandled Rejection Warning".
+      throw new Error(
+        'Promise instances are not allowed for constant values ' +
+          'Register an async getter function '
+      );
     }
-    const oldSource = this._source;
-    this._source.value = value;
+    this.emit('source', value);
+    this.emit('value', value);
+    this.#source.value = value;
+    this.#initialized = true;
 
-    this.emit('change', [oldSource, this._source], this._changes);
-    return this as never;
+    return this;
   }
 
   /**
@@ -105,36 +135,101 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
    * @param value
    */
   memoize(value = true): this {
-    this._memoized = value;
+    this.#memoized = value;
     return this;
   }
 
-  lock(): Lock<this> {
-    this._locked = true;
-    const newBind = new Binding(this.key);
-    Object.assign(newBind, this);
-    Object.assign(newBind, {
-      unlock: () => {
-        this._locked = false;
-      }
-    });
-    newBind._source.value = this._source.value;
-    return newBind as unknown as Lock<this>;
+  /**
+   * Mark this bind as locked so any change to the source is not allowed
+   * @returns this
+   */
+  lock(): this {
+    this.isLocked = true;
+    return this;
   }
 
+  /**
+   * Mark this binding as constant, this way always the source is returned as is
+   * @returns this
+   */
   constant(): this {
-    this._source.type = BindingType.CONSTANT;
+    this.#source.type = BindingType.CONSTANT;
     return this;
   }
 
+  /**
+   * Mark this binding as dynamic, so if the source
+   * is a function this will be called every time value() is called
+   * @returns this
+   */
   dynamic(): this {
-    this._source.type = BindingType.FUNCTION;
+    this.#source.type = BindingType.FUNCTION;
     return this;
   }
 
+  /**
+   * Mark this binding as the source is newable object, so every call to
+   * value() would return a new instance
+   * @returns this
+   */
   class(): this {
-    this._source.type = BindingType.CLASS;
+    this.#source.type = BindingType.CLASS;
     return this;
+  }
+
+  tag<Key extends keyof Tags, Value extends isAny<Tags[Key], unknown, Tags[Key]>>(
+    key: Key,
+    value: isBoolean<Tags[Key], boolean | undefined, Value>
+  ): Binding<
+    BoundValue,
+    {
+      [key in Key | isString<keyof Tags, never, keyof Tags>]: (Tags &
+        Record<Key, Value>)[key];
+    }
+  >;
+
+  /**
+   * set to a provided key a value
+   * @param key
+   * @param value to set to key
+   */
+  tag<Key extends string, Value extends Tags[Key]>(
+    key: Key,
+    value: Value
+  ): Binding<
+    BoundValue,
+    {
+      [key in Key | isString<keyof Tags, never, keyof Tags>]: (Tags &
+        Record<Key, Value>)[key];
+    }
+  >;
+
+  /**
+   * Define this as true inside of tagMap
+   * @param key set this tag to true
+   */
+  tag<Key extends string>(
+    key: isAnyObject<Tags, Key, isBoolean<Tags[Key], Key, isAny<Tags[Key], Key, never>>>
+  ): Binding<
+    BoundValue,
+    {
+      [key in isAnyObject<Tags, Key, Key | keyof Tags>]: (Tags & Record<Key, true>)[key];
+    }
+  >;
+
+  tag(key: unknown, value?: unknown): unknown {
+    value = value === undefined ? true : value;
+    if (!this.tagMap) {
+      this.tagMap = new Map();
+    }
+    this.tagMap.set(key as never, value as never);
+    this.emit('tag', key as never, value as never);
+
+    return this;
+  }
+
+  apply<Bind>(template: (bind: Binding) => Bind): Bind {
+    return template(this as Binding);
   }
 
   /**
@@ -144,57 +239,57 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
    */
   in(bindingScope: string): this {
     this.scope = bindingScope;
+    this.emit('scope', this.scope);
     return this;
   }
 
   /**
    * @throws SourceNotDefined | ContextNotFound
-   * @param altCtx alternative provided context to use
    * @returns bound value
    */
-  value(altCtx?: Context): Return<BoundValue, SourceNotDefined | ContextNotFound> {
-    /* istanbul ignore if */
-    // if (debug.enabled) {
-    //   debug('Get value for binding %s', this.key);
-    // }
-    if (this._source.value === undefined) {
+  value(): Return<BoundValue, SourceNotDefined | ContextNotFound> {
+    if (!this.#initialized) {
       throw new SourceNotDefined(this.key);
     }
-    const ctx = getContext() ?? altCtx;
+    let sourceValue = this.#source.value as BoundValue;
 
-    const resolutionCtx = this.getResolutionContext(ctx);
-
-    if (this._source.type === BindingType.CONSTANT) {
-      return this._source.value;
+    if (this.#source.type === BindingType.CONSTANT) {
+      return sourceValue;
     }
 
-    const cache = this._cache.get(resolutionCtx);
-    if (cache !== undefined && this.scope !== BindingScope.TRANSIENT) {
-      return cache;
+    const resolutionCtx = this.getResolutionContext();
+
+    let value = this.#cache.get(resolutionCtx);
+    if (this.scope !== BindingScope.TRANSIENT && value !== undefined) {
+      return value;
     }
 
-    let value: BoundValue;
-
-    if (this._source.type === BindingType.CLASS) {
-      value = new this._source.value();
-    } else if (isFunction(this._source.value)) {
-      value = this._source.value();
+    if (this.#source.type === BindingType.CLASS) {
+      value = new this.#source.value();
+    } else if (isFunction(this.#source.value)) {
+      value = this.#source.value();
     } else {
-      value = this._source.value as BoundValue;
+      throw new TypeError(
+        `bind ${this.key} is type ${
+          this.#source.type
+        } but it's source is not callable/newable`
+      );
     }
+
     if (this.scope !== BindingScope.TRANSIENT) {
-      this._cache.set(resolutionCtx, value);
+      this.#cache.set(resolutionCtx, value);
     }
+
     return value;
   }
 
   /**
    * Locate and check for the resolution context
    * @throws ContextNotFound
-   * @param ctx - Current context
-   * @param options - Resolution options
    */
-  private getResolutionContext(ctx: Context): Return<Context, ContextNotFound> {
+  private getResolutionContext(): Return<Context, ContextNotFound> {
+    const ctx = getContext();
+
     const resolutionCtx = ctx.getResolutionContext(this as Binding);
 
     if (!resolutionCtx && this.scope !== BindingScope.TRANSIENT) {
@@ -217,5 +312,28 @@ export class Binding<BoundValue = unknown> extends EventEmitter<
     }
 
     return resolutionCtx;
+  }
+
+  override on(
+    eventName: 'tag',
+    listener: (key: keyof Tags, value: Tags[keyof Tags]) => void
+  ): this;
+  override on(
+    eventName: 'source' | 'value',
+    listener: (value: BindingSource<BoundValue>['value']) => void
+  ): this;
+  override on(eventName: 'scope', listener: (newScope: string) => void): this;
+  override on(eventName: string | symbol, listener: (...args: any[]) => void): this {
+    return super.on(eventName, listener);
+  }
+
+  override emit(eventName: 'tag', key: keyof Tags, value: Tags[keyof Tags]): boolean;
+  override emit(
+    eventName: 'source' | 'value',
+    value: BindingSource<BoundValue>['value']
+  ): boolean;
+  override emit(eventName: 'scope', scope: string): boolean;
+  override emit(eventName: string | symbol, ...args: any[]): boolean {
+    return super.emit(eventName, ...args);
   }
 }

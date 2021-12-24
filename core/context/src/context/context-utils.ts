@@ -1,6 +1,6 @@
-import { isPromiseLike } from '../utils';
 import { ContextNotFound, ScopeNotFound } from '../errors';
 import type { Return } from '@kraftr/errors';
+import { isPromiseLike } from '../utils';
 import { Context } from './context';
 
 let currentContext: Context | undefined;
@@ -20,20 +20,21 @@ export function setContext(ctx: Context): void {
   currentContext = ctx;
 }
 
-export function openContext(scope?: string): void {
+export function openContext(scope?: string) {
   currentContext = new Context();
   if (scope) {
     currentContext.scope = scope;
   }
+  return currentContext;
 }
 
 export function closeContext(): void {
   currentContext = undefined;
 }
 
-export function useContext(ctx: Context, fn: (ctx: Context) => void): void;
 export function useContext<T>(ctx: Context, fn: (ctx: Context) => Promise<T>): Promise<T>;
 export function useContext<T>(ctx: Context, fn: (ctx: Context) => T): T;
+export function useContext(ctx: Context, fn: (ctx: Context) => void): void;
 
 export function useContext<T>(
   ctx: Context,
@@ -65,7 +66,7 @@ export function createContext<T>(
   fn: (ctx: Context) => Promise<T> | T,
   scope?: string
 ): Promise<T> | T | void {
-  const context = new Context(currentContext);
+  const context = new Context(fn.name?.length > 0 ? fn.name : 'context', currentContext);
   if (scope) {
     context.scope = scope;
   }

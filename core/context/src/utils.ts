@@ -1,11 +1,3 @@
-export enum BindingScope {
-  TRANSIENT = 'Transient',
-  METADATA = 'Metadata',
-  SINGLETON = 'Singleton',
-  SERVER = 'Server',
-  APPLICATION = 'Application'
-}
-
 /**
  * Representing a value or promise. This type represent results of
  * synchronous/asynchronous resolution of values.

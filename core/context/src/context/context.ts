@@ -1,41 +1,41 @@
-import { BindingScope } from '../utils';
-import type { BindingAddress, Binding } from '../bindings';
 import { EventEmitter } from 'tsee';
+import type { Binding, BindingAddress } from '../bindings';
+import { BindingFilter, BindingScope } from '../bindings';
 
 type ContextEvents = {
   add: (bind: Binding) => void;
 };
 
 export class Context extends EventEmitter<ContextEvents> {
-  constructor(parent?: Context) {
-    super();
-    this._parent = parent;
-  }
-
   public scope: string = BindingScope.APPLICATION;
-  public name = 'context';
   protected readonly registry: Map<string, Binding> = new Map();
-  _parent?: Context;
+
+  constructor(public name: string = 'context', public parent?: Context) {
+    super();
+  }
 
   add(bind: Binding): void {
-    this.emit('add', bind);
     this.registry.set(bind.key.toString(), bind);
+    this.emit('add', bind);
   }
 
-  find<ValueType>(filter: (bind: Binding) => boolean): Binding<ValueType>[] | undefined {
+  find<Tags extends Record<string, unknown>>(
+    filter: BindingFilter<Tags>
+  ): Binding<unknown, Tags>[] {
     const bindings: Binding[] = [];
     for (const bind of this.registry.values()) {
       if (filter(bind)) {
         bindings.push(bind);
       }
     }
-    const parentBindings = this._parent?.find(filter) ?? [];
+    const parentBindings = this.parent?.find(filter) ?? [];
+
     return [
       ...bindings,
       ...parentBindings.filter(
         (p) => !bindings.some((c) => c.key.toString() === p.key.toString())
       )
-    ] as Binding<ValueType>[];
+    ] as Binding<unknown, Tags>[];
   }
 
   /**
@@ -53,8 +53,8 @@ export class Context extends EventEmitter<ContextEvents> {
    */
   isBound(key: BindingAddress): boolean {
     if (this.contains(key)) return true;
-    if (this._parent) {
-      return this._parent.isBound(key);
+    if (this.parent) {
+      return this.parent.isBound(key);
     }
     return false;
   }
@@ -64,8 +64,8 @@ export class Context extends EventEmitter<ContextEvents> {
    */
   getScopedContext(scope: string): Context | undefined {
     if (this.scope === scope) return this;
-    if (this._parent) {
-      return this._parent.getScopedContext(scope);
+    if (this.parent) {
+      return this.parent.getScopedContext(scope);
     }
     return undefined;
   }
@@ -78,7 +78,7 @@ export class Context extends EventEmitter<ContextEvents> {
     let current: Context | undefined = ctx;
     while (current !== undefined) {
       if (current === this) return true;
-      current = current._parent;
+      current = current.parent;
     }
     return false;
   }
@@ -123,8 +123,8 @@ export class Context extends EventEmitter<ContextEvents> {
       return this;
     }
 
-    if (this._parent) {
-      return this._parent.getOwnerContext(key);
+    if (this.parent) {
+      return this.parent.getOwnerContext(key);
     }
     return undefined;
   }
@@ -132,8 +132,8 @@ export class Context extends EventEmitter<ContextEvents> {
   get<ValueType>(key: BindingAddress<ValueType>): Binding<ValueType> | undefined {
     const binding = this.registry.get(key.toString());
 
-    if (!binding && this._parent) {
-      return this._parent.get(key.toString());
+    if (!binding && this.parent) {
+      return this.parent.get(key.toString());
     }
     return binding as Binding<ValueType>;
   }

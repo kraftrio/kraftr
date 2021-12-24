@@ -1,4 +1,5 @@
 export * from './binding';
 export * from './binding-filter';
-export * from './binding-utils';
-export * from './composition';
+export * from './key-creation';
+export * from './injections';
+export * from './types';

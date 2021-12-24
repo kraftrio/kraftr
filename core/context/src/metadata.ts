@@ -1,7 +1,5 @@
 import deepmerge from 'deepmerge';
-import { BindingAddress, provide } from './bindings';
-import { BindingScope } from './utils';
-
+import { BindingAddress, BindingScope, provide } from './bindings';
 export class Metadata<T extends object = Record<string, unknown>> {
   data: T = {} as T;
   extend(obj: Partial<T>) {
@@ -9,8 +7,10 @@ export class Metadata<T extends object = Record<string, unknown>> {
   }
 }
 
-export function useMetadata<T extends Record<string, unknown>>(key: BindingAddress<T>) {
-  return provide<Metadata<T>>(key)
+export function useMetadata<T extends Record<string, unknown>>(
+  key: BindingAddress<Metadata<T>>
+) {
+  return provide(key, { policy: 'IF_NOT_EXIST' })
     .class()
     .in(BindingScope.METADATA)
     .with(Metadata)
