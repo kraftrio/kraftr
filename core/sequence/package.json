@@ -15,8 +15,8 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "build": "craft build --silent ./src/index.ts",
-    "build:watch": "craft build --silent ./src/index.ts",
+    "build": "craft build --silent",
+    "build:watch": "craft build --silent --stub",
     "test": "vitest",
     "test:types": "tsc --noEmit"
   },
@@ -42,12 +42,13 @@
   },
   "devDependencies": {
     "@kraftr/build": "workspace:^0.5.0",
-    "vitest": "latest",
     "@kraftr/eslint-plugin": "workspace:^0.2.3",
     "@types/debug": "^4.1.7",
     "@types/node": "^16.11.7",
     "@types/toposort": "^2.0.3",
     "tslib": "^2.3.1",
+    "vitest": "latest",
+    "vite": "^2.6.14",
     "eslint": "^8.2.0"
   }
 }
