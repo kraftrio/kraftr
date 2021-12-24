@@ -1,0 +1,18 @@
+{
+  "jest.jestCommandLine": "npm test --",
+  "prettier.configPath": "../../.prettierrc.js",
+  "editor.tabSize": 2,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/node_modules": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    ".vscode": true,
+    "**/dist": true
+  },
+  "editor.formatOnSave": true,
+  "cSpell.words": ["trouter"]
+}

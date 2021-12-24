@@ -1,3 +1,4 @@
 export enum RestScope {
-  REQUEST = 'REQUEST'
+  REQUEST = 'REQUEST',
+  SERVER = 'SERVER'
 }

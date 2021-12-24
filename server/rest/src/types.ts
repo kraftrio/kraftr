@@ -1,3 +1,5 @@
+import { MIMEType } from './utils/mimetype';
+
 type RE_SYMBOLS = '(' | ' ';
 type SPLIT_SYMBOLS = '.' | '-' | '/';
 
@@ -16,3 +18,8 @@ export type RouteParams<T extends string> = string extends T
   : T extends `${infer _}:${infer Param}`
   ? { [k in CleanParam<Param>]: string }
   : Record<never, never>;
+
+export type HttpHeaders = {
+  contentType: MIMEType;
+  accept: MIMEType[];
+};
