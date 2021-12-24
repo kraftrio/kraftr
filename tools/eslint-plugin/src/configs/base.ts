@@ -1,9 +1,6 @@
 import { Linter } from 'eslint';
 
 const rules: Linter.RulesRecord = {
-  // sonar https://github.com/SonarSource/eslint-plugin-sonarjs
-  'sonarjs/cognitive-complexity': 'off',
-
   // typescript-eslint
   '@typescript-eslint/no-floating-promises': 'error',
 
@@ -120,29 +117,12 @@ const rules: Linter.RulesRecord = {
 
   'dot-notation': 'off',
   'no-console': process.env['NODE_ENV'] !== 'production' ? 'error' : 'warn',
-  'no-debugger': process.env['NODE_ENV'] !== 'production' ? 'error' : 'warn',
-
-  'unused-imports/no-unused-imports': 'warn',
-  'unused-imports/no-unused-vars': [
-    'warn',
-    {
-      vars: 'all',
-      varsIgnorePattern: '^_',
-      args: 'after-used',
-      argsIgnorePattern: '^_'
-    }
-  ]
+  'no-debugger': process.env['NODE_ENV'] !== 'production' ? 'error' : 'warn'
 };
 
 export const base: Linter.Config = {
-  extends: ['plugin:sonarjs/recommended', 'prettier'],
-  plugins: [
-    '@typescript-eslint',
-    'sonarjs',
-    'unicorn',
-    'unused-imports',
-    'write-good-comments'
-  ],
+  extends: ['prettier'],
+  plugins: ['@typescript-eslint', 'unicorn'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020

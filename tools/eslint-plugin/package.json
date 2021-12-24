@@ -32,11 +32,9 @@
   },
   "author": "Michel Betancourt",
   "scripts": {
-    "build": "craft build ./src/index.ts ./src/eslint.ts",
+    "build": "craft build --silent ./src/index.ts ./src/eslint.ts",
     "build:watch": "craft build ./src/index.ts ./src/eslint.ts",
     "lint": "eslint **/*.ts --ext ts",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
     "test:types": "tsc --noEmit"
   },
   "publishConfig": {
@@ -51,8 +49,9 @@
     "@typescript-eslint/types": "^5.1.0",
     "@typescript-eslint/typescript-estree": "^5.1.0",
     "deepmerge": "^4.2.2",
-    "eslint-plugin-write-good-comments": "^0.1.3",
     "json-schema": "^0.4.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-unicorn": "^38.0.1",
     "tsutils": "^3.21.0",
     "eslint": "^8.2.0",
     "typescript": "^4.5.2"
@@ -60,20 +59,9 @@
   "license": "^MIT",
   "devDependencies": {
     "@kraftr/build": "workspace:^0.5.0",
-    "@jest/types": "^27.2.5",
     "@types/eslint": "^7.28.2",
     "@types/estree": "^0.0.50",
     "@types/node": "^16.11.7",
-    "esbuild": "^0.13.10",
-    "typescript": "^4.5.2",
-    "esbuild-jest": "^0.5.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-sonarjs": "^0.10.0",
-    "eslint-plugin-unicorn": "^38.0.1",
-    "eslint-plugin-unused-imports": "^2.0.0",
-    "ts-node": "^10.4.0",
-    "jest": "^27.3.1",
-    "tslib": "^2.3.1",
-    "tsup": "^5.6.0"
+    "tslib": "^2.3.1"
   }
 }

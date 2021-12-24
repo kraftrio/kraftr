@@ -12,14 +12,6 @@
       "shellCommand": "pretty-quick --staged"
     },
     {
-      "name": "jest",
-      "commandKind": "global",
-      "summary": "Used to run jest.",
-      "safeForSimultaneousRushProcesses": true,
-      "autoinstallerName": "rush-jest",
-      "shellCommand": "jest"
-    },
-    {
       "name": "build:watch",
       "commandKind": "bulk",
       "summary": "",

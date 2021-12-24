@@ -1,5 +1,5 @@
 // This is a workaround for https://github.com/eslint/eslint/issues/3458
-const { useESlint, lib } = require('./dist/eslint');
+const { useESlint, lib } = require('./dist/eslint.cjs');
 
 module.exports = useESlint({
   ...lib,
@@ -10,5 +10,5 @@ module.exports = useESlint({
   parserOptions: {
     project: './tsconfig.json'
   },
-  ignorePatterns: ['.eslintrc.js']
+  ignorePatterns: ['*.cjs', '*.js']
 });
