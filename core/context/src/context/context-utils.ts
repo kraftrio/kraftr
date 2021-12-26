@@ -1,35 +1,33 @@
-import { ContextNotFound, ScopeNotFound } from '../errors';
+import { createLogger } from '@kraftr/common';
 import type { Return } from '@kraftr/errors';
-import { isPromiseLike } from '../utils';
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { ContextNotFound, ScopeNotFound } from '../errors';
 import { Context } from './context';
+const logger = createLogger('kraftr:context:manager');
 
-let currentContext: Context | undefined;
+const storage = new AsyncLocalStorage<Context>();
 
 /**
  * Get the actual context can throw an exception since try running injection without context is undesirable
  * @returns Actual context
  */
 export function getContext(): Return<Context, ContextNotFound> {
+  const currentContext = storage.getStore();
   if (!currentContext) {
     throw new ContextNotFound();
   }
   return currentContext;
 }
-
-export function setContext(ctx: Context): void {
-  currentContext = ctx;
-}
-
 export function openContext(scope?: string) {
-  currentContext = new Context();
+  storage.enterWith(new Context());
   if (scope) {
-    currentContext.scope = scope;
+    getContext()!.scope = scope;
   }
-  return currentContext;
+  return getContext();
 }
 
 export function closeContext(): void {
-  currentContext = undefined;
+  storage.disable();
 }
 
 export function useContext<T>(ctx: Context, fn: (ctx: Context) => Promise<T>): Promise<T>;
@@ -40,19 +38,13 @@ export function useContext<T>(
   ctx: Context,
   fn: (ctx: Context) => Promise<T> | T
 ): T | Promise<T> {
-  const oldCtx = currentContext;
-  currentContext = ctx;
-  const result = fn(ctx);
-
-  if (isPromiseLike(result)) {
-    return result.then((value) => {
-      currentContext = oldCtx;
-      return value;
-    });
-  }
-
-  currentContext = oldCtx;
-  return result;
+  const currentContext = storage.getStore();
+  logger.debug(
+    `Switching ctx ${currentContext?.name ?? 'None'}(scope: ${
+      currentContext?.scope ?? 'None'
+    }) -> ${ctx?.name ?? 'None'}(scope: ${ctx?.scope ?? 'None'})`
+  );
+  return storage.run(ctx, () => fn(ctx));
 }
 
 export function createContext<T>(
@@ -66,7 +58,7 @@ export function createContext<T>(
   fn: (ctx: Context) => Promise<T> | T,
   scope?: string
 ): Promise<T> | T | void {
-  const context = new Context(fn.name?.length > 0 ? fn.name : 'context', currentContext);
+  const context = new Context(fn.name?.length > 0 ? fn.name : 'context', getContext());
   if (scope) {
     context.scope = scope;
   }
