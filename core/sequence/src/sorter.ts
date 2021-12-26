@@ -1,7 +1,6 @@
-import debugFactory from 'debug';
+import { createLogger } from '@kraftr/common';
 import toposort from 'toposort';
-
-const debug = debugFactory('kraftr:sequence');
+const logger = createLogger('kraftr:sequence:middleware-sort');
 
 /**
  * Sort the groups by their relative order
@@ -9,12 +8,10 @@ const debug = debugFactory('kraftr:sequence');
  * order of groups.
  */
 export function sortListOfGroups(...unorderedGroups: string[][]): string[] {
-  if (debug.enabled) {
-    debug(
-      'Dependency graph: %s',
-      unorderedGroups.map((edge) => edge.join('->')).join(', ')
-    );
-  }
+  logger.debug(
+    'Dependency graph: %s',
+    unorderedGroups.map((edge) => edge.join('->')).join(', ')
+  );
 
   const graph: [string, string][] = [];
 
@@ -35,6 +32,6 @@ export function sortListOfGroups(...unorderedGroups: string[][]): string[] {
     sorted.push(...unorderedGroups.flat());
   }
 
-  debug('After sort: %s', sorted.join('->'));
+  logger.debug('After sort: %s', sorted.join('->'));
   return sorted;
 }

@@ -1,5 +1,8 @@
 import { Binding, BindingAddress, filterByTag, inject } from '@kraftr/context';
 import { sortListOfGroups } from './sorter';
+import { createLogger } from '@kraftr/common';
+
+const logger = createLogger('kraftr:sequence:runner');
 
 export type SequenceTags = {
   chain: string;
@@ -70,6 +73,7 @@ export class Sequence<Data> {
   }
 
   execute(initialData: Data): Promise<Data> {
+    logger.debug(`Running chain ${this.chain}`);
     const context = inject.context();
 
     const filter = filterByTag({
@@ -80,7 +84,7 @@ export class Sequence<Data> {
       ExecutableMiddleware,
       SequenceTags
     >[];
-
+    logger.debug(`${this.chain}: Found ${binds.length} binds`);
     if (binds.length === 0) return Promise.resolve(initialData);
 
     // Calculate orders from middleware dependencies

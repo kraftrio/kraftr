@@ -1,5 +1,5 @@
 import { closeContext, Context, inject, openContext } from '@kraftr/context';
-import { Sequence, toSequenceFn } from 'src';
+import { Sequence, toSequenceFn } from '../';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('toSequenceFn()', () => {

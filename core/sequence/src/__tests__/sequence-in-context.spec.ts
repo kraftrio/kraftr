@@ -1,5 +1,5 @@
 import { closeContext, inject, openContext, provide } from '@kraftr/context';
-import { Middleware, Sequence } from 'src';
+import { Middleware, Sequence } from '../';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 describe('integration sequence with context', () => {
