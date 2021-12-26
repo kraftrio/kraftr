@@ -1,0 +1,27 @@
+{
+  "name": "hello-world-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:watch": "echo ignoring",
+    "build": "echo ignoring",
+    "dev": "craft dev"
+  },
+  "main": "src/index.ts",
+  "dependencies": {
+    "@kraftr/http-framework": "workspace:^0.1.0",
+    "listhen": "^0.2.5",
+    "helmet": "^4.6.0",
+    "pino-http": "^6.5.0",
+    "response-time": "^2.3.2",
+    "ts-node": "10.4.0"
+  },
+  "devDependencies": {
+    "@kraftr/build": "workspace:^0.5.0",
+    "tslib": "^2.3.1",
+    "@kraftr/eslint-plugin": "workspace:^0.2.3",
+    "@types/node": "^16.11.7",
+    "eslint": "^8.2.0"
+  }
+}
