@@ -48,14 +48,6 @@ export function build(cmd: Command) {
 
     spinner.start(chalk`{green Building for production...}\n`);
 
-    const buildOptions = {
-      lib: {
-        entry: '',
-        name: 'craft'
-      },
-      watch: watch?.value === true ? true : null
-    };
-
     let buildConfig: InlineConfig = {
       root: root.value,
       mode: mode.value,
@@ -65,6 +57,9 @@ export function build(cmd: Command) {
       build: {
         lib: { entry: '' },
         watch: watch?.value === true ? {} : null
+      },
+      optimizeDeps: {
+        exclude: ['rollup-plugin-license']
       }
     };
 

@@ -36,13 +36,18 @@ export function stub(): Plugin {
             `export * from '${relativePath}'\n` +
             `export { default } from '${relativePath}'\n`;
         } else if (outputOptions.format === 'es') {
+          const _exports = chunk.exports.filter((v) => !v.startsWith('*')).join(', ');
+          const allExports = chunk.exports.filter((v) => v.startsWith('*'));
           code =
-            `import jiti from 'jiti';\n` +
+            `import { jiti } from '@kraftr/build';\n` +
             `const _module = jiti(null, { interopDefault: true })('${chunk.facadeModuleId}')\n` +
             `export default _module\n` +
-            `export const { ${chunk.exports.join(', ')} } = _module\n`;
+            `export const { ${_exports} } = _module\n`;
+          for (const _export of allExports) {
+            code += `export * from '${_export.slice(1)}';\n`;
+          }
         } else {
-          code = `module.exports = require('jiti')(__filename, { interopDefault: true })('${chunk.facadeModuleId}');\n`;
+          code = `module.exports = require('@kraftr/build').jiti(__filename, { interopDefault: true })('${chunk.facadeModuleId}');\n`;
         }
 
         bundle[filename] = {

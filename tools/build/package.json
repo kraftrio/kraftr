@@ -52,7 +52,8 @@
   "sideEffects": false,
   "scripts": {
     "build": "node ./bin/craft.mjs build --silent",
-    "build:watch": "node ./bin/craft.mjs build --silent --stub",
+    "build:watch": "node ./bin/craft.mjs build --silent",
+    "stub": "node ./bin/craft.mjs build --silent",
     "lint": "eslint **/*.ts --ext ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
@@ -60,7 +61,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "debug": "^4.3.2",
     "soly": "^1.1.0",
     "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-license": "^2.6.0",
@@ -72,10 +72,8 @@
     "chalk": "^4.1.2",
     "ora": "^6.0.1",
     "local-pkg": "^0.4.0",
-    "vite": "^2.6.14",
+    "vite": "^2.7.0",
     "cac": "^6.7.11",
-    "pino": "^7.5.1",
-    "pino-pretty": "^7.3.0",
     "jiti": "^1.12.9",
     "execa": "^5.1.1",
     "fast-glob": "^3.2.7",
@@ -87,7 +85,6 @@
     "@types/rollup-plugin-auto-external": "^2.0.2",
     "@kraftr/eslint-plugin": "^0.2.3",
     "@types/node": "^16.11.7",
-    "@jest/types": "^27.2.5",
     "tslib": "^2.3.1",
     "eslint": "^8.2.0"
   }
