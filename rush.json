@@ -10,6 +10,11 @@
   },
   "projects": [
     {
+      "packageName": "@kraftr/common",
+      "projectFolder": "core/common",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@kraftr/context",
       "projectFolder": "core/context",
       "shouldPublish": true
@@ -42,8 +47,8 @@
       "shouldPublish": true
     },
     {
-      "packageName": "@kraftr/rest",
-      "projectFolder": "server/rest",
+      "packageName": "@kraftr/http-framework",
+      "projectFolder": "frameworks/http",
       "shouldPublish": true
     },
     // {

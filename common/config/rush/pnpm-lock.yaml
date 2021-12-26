@@ -36,10 +36,8 @@ importers:
       '@kraftr/common': workspace:^0.1.0
       '@kraftr/errors': workspace:^0.1.4
       '@kraftr/eslint-plugin': workspace:^0.2.3
-      '@types/debug': ^4.1.7
       '@types/node': ^16.11.7
       c8: ^7.10.0
-      debug: ^4.3.2
       deepmerge: ^4.2.2
       eslint: ^8.2.0
       hyperid: ^2.3.1
@@ -50,14 +48,12 @@ importers:
     dependencies:
       '@kraftr/common': link:../common
       '@kraftr/errors': link:../errors
-      debug: 4.3.3
       deepmerge: 4.2.2
       hyperid: 2.3.1
       tsee: 1.3.2
     devDependencies:
       '@kraftr/build': link:../../tools/build
       '@kraftr/eslint-plugin': link:../../tools/eslint-plugin
-      '@types/debug': 4.1.7
       '@types/node': 16.11.17
       c8: 7.10.0
       eslint: 8.5.0
