@@ -1,3 +1,0 @@
-{
-  "extends": "@kraftr/build/config/tsconfig.common.json"
-}
