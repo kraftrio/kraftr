@@ -1,0 +1,48 @@
+{
+  "name": "@kraftr/common",
+  "version": "0.1.0",
+  "type": "module",
+  "homepage": "https://github.com/kraftrio/kraftr",
+  "repository": {
+    "directory": "core/core",
+    "type": "git",
+    "url": "https://github.com/kraftrio/kraftr"
+  },
+  "bugs": {
+    "url": "https://github.com/kraftrio/kraftr/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "build": "craft build --silent",
+    "build:watch": "craft build --silent --stub",
+    "test": "vitest",
+    "test:types": "tsc --noEmit"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "dependencies": {
+    "pino": "^7.6.1",
+    "picomatch": "^2.3.0"
+  },
+  "devDependencies": {
+    "@kraftr/build": "workspace:^0.5.0",
+    "@kraftr/eslint-plugin": "workspace:^0.2.3",
+    "@types/node": "^16.11.7",
+    "@types/picomatch": "^2.3.0",
+    "tslib": "^2.3.1",
+    "vitest": "latest",
+    "vite": "^2.7.0",
+    "eslint": "^8.2.0"
+  }
+}
