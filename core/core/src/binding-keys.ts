@@ -6,7 +6,7 @@ export namespace CoreBindings {
   export const APP_INPUT = BindingKey.create<unknown[]>(
     'kraftr.core.binding-keys.app-input'
   );
-  export const APP_SEQUENCE = BindingKey.create<Sequence<unknown>>(
+  export const APP_SEQUENCE = BindingKey.create<Sequence<void>>(
     'kraftr.core.binding-keys.app-sequence'
   );
   export const EVENT_PROCESSOR = BindingKey.create<Sequence<void>>(
