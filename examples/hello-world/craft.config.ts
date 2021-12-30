@@ -1,17 +1,10 @@
+import { defineConfig } from '@kraftr/build';
 import { dev } from '@kraftr/http-framework';
-import { defineConfig } from 'vite';
 
 export default defineConfig({
+  entries: ['./src/app'],
   server: {
     port: 3000
-  },
-  build: {
-    lib: {
-      entry: './src/app.ts'
-    },
-    rollupOptions: {
-      input: './src/app.ts'
-    }
   },
   plugins: [dev({ app: './src/app' })],
   optimizeDeps: {

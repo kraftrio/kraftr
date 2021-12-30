@@ -15,9 +15,11 @@
     "helmet": "^4.6.0",
     "pino-http": "^6.5.0",
     "response-time": "^2.3.2",
-    "ts-node": "10.4.0"
+    "ts-node": "10.4.0",
+    "@prisma/client": "~3.7.0"
   },
   "devDependencies": {
+    "prisma": "latest",
     "@kraftr/build": "workspace:^0.5.0",
     "tslib": "^2.3.1",
     "@kraftr/eslint-plugin": "workspace:^0.2.3",

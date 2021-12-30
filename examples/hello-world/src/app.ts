@@ -1,22 +1,30 @@
 import {
-  createServer,
-  RestComponent,
-  useStatic,
   createApp,
+  createListener,
+  HttpComponent,
   useComponent,
-  load,
-  useConnect
+  useConnect,
+  useStatic,
+  provide
 } from '@kraftr/http-framework';
+import { PrismaClient } from '@prisma/client';
 import helmet from 'helmet';
 import logger from 'pino-http';
-import responseTime from 'response-time';
-export const app = createApp(async () => {
-  useComponent(RestComponent);
-  await load('./src/controllers');
-  useStatic('./static');
+
+export const app = await createApp(async () => {
+  useComponent(HttpComponent);
+
+  // load components from folder
+  await useComponent('./src/controllers');
+
+  // express middleware
   useConnect('helmet', helmet());
-  useConnect('response-time', responseTime());
   useConnect('logger', logger());
+
+  provide<PrismaClient>('prisma').with(PrismaClient).class();
+
+  // serve static assets
+  useStatic('./static');
 });
 
-export default createServer(await app);
+export default createListener(app);

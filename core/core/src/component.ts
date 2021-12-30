@@ -2,6 +2,7 @@ import { Return } from '@kraftr/errors';
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { createLogger } from '@kraftr/common';
+import { isPromise } from 'node:util/types';
 
 const logger = createLogger('kraftr:core:components');
 
@@ -32,18 +33,40 @@ export function component(obj: unknown, fn?: () => void | Promise<void>) {
 }
 
 export function useComponent(component: AsyncComponent): Promise<void>;
+export function useComponent(path: string): Promise<void>;
+export function useComponent(paths: string[]): Promise<void>;
 export function useComponent(component: Component): void;
-export function useComponent(component: Component | AsyncComponent) {
-  const result = component[INSTALL];
+export function useComponent(components: Component[]): void;
+export function useComponent(
+  components: (AsyncComponent | Component | string)[]
+): Promise<void>;
 
-  return result();
+export function useComponent(
+  componentOrPath:
+    | Component
+    | AsyncComponent
+    | string
+    | (AsyncComponent | Component | string)[]
+    | string[]
+): Promise<void> | void {
+  const components = Array.isArray(componentOrPath) ? componentOrPath : [componentOrPath];
+  const promises: (Promise<void> | void)[] = [];
+
+  for (const compOrPath of components) {
+    if (typeof compOrPath === 'string') {
+      promises.push(load(compOrPath));
+    } else {
+      promises.push(compOrPath[INSTALL]());
+    }
+  }
+  if (promises.some(isPromise)) return Promise.all(promises) as unknown as Promise<void>;
 }
 
 export function isComponent(obj: unknown): obj is Component | AsyncComponent {
   return obj instanceof Object && INSTALL in obj;
 }
 
-export async function load(folder: string) {
+async function load(folder: string) {
   const fullPath = path.resolve(folder);
   logger.debug(`loading components from ${fullPath}`);
   const files = await readdir(fullPath);

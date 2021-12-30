@@ -28,7 +28,7 @@ importers:
       eslint: 8.5.0
       tslib: 2.3.1
       vite: 2.7.6
-      vitest: 0.0.115_vite@2.7.6
+      vitest: 0.0.116_vite@2.7.6
 
   ../../core/context:
     specifiers:
@@ -59,7 +59,7 @@ importers:
       eslint: 8.5.0
       tslib: 2.3.1
       vite: 2.7.6
-      vitest: 0.0.115_c8@7.10.0+vite@2.7.6
+      vitest: 0.0.116_c8@7.10.0+vite@2.7.6
 
   ../../core/core:
     specifiers:
@@ -88,7 +88,7 @@ importers:
       eslint: 8.5.0
       tslib: 2.3.1
       vite: 2.7.6
-      vitest: 0.0.115_vite@2.7.6
+      vitest: 0.0.116_vite@2.7.6
 
   ../../core/errors:
     specifiers:
@@ -104,7 +104,7 @@ importers:
       '@types/node': 16.11.17
       eslint: 8.5.0
       tslib: 2.3.1
-      vitest: 0.0.115
+      vitest: 0.0.116
 
   ../../core/sequence:
     specifiers:
@@ -131,40 +131,43 @@ importers:
       eslint: 8.5.0
       tslib: 2.3.1
       vite: 2.7.6
-      vitest: 0.0.115_vite@2.7.6
+      vitest: 0.0.116_vite@2.7.6
 
   ../../examples/hello-world:
     specifiers:
       '@kraftr/build': workspace:^0.5.0
       '@kraftr/eslint-plugin': workspace:^0.2.3
       '@kraftr/http-framework': workspace:^0.1.0
+      '@prisma/client': ~3.7.0
       '@types/node': ^16.11.7
       eslint: ^8.2.0
       helmet: ^4.6.0
       listhen: ^0.2.5
       pino-http: ^6.5.0
+      prisma: latest
       response-time: ^2.3.2
       ts-node: 10.4.0
       tslib: ^2.3.1
-      vite: ^2.7.0
     dependencies:
       '@kraftr/http-framework': link:../../frameworks/http
+      '@prisma/client': 3.7.0_prisma@3.7.0
       helmet: 4.6.0
       listhen: 0.2.5
       pino-http: 6.5.0
       response-time: 2.3.2
       ts-node: 10.4.0_@types+node@16.11.17
-      vite: 2.7.6
     devDependencies:
       '@kraftr/build': link:../../tools/build
       '@kraftr/eslint-plugin': link:../../tools/eslint-plugin
       '@types/node': 16.11.17
       eslint: 8.5.0
+      prisma: 3.7.0
       tslib: 2.3.1
 
   ../../frameworks/http:
     specifiers:
       '@kraftr/build': workspace:^0.5.0
+      '@kraftr/common': workspace:^0.1.0
       '@kraftr/core': workspace:^0.1.0
       '@kraftr/eslint-plugin': workspace:^0.2.3
       '@types/connect': ^3.4.35
@@ -189,6 +192,7 @@ importers:
       vitest: latest
       wayfarer: ^7.0.1
     dependencies:
+      '@kraftr/common': link:../../core/common
       '@kraftr/core': link:../../core/core
       '@types/connect': 3.4.35
       debug: 4.3.3
@@ -212,7 +216,7 @@ importers:
       supertest-fetch: 1.5.0
       trouter: 3.2.0
       tslib: 2.3.1
-      vitest: 0.0.115
+      vitest: 0.0.116
       wayfarer: 7.0.1
 
   ../../tools/build:
@@ -690,6 +694,29 @@ packages:
   /@polka/url/1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: false
+
+  /@prisma/client/3.7.0_prisma@3.7.0:
+    resolution: {integrity: sha512-fUJMvBOX5C7JPc0e3CJD6Gbelbu4dMJB4ScYpiht8HMUnRShw20ULOipTopjNtl6ekHQJ4muI7pXlQxWS9nMbw==}
+    engines: {node: '>=12.6'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f
+      prisma: 3.7.0
+    dev: false
+
+  /@prisma/engines-version/3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f:
+    resolution: {integrity: sha512-+qx2b+HK7BKF4VCa0LZ/t1QCXsu6SmvhUQyJkOD2aPpmOzket4fEnSKQZSB0i5tl7rwCDsvAiSeK8o7rf+yvwg==}
+    dev: false
+
+  /@prisma/engines/3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f:
+    resolution: {integrity: sha512-W549ub5NlgexNhR8EFstA/UwAWq3Zq0w9aNkraqsozVCt2CsX+lK4TK7IW5OZVSnxHwRjrgEAt3r9yPy8nZQRg==}
+    requiresBuild: true
+    dev: true
 
   /@rushstack/eslint-patch/1.1.0:
     resolution: {integrity: sha512-JLo+Y592QzIE+q7Dl2pMUtt4q8SKYI5jDrZxrozEQxnGVOyYE+GWK9eLkwTaeN9DDctlaRAQ3TBmzZ1qdLE30A==}
@@ -2912,6 +2939,15 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
+  /prisma/3.7.0:
+    resolution: {integrity: sha512-pzgc95msPLcCHqOli7Hnabu/GRfSGSUWl5s2P6N13T/rgMB+NNeKbxCmzQiZT2yLOeLEPivV6YrW1oeQIwJxcg==}
+    engines: {node: '>=12.6'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@prisma/engines': 3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f
+    dev: true
+
   /progress/2.0.3:
     resolution: {integrity: sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==}
     engines: {node: '>=0.4.0'}
@@ -3690,8 +3726,8 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
 
-  /vitest/0.0.115:
-    resolution: {integrity: sha512-50tln+U3bGq7P/bjD67bidTQraHJfy3FAFHgFqnCyK/7/XbbdapfqiFSU+cDI6Di76HUedWdLd36xywNsXaAwg==}
+  /vitest/0.0.116:
+    resolution: {integrity: sha512-BV8lI1vgxznggf79pGnGdEH2Nm5r9b/kMMGDfoPtCa3qj/ncbcmePXmFNnQ8AgKYAUP9+a8dqKi9w+KioF98pw==}
     engines: {node: '>=14.14.0'}
     hasBin: true
     peerDependencies:
@@ -3715,8 +3751,8 @@ packages:
       tinyspy: 0.2.6
     dev: true
 
-  /vitest/0.0.115_c8@7.10.0+vite@2.7.6:
-    resolution: {integrity: sha512-50tln+U3bGq7P/bjD67bidTQraHJfy3FAFHgFqnCyK/7/XbbdapfqiFSU+cDI6Di76HUedWdLd36xywNsXaAwg==}
+  /vitest/0.0.116_c8@7.10.0+vite@2.7.6:
+    resolution: {integrity: sha512-BV8lI1vgxznggf79pGnGdEH2Nm5r9b/kMMGDfoPtCa3qj/ncbcmePXmFNnQ8AgKYAUP9+a8dqKi9w+KioF98pw==}
     engines: {node: '>=14.14.0'}
     hasBin: true
     peerDependencies:
@@ -3742,8 +3778,8 @@ packages:
       vite: 2.7.6
     dev: true
 
-  /vitest/0.0.115_vite@2.7.6:
-    resolution: {integrity: sha512-50tln+U3bGq7P/bjD67bidTQraHJfy3FAFHgFqnCyK/7/XbbdapfqiFSU+cDI6Di76HUedWdLd36xywNsXaAwg==}
+  /vitest/0.0.116_vite@2.7.6:
+    resolution: {integrity: sha512-BV8lI1vgxznggf79pGnGdEH2Nm5r9b/kMMGDfoPtCa3qj/ncbcmePXmFNnQ8AgKYAUP9+a8dqKi9w+KioF98pw==}
     engines: {node: '>=14.14.0'}
     hasBin: true
     peerDependencies:
