@@ -1,15 +1,14 @@
-import pino from 'pino';
 import match from 'picomatch';
-import { performance } from 'node:perf_hooks';
+import pino, { LoggerOptions } from 'pino';
 
-let initial = performance.now();
-
-export function createLogger(namespace: string) {
+export function createLogger(namespace: string, options?: LoggerOptions) {
   const debug = process.env['DEBUG'];
+  const debugEnabled = !!debug && match.isMatch(namespace, debug);
 
   return pino({
-    enabled: !!debug && match.isMatch(namespace, debug),
-    level: 'debug',
+    enabled: true,
+    level: debugEnabled ? 'debug' : process.env['DEBUG_LEVEL'] ?? 'warn',
+    ...options,
     name: namespace
   });
 }
