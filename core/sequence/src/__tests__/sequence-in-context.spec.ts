@@ -19,7 +19,7 @@ describe('integration sequence with context', () => {
 
     provide<Middleware<string>>('key')
       .with((_, next) => next('return')) // noop
-      .tag('chain', 'test-sequence')
+      .tag('extensionFor', 'test-sequence')
       .tag('group', 'group');
 
     const result = await sequence.execute('');
@@ -37,7 +37,7 @@ describe('integration sequence with context', () => {
 
     provide<Middleware<string>>('fnc')
       .tag('group', 'c')
-      .tag('chain', 'test-chain')
+      .tag('extensionFor', 'test-chain')
       .with(async (s: string, next) => {
         s = await next(s + 'c');
         return s;
@@ -45,7 +45,7 @@ describe('integration sequence with context', () => {
 
     provide<Middleware<string>>('fnb')
       .tag('group', 'b')
-      .tag('chain', 'test-chain')
+      .tag('extensionFor', 'test-chain')
       .with(async (s: string, next) => {
         s = await next(s + 'b');
         return s;
@@ -53,7 +53,7 @@ describe('integration sequence with context', () => {
 
     provide<Middleware<string>>('fna')
       .tag('group', 'a')
-      .tag('chain', 'test-chain')
+      .tag('extensionFor', 'test-chain')
       .with(async (s: string, next) => {
         s = await next(s + 'a');
         return s;
@@ -81,23 +81,23 @@ describe('integration sequence with context', () => {
 
     provide<Middleware<string>>('fn-upper')
       .tag('group', 'upper')
-      .tag('chain', 'upper-chain')
+      .tag('extensionFor', 'upper-chain')
       .with((s: string, next) => next(s.toUpperCase()));
 
     provide<Middleware<string>>('fn-inverse')
       .tag('group', 'inverse')
-      .tag('chain', 'upper-chain')
+      .tag('extensionFor', 'upper-chain')
       .tag('upstream', ['upper'])
       .with((s: string, next) => next([...s].reverse().join('')));
 
     provide<Sequence<string>>('seq-upper')
       .tag('group', 'post-processor')
-      .tag('chain', 'main-chain')
+      .tag('extensionFor', 'main-chain')
       .with(upperSequence);
 
     provide<Middleware<string>>('fn-final')
       .tag('group', 'final-word')
-      .tag('chain', 'main-chain')
+      .tag('extensionFor', 'main-chain')
       .tag('downstream', ['post-processor'])
       .with((s: string, next) => next(s + 'final word'));
 
@@ -116,7 +116,7 @@ describe('integration sequence with context', () => {
 
     provide<Middleware<string>>('fnb')
       .tag('group', 'b')
-      .tag('chain', 'test-chain')
+      .tag('extensionFor', 'test-chain')
       .with(async (s: string, next) => {
         s = await next(s + 'abc');
         return s;

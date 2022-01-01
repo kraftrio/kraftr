@@ -12,5 +12,6 @@
     "**/Thumbs.db": true,
     "**/dist": false
   },
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "cSpell.words": ["toposort"]
 }

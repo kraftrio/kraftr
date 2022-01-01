@@ -6,6 +6,7 @@ describe('sortListOfGroups()', function () {
     const result = sortListOfGroups(['first', 'end'], ['start', 'end', 'last']);
     expect(result).toEqual(['first', 'start', 'end', 'last']);
   });
+
   it('add new groups after existing groups', () => {
     const result = sortListOfGroups(
       ['initial', 'session', 'auth'],
@@ -13,6 +14,7 @@ describe('sortListOfGroups()', function () {
     );
     expect(result).toEqual(['initial', 'session', 'added', 'auth']);
   });
+
   it('merges arrays preserving the order', () => {
     const target = ['initial', 'session', 'auth', 'routes', 'files', 'final'];
     const result = sortListOfGroups(target, [
