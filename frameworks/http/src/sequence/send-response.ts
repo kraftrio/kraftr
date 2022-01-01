@@ -1,47 +1,40 @@
-import { inject, Middleware } from '@kraftr/core';
-import { Duplex } from 'node:stream';
+import { inject, Middleware, shelter } from '@kraftr/core';
+import { pipeline } from 'node:stream/promises';
 import { RestBindings } from '../bindings';
-import { HttpResponse } from '../http-errors';
+import { HttpException, HttpStatus } from '../http-errors';
 
 export const sendResponse: Middleware<void> = async (_, next) => {
-  const res = inject(RestBindings.Http.RESPONSE);
+  const response = inject(RestBindings.Http.RESPONSE);
 
-  let returnValue: unknown;
+  const result = await shelter(() => next());
 
-  try {
-    await next();
-    returnValue = inject(RestBindings.Operation.RETURN_VALUE);
-  } catch (error) {
-    if (!(error instanceof HttpResponse)) {
-      const message = error instanceof Error ? error.stack : '';
-      console.log(error);
+  const responseStream = inject(RestBindings.Operation.RESPONSE_STREAM);
 
-      HttpResponse.InternalServerError().apply(res);
-      res.end();
-
-      return;
-    }
-
-    error.apply(res);
-    res.end();
-    return;
+  if (result.isOk) {
+    return pipeline(responseStream, response);
   }
 
-  if (returnValue === undefined) {
-    HttpResponse.NotFound().apply(res);
-    res.end();
-    return;
+  if (result.error instanceof HttpException) {
+    response.writeHead(result.error.statusCode, result.error.message);
+    return pipeline(result.error, response);
   }
 
-  if (returnValue === null) {
-    HttpResponse.Created().apply(res);
-    res.end();
-    return;
+  if (result.error instanceof Error) {
+    response.writeHead(HttpStatus.InternalServerError, result.error.message);
+    return pipeline(
+      [
+        {
+          message: result.error.message,
+          stack: result.error.stack,
+          statusCode: HttpStatus.InternalServerError
+        }
+      ],
+      response
+    );
   }
 
-  res.write(returnValue);
-  res.statusCode = 200;
-
-  res.end();
-  return;
+  return pipeline(
+    [{ statusCode: HttpStatus.InternalServerError, message: 'Unknown Error' }],
+    response
+  );
 };

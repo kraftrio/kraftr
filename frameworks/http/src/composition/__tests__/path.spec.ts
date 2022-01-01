@@ -60,19 +60,6 @@ it('create a metadata obj with 2 path params', () => {
   });
 });
 
-it('returns an object for every path param as a binding', () => {
-  const { id, name } = definePath('PATCH', '/subscription/:id/:name');
-
-  expect(id).toBeInstanceOf(Binding);
-  expect(name).toBeInstanceOf(Binding);
-});
-
-it('returns as binding only defined path params', () => {
-  const params = definePath('PATCH', '/subscription/:id/:name');
-
-  expect((params as any).test).toBeUndefined();
-});
-
 it('throw error if params is not string', () => {
   expect(() => definePath(23 as unknown as string)).toThrow(/params must be strings/);
 });

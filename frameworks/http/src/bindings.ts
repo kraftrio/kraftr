@@ -2,11 +2,10 @@
 import { BindingKey, Context, Metadata, Sequence } from '@kraftr/core';
 import { HTTPVersion, Instance } from 'find-my-way';
 import { IncomingMessage, RequestListener, Server, ServerResponse } from 'node:http';
-import { Readable } from 'node:stream';
+import { Duplex as DuplexStream } from 'node:stream';
 import { URL } from 'node:url';
 import { ControllerTags } from './template';
 import { HttpHeaders } from './types';
-export type ReturnValue = unknown;
 
 export namespace RestBindings {
   export namespace Server {
@@ -38,9 +37,6 @@ export namespace RestBindings {
     export const PARAMS = BindingKey.create<Record<string, string | undefined>>(
       'server.rest.operation.params'
     );
-    export const BODY = BindingKey.create<Readable>(
-      'server.rest.operation.body' // key
-    );
     export const CONTEXT = BindingKey.create<Context>(
       'server.rest.bindings.http.context'
     );
@@ -48,9 +44,9 @@ export namespace RestBindings {
   export namespace Sequences {}
 
   export namespace Operation {
-    export const RETURN_VALUE = BindingKey.create<ReturnValue>(
-      'server.rest.operation.returnValue'
-    );
+    export const RESPONSE_STREAM = BindingKey.create<
+      DuplexStream | AsyncIterable<unknown> | Iterable<unknown>
+    >('server.rest.operation.returnValue');
     export const HANDLER = BindingKey.create<() => unknown>(
       'server.rest.operation.handler'
     );

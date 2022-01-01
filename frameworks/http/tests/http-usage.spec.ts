@@ -2,13 +2,13 @@ import { createApp, useComponent } from '@kraftr/core';
 import { makeFetch } from 'supertest-fetch';
 import { expect, it } from 'vitest';
 import { controller, createServer, defineBody, definePath, useController } from '../src';
-import { RestComponent } from '../src/component';
+import { HttpComponent } from '../src/component';
 
 type User = { name: string };
 
 it('returns 404 when route is not found', async () => {
   const app = createApp(() => {
-    useComponent(RestComponent);
+    useComponent(HttpComponent);
   });
   const server = createServer(app);
   const fetch = makeFetch(server);
@@ -24,7 +24,7 @@ it('call with GET to an existing endpoint and returns 200', async () => {
 
   const app = createApp(() => {
     useController(getUsers);
-    useComponent(RestComponent);
+    useComponent(HttpComponent);
   });
 
   const server = createServer(app);
@@ -40,7 +40,7 @@ it('call with GET to an existing endpoint and returns 200', async () => {
     method: 'POST',
     body: JSON.stringify({ name: 'NoName' })
   }).expect(404);
-}, 20);
+}, 200);
 
 it('call GET to an existing endpoint with querystring and hash', async () => {
   const getUsers = controller(() => {
@@ -50,7 +50,7 @@ it('call GET to an existing endpoint with querystring and hash', async () => {
   });
 
   const app = createApp(() => {
-    useComponent(RestComponent);
+    useComponent(HttpComponent);
     useController(getUsers);
   });
 
@@ -71,14 +71,14 @@ it('make a post request with a body', async () => {
     const body = defineBody<User>();
 
     return async () => {
-      const user = await body.value();
+      const user = await body.value;
       db.push(user);
       return user;
     };
   });
 
   const app = createApp(() => {
-    useComponent(RestComponent);
+    useComponent(HttpComponent);
     useController(createUser);
   });
 
@@ -90,7 +90,8 @@ it('make a post request with a body', async () => {
     method: 'POST',
     body: JSON.stringify({ name: 'Jose' }),
     headers: {
-      accept: 'application/json'
+      accept: 'application/json',
+      'content-type': 'application/json'
     }
   }).expect(200, {
     name: 'Jose'
@@ -106,7 +107,7 @@ it('make a post request with a invalid body', async () => {
     const body = defineBody<User>();
 
     return async () => {
-      const user = await body.value();
+      const user = await body.value;
 
       db.push(user);
       return user;
@@ -114,7 +115,7 @@ it('make a post request with a invalid body', async () => {
   });
 
   const app = createApp(() => {
-    useComponent(RestComponent);
+    useComponent(HttpComponent);
     useController(createUser);
   });
 
@@ -139,7 +140,7 @@ it('handle internal errors as 500', async () => {
   });
 
   const app = createApp(() => {
-    useComponent(RestComponent);
+    useComponent(HttpComponent);
     useController(createUser);
   });
 
@@ -157,7 +158,7 @@ it('handle simultaneous calls', async () => {
   });
 
   const app = createApp(() => {
-    useComponent(RestComponent);
+    useComponent(HttpComponent);
     useController(getUsers);
   });
 
@@ -167,4 +168,4 @@ it('handle simultaneous calls', async () => {
   const requests = Array.from({ length: 20 }, () => fetch('/users').expect(200));
 
   await Promise.all(requests);
-}, 20);
+}, 40);

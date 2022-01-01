@@ -4,20 +4,20 @@ import Router, { HTTPMethod, HTTPVersion } from 'find-my-way';
 import { RestBindings } from './bindings';
 import {
   findRoute,
+  HttpSequence,
   invokeMiddleware,
   parseRequest,
   RestMiddlewareGroups,
-  RestSequence,
   sendResponse,
   serializerFinder
 } from './sequence';
 import { RestTemplates } from './template';
 
-export const RestComponent = component(() => {
+export const HttpComponent = component(() => {
   provide(RestBindings.Server.SEQUENCE)
     .class()
     .in(BindingScope.SERVER)
-    .with(RestSequence);
+    .with(HttpSequence);
 
   provide(RestMiddlewareGroups.SEND_RESPONSE)
     .apply(RestTemplates.Sequence.SEND_RESPONSE)

@@ -9,13 +9,13 @@ export namespace RestMiddlewareGroups {
   export const INVOKE = 'invoke';
 }
 
-export class RestSequence extends Sequence<void> {
+export class HttpSequence extends Sequence<void> {
   override readonly chain = RestTags.REST_SEQUENCE;
   override groups = [
     RestMiddlewareGroups.SEND_RESPONSE,
     RestMiddlewareGroups.PARSE_REQUEST,
-    RestMiddlewareGroups.SERIALIZER_FINDER,
     RestMiddlewareGroups.FIND_ROUTE,
+    RestMiddlewareGroups.SERIALIZER_FINDER,
     RestMiddlewareGroups.INVOKE
   ];
 }

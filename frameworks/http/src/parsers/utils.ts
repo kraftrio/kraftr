@@ -1,5 +1,4 @@
 import { Transform, TransformOptions } from 'node:stream';
-
 export type Serializer = {
   serialize: () => void;
   deserialize: () => void;

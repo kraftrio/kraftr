@@ -1,19 +1,16 @@
-import { Binding, inject, provide, ref } from '@kraftr/core';
+import { inject } from '@kraftr/core';
+import { finished } from 'node:stream/promises';
 import { RestBindings } from '../bindings';
-import { RestScope } from '../scopes';
 
-export function defineBody<Body>(): Binding<Promise<Body>> {
-  const reference = new Binding<Promise<Body>>('body')
-    .dynamic()
-    .memoize()
-    .in(RestScope.REQUEST);
+export type Body<B> = {
+  value: Promise<B>;
+};
+export function defineBody<B>(): Body<B> {
+  return {
+    get value() {
+      const stream = inject(RestBindings.Http.BODY);
 
-  return reference.with(async () => {
-    const stream = inject(RestBindings.Http.BODY);
-
-    const iterator = stream[Symbol.asyncIterator]() as AsyncIterableIterator<Body>;
-    const result = await iterator.next();
-
-    return result.value;
-  });
+      return finished(stream).then(() => stream.read());
+    }
+  };
 }

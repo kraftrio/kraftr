@@ -1,13 +1,12 @@
 import { inject, Middleware, provide } from '@kraftr/core';
 import { URL } from 'node:url';
 import { RestBindings } from '../bindings';
-import { HttpResponse } from '../http-errors';
+import { HttpException } from '../http-errors';
 import { RestScope } from '../scopes';
 import { MIMEType } from '../utils/mimetype';
 
 export const parseRequest: Middleware<void> = async (_, next) => {
   const request = inject(RestBindings.Http.REQUEST);
-  provide(RestBindings.Operation.RETURN_VALUE).with(undefined);
 
   const contentType = MIMEType.parse(
     request.headers['content-type'] ?? 'application/json'
@@ -19,14 +18,14 @@ export const parseRequest: Middleware<void> = async (_, next) => {
 
   if (contentType === null) {
     // eslint-disable-next-line @kraftr/returns-throw
-    throw HttpResponse.UnsupportedMediaType();
+    throw new HttpException.UnsupportedMediaType();
   }
 
   for (const acceptValue of acceptValues) {
     const value = MIMEType.parse(acceptValue);
     if (!value) {
       // eslint-disable-next-line @kraftr/returns-throw
-      throw HttpResponse.NotAcceptable().body(`Error parsing ${acceptValue}`);
+      throw new HttpException.NotAcceptable();
     }
     accept.push(value);
   }

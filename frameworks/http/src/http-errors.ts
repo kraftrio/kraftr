@@ -1,197 +1,321 @@
-import { ServerResponse, STATUS_CODES } from 'node:http';
+import { STATUS_CODES } from 'node:http';
+import { Readable } from 'node:stream';
 
-export class HttpResponse {
+export enum HttpStatus {
+  Continue = 100,
+  SwitchingProtocols = 101,
+  OK = 200,
+  Created = 201,
+  Accepted = 202,
+  NonAuthoritativeInformation = 203,
+  NoContent = 204,
+  ResetContent = 205,
+  PartialContent = 206,
+  MultipleChoices = 300,
+  MovedPermanently = 301,
+  Found = 302,
+  SeeOther = 303,
+  NotModified = 304,
+  UseProxy = 305,
+  TemporaryRedirect = 307,
+  BadRequest = 400,
+  Unauthorized = 401,
+  PaymentRequired = 402,
+  Forbidden = 403,
+  NotFound = 404,
+  MethodNotAllowed = 405,
+  NotAcceptable = 406,
+  ProxyAuthenticationRequired = 407,
+  RequestTimeout = 408,
+  Conflict = 409,
+  Gone = 410,
+  LengthRequired = 411,
+  PreconditionFailed = 412,
+  PayloadTooLarge = 413,
+  URITooLong = 414,
+  UnsupportedMediaType = 415,
+  RangeNotSatisfiable = 416,
+  ExpectationFailed = 417,
+  ImATeapot = 418,
+  MisdirectedRequest = 421,
+  UnprocessableEntity = 422,
+  Locked = 423,
+  FailedDependency = 424,
+  UnorderedCollection = 425,
+  UpgradeRequired = 426,
+  PreconditionRequired = 428,
+  TooManyRequests = 429,
+  RequestHeaderFieldsTooLarge = 431,
+  UnavailableForLegalReasons = 451,
+  InternalServerError = 500,
+  NotImplemented = 501,
+  BadGateway = 502,
+  ServiceUnavailable = 503,
+  GatewayTimeout = 504,
+  HTTPVersionNotSupported = 505,
+  VariantAlsoNegotiates = 506,
+  InsufficientStorage = 507,
+  LoopDetected = 508,
+  BandwidthLimitExceeded = 509,
+  NotExtended = 510,
+  NetworkAuthenticationRequired = 511
+}
+
+export class HttpException extends Readable implements Error {
   public name: string;
   public message: string;
-  public _body: { message: string } = { message: '' };
-  constructor(public code: number, message?: string) {
-    this.name = message ?? STATUS_CODES[code] ?? 'Unknown';
-    this.message = this.name;
+  public body: unknown;
+
+  constructor(public response: unknown, public statusCode: HttpStatus) {
+    super({ objectMode: true });
+    this.body =
+      typeof response === 'string'
+        ? {
+            statusCode,
+            message: response
+          }
+        : response;
+    this.name = STATUS_CODES[statusCode] ?? 'Unknown Error';
+    this.message = typeof response === 'string' ? response : this.name;
   }
 
-  apply(response: ServerResponse) {
-    response.writeHead(this.code, this.message);
+  override _read(): void {
+    this.push(this.body);
+    this.push(null);
   }
+}
 
-  body(message: string) {
-    this._body = {
-      message
-    };
-    return this;
+export namespace HttpException {
+  export class BadRequest extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.BadRequest], HttpStatus.BadRequest);
+    }
   }
-
-  /* c8 ignore start */
-  static Continue(customMsg?: string) {
-    return new HttpResponse(100, customMsg ?? STATUS_CODES[100]);
+  export class Unauthorized extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.Unauthorized], HttpStatus.Unauthorized);
+    }
   }
-  static SwitchingProtocols(customMsg?: string) {
-    return new HttpResponse(101, customMsg ?? STATUS_CODES[101]);
+  export class PaymentRequired extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.PaymentRequired], HttpStatus.PaymentRequired);
+    }
   }
-  static OK(customMsg?: string) {
-    return new HttpResponse(200, customMsg ?? STATUS_CODES[200]);
+  export class Forbidden extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.Forbidden], HttpStatus.Forbidden);
+    }
   }
-  static Created(customMsg?: string) {
-    return new HttpResponse(201, customMsg ?? STATUS_CODES[201]);
+  export class NotFound extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.NotFound], HttpStatus.NotFound);
+    }
   }
-  static Accepted(customMsg?: string) {
-    return new HttpResponse(202, customMsg ?? STATUS_CODES[202]);
+  export class MethodNotAllowed extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.MethodNotAllowed], HttpStatus.MethodNotAllowed);
+    }
   }
-  static NonAuthoritativeInformation(customMsg?: string) {
-    return new HttpResponse(203, customMsg ?? STATUS_CODES[203]);
+  export class NotAcceptable extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.NotAcceptable], HttpStatus.NotAcceptable);
+    }
   }
-  static NoContent(customMsg?: string) {
-    return new HttpResponse(204, customMsg ?? STATUS_CODES[204]);
+  export class ProxyAuthenticationRequired extends HttpException {
+    constructor() {
+      super(
+        STATUS_CODES[HttpStatus.ProxyAuthenticationRequired],
+        HttpStatus.ProxyAuthenticationRequired
+      );
+    }
   }
-  static ResetContent(customMsg?: string) {
-    return new HttpResponse(205, customMsg ?? STATUS_CODES[205]);
+  export class RequestTimeout extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.RequestTimeout], HttpStatus.RequestTimeout);
+    }
   }
-  static PartialContent(customMsg?: string) {
-    return new HttpResponse(206, customMsg ?? STATUS_CODES[206]);
+  export class Conflict extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.Conflict], HttpStatus.Conflict);
+    }
   }
-  static MultipleChoices(customMsg?: string) {
-    return new HttpResponse(300, customMsg ?? STATUS_CODES[300]);
+  export class Gone extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.Gone], HttpStatus.Gone);
+    }
   }
-  static MovedPermanently(customMsg?: string) {
-    return new HttpResponse(301, customMsg ?? STATUS_CODES[301]);
+  export class LengthRequired extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.LengthRequired], HttpStatus.LengthRequired);
+    }
   }
-  static Found(customMsg?: string) {
-    return new HttpResponse(302, customMsg ?? STATUS_CODES[302]);
+  export class PreconditionFailed extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.PreconditionFailed], HttpStatus.PreconditionFailed);
+    }
   }
-  static SeeOther(customMsg?: string) {
-    return new HttpResponse(303, customMsg ?? STATUS_CODES[303]);
+  export class PayloadTooLarge extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.PayloadTooLarge], HttpStatus.PayloadTooLarge);
+    }
   }
-  static NotModified(customMsg?: string) {
-    return new HttpResponse(304, customMsg ?? STATUS_CODES[304]);
+  export class URITooLong extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.URITooLong], HttpStatus.URITooLong);
+    }
   }
-  static UseProxy(customMsg?: string) {
-    return new HttpResponse(305, customMsg ?? STATUS_CODES[305]);
+  export class UnsupportedMediaType extends HttpException {
+    constructor() {
+      super(
+        STATUS_CODES[HttpStatus.UnsupportedMediaType],
+        HttpStatus.UnsupportedMediaType
+      );
+    }
   }
-  static TemporaryRedirect(customMsg?: string) {
-    return new HttpResponse(307, customMsg ?? STATUS_CODES[307]);
+  export class RangeNotSatisfiable extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.RangeNotSatisfiable], HttpStatus.RangeNotSatisfiable);
+    }
   }
-
-  static BadRequest(customMsg?: string) {
-    return new HttpResponse(400, customMsg ?? STATUS_CODES[400]);
+  export class ExpectationFailed extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.ExpectationFailed], HttpStatus.ExpectationFailed);
+    }
   }
-  static Unauthorized(customMsg?: string) {
-    return new HttpResponse(401, customMsg ?? STATUS_CODES[401]);
+  export class ImATeapot extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.ImATeapot], HttpStatus.ImATeapot);
+    }
   }
-  static PaymentRequired(customMsg?: string) {
-    return new HttpResponse(402, customMsg ?? STATUS_CODES[402]);
+  export class MisdirectedRequest extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.MisdirectedRequest], HttpStatus.MisdirectedRequest);
+    }
   }
-  static Forbidden(customMsg?: string) {
-    return new HttpResponse(403, customMsg ?? STATUS_CODES[403]);
+  export class UnprocessableEntity extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.UnprocessableEntity], HttpStatus.UnprocessableEntity);
+    }
   }
-  static NotFound(customMsg?: string) {
-    return new HttpResponse(404, customMsg ?? STATUS_CODES[404]);
+  export class Locked extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.Locked], HttpStatus.Locked);
+    }
   }
-  static MethodNotAllowed(customMsg?: string) {
-    return new HttpResponse(405, customMsg ?? STATUS_CODES[405]);
+  export class FailedDependency extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.FailedDependency], HttpStatus.FailedDependency);
+    }
   }
-  static NotAcceptable(customMsg?: string) {
-    return new HttpResponse(406, customMsg ?? STATUS_CODES[406]);
+  export class UnorderedCollection extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.UnorderedCollection], HttpStatus.UnorderedCollection);
+    }
   }
-  static ProxyAuthenticationRequired(customMsg?: string) {
-    return new HttpResponse(407, customMsg ?? STATUS_CODES[407]);
+  export class UpgradeRequired extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.UpgradeRequired], HttpStatus.UpgradeRequired);
+    }
   }
-  static RequestTimeout(customMsg?: string) {
-    return new HttpResponse(408, customMsg ?? STATUS_CODES[408]);
+  export class PreconditionRequired extends HttpException {
+    constructor() {
+      super(
+        STATUS_CODES[HttpStatus.PreconditionRequired],
+        HttpStatus.PreconditionRequired
+      );
+    }
   }
-  static Conflict(customMsg?: string) {
-    return new HttpResponse(409, customMsg ?? STATUS_CODES[409]);
+  export class TooManyRequests extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.TooManyRequests], HttpStatus.TooManyRequests);
+    }
   }
-  static Gone(customMsg?: string) {
-    return new HttpResponse(410, customMsg ?? STATUS_CODES[410]);
+  export class RequestHeaderFieldsTooLarge extends HttpException {
+    constructor() {
+      super(
+        STATUS_CODES[HttpStatus.RequestHeaderFieldsTooLarge],
+        HttpStatus.RequestHeaderFieldsTooLarge
+      );
+    }
   }
-  static LengthRequired(customMsg?: string) {
-    return new HttpResponse(411, customMsg ?? STATUS_CODES[411]);
+  export class UnavailableForLegalReasons extends HttpException {
+    constructor() {
+      super(
+        STATUS_CODES[HttpStatus.UnavailableForLegalReasons],
+        HttpStatus.UnavailableForLegalReasons
+      );
+    }
   }
-  static PreconditionFailed(customMsg?: string) {
-    return new HttpResponse(412, customMsg ?? STATUS_CODES[412]);
+  export class InternalServerError extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.InternalServerError], HttpStatus.InternalServerError);
+    }
   }
-  static PayloadTooLarge(customMsg?: string) {
-    return new HttpResponse(413, customMsg ?? STATUS_CODES[413]);
+  export class NotImplemented extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.NotImplemented], HttpStatus.NotImplemented);
+    }
   }
-  static URITooLong(customMsg?: string) {
-    return new HttpResponse(414, customMsg ?? STATUS_CODES[414]);
+  export class BadGateway extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.BadGateway], HttpStatus.BadGateway);
+    }
   }
-  static UnsupportedMediaType(customMsg?: string) {
-    return new HttpResponse(415, customMsg ?? STATUS_CODES[415]);
+  export class ServiceUnavailable extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.ServiceUnavailable], HttpStatus.ServiceUnavailable);
+    }
   }
-  static RangeNotSatisfiable(customMsg?: string) {
-    return new HttpResponse(416, customMsg ?? STATUS_CODES[416]);
+  export class GatewayTimeout extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.GatewayTimeout], HttpStatus.GatewayTimeout);
+    }
   }
-  static ExpectationFailed(customMsg?: string) {
-    return new HttpResponse(417, customMsg ?? STATUS_CODES[417]);
+  export class HTTPVersionNotSupported extends HttpException {
+    constructor() {
+      super(
+        STATUS_CODES[HttpStatus.HTTPVersionNotSupported],
+        HttpStatus.HTTPVersionNotSupported
+      );
+    }
   }
-  static ImATeapot(customMsg?: string) {
-    return new HttpResponse(418, customMsg ?? STATUS_CODES[418]);
+  export class VariantAlsoNegotiates extends HttpException {
+    constructor() {
+      super(
+        STATUS_CODES[HttpStatus.VariantAlsoNegotiates],
+        HttpStatus.VariantAlsoNegotiates
+      );
+    }
   }
-  static MisdirectedRequest(customMsg?: string) {
-    return new HttpResponse(421, customMsg ?? STATUS_CODES[421]);
+  export class InsufficientStorage extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.InsufficientStorage], HttpStatus.InsufficientStorage);
+    }
   }
-  static UnprocessableEntity(customMsg?: string) {
-    return new HttpResponse(422, customMsg ?? STATUS_CODES[422]);
+  export class LoopDetected extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.LoopDetected], HttpStatus.LoopDetected);
+    }
   }
-  static Locked(customMsg?: string) {
-    return new HttpResponse(423, customMsg ?? STATUS_CODES[423]);
+  export class BandwidthLimitExceeded extends HttpException {
+    constructor() {
+      super(
+        STATUS_CODES[HttpStatus.BandwidthLimitExceeded],
+        HttpStatus.BandwidthLimitExceeded
+      );
+    }
   }
-  static FailedDependency(customMsg?: string) {
-    return new HttpResponse(424, customMsg ?? STATUS_CODES[424]);
+  export class NotExtended extends HttpException {
+    constructor() {
+      super(STATUS_CODES[HttpStatus.NotExtended], HttpStatus.NotExtended);
+    }
   }
-  static UnorderedCollection(customMsg?: string) {
-    return new HttpResponse(425, customMsg ?? STATUS_CODES[425]);
+  export class NetworkAuthenticationRequired extends HttpException {
+    constructor() {
+      super(
+        STATUS_CODES[HttpStatus.NetworkAuthenticationRequired],
+        HttpStatus.NetworkAuthenticationRequired
+      );
+    }
   }
-  static UpgradeRequired(customMsg?: string) {
-    return new HttpResponse(426, customMsg ?? STATUS_CODES[426]);
-  }
-  static PreconditionRequired(customMsg?: string) {
-    return new HttpResponse(428, customMsg ?? STATUS_CODES[428]);
-  }
-  static TooManyRequests(customMsg?: string) {
-    return new HttpResponse(429, customMsg ?? STATUS_CODES[429]);
-  }
-  static RequestHeaderFieldsTooLarge(customMsg?: string) {
-    return new HttpResponse(431, customMsg ?? STATUS_CODES[431]);
-  }
-  static UnavailableForLegalReasons(customMsg?: string) {
-    return new HttpResponse(451, customMsg ?? STATUS_CODES[451]);
-  }
-  static InternalServerError(customMsg?: string) {
-    return new HttpResponse(500, customMsg ?? STATUS_CODES[500]);
-  }
-  static NotImplemented(customMsg?: string) {
-    return new HttpResponse(501, customMsg ?? STATUS_CODES[501]);
-  }
-  static BadGateway(customMsg?: string) {
-    return new HttpResponse(502, customMsg ?? STATUS_CODES[502]);
-  }
-  static ServiceUnavailable(customMsg?: string) {
-    return new HttpResponse(503, customMsg ?? STATUS_CODES[503]);
-  }
-  static GatewayTimeout(customMsg?: string) {
-    return new HttpResponse(504, customMsg ?? STATUS_CODES[504]);
-  }
-  static HTTPVersionNotSupported(customMsg?: string) {
-    return new HttpResponse(505, customMsg ?? STATUS_CODES[505]);
-  }
-  static VariantAlsoNegotiates(customMsg?: string) {
-    return new HttpResponse(506, customMsg ?? STATUS_CODES[506]);
-  }
-  static InsufficientStorage(customMsg?: string) {
-    return new HttpResponse(507, customMsg ?? STATUS_CODES[507]);
-  }
-  static LoopDetected(customMsg?: string) {
-    return new HttpResponse(508, customMsg ?? STATUS_CODES[508]);
-  }
-  static BandwidthLimitExceeded(customMsg?: string) {
-    return new HttpResponse(509, customMsg ?? STATUS_CODES[509]);
-  }
-  static NotExtended(customMsg?: string) {
-    return new HttpResponse(510, customMsg ?? STATUS_CODES[510]);
-  }
-  static NetworkAuthenticationRequired(customMsg?: string) {
-    return new HttpResponse(511, customMsg ?? STATUS_CODES[511]);
-  }
-  /* c8 ignore stop */
 }

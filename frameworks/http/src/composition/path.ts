@@ -1,7 +1,6 @@
-import { provide, Return, useMetadata, inject } from '@kraftr/core';
+import { inject, Return, useMetadata } from '@kraftr/core';
 import { parse } from 'regexparam';
-import { RestBindings } from '..';
-import { RestMetadata } from '../bindings';
+import { RestMetadata, RestBindings } from '../bindings';
 import { defineMethod } from './method';
 import type { HTTPMethod, RecordBind, RouteParamsBinds } from './utils';
 

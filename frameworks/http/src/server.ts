@@ -1,16 +1,8 @@
-import {
-  BindingScope,
-  Context,
-  createContext,
-  inject,
-  provide,
-  useContext
-} from '@kraftr/core';
-import { RequestListener } from 'node:http';
+import { BindingScope, Context, inject, provide, useContext } from '@kraftr/core';
+import { RequestListener, createServer as createHttpServer } from 'node:http';
 import { RestBindings, RestScope } from '.';
-import { RestSequence } from './sequence';
 
-export function createServer(appContext: Context): RequestListener {
+export function createListener(appContext: Context): RequestListener {
   const serverCtx = new Context('Server Context', appContext);
   serverCtx.scope = BindingScope.SERVER;
 
@@ -26,4 +18,10 @@ export function createServer(appContext: Context): RequestListener {
       return sequence.execute();
     });
   };
+}
+
+export function createServer(appContext: Context) {
+  const listener = createListener(appContext);
+
+  return createHttpServer(listener);
 }
