@@ -3,6 +3,7 @@ import type { Return } from '@kraftr/errors';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { ContextNotFound, ScopeNotFound } from '../errors';
 import { Context } from './context';
+
 const logger = createLogger('kraftr:context:manager');
 
 const storage = new AsyncLocalStorage<Context>();

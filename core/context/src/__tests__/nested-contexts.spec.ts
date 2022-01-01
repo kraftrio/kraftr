@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BindingScope, createContext, inject, provide } from 'src';
+import { BindingScope, createContext, inject, provide } from '../';
 import { runInContext } from '../tests';
 
 describe('behavior of bindings in nested contexts', () => {

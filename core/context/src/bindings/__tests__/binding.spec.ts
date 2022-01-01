@@ -1,5 +1,6 @@
 import { describe, expect, fn, it, spyOn } from 'vitest';
-import { Binding, BindingScope, BindingType } from '../binding';
+import { BindingType, BindingScope } from '../types';
+import { Binding } from '../binding';
 
 describe('new Binding()', () => {
   it(`it's set as default as constant`, () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BindingScope, inject, provide } from 'src';
+import { BindingScope, inject, provide } from '../';
 import { runInContext } from '../tests';
 
 describe('context as container for bindings', () => {

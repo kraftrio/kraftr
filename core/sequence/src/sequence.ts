@@ -2,7 +2,7 @@ import { createLogger } from '@kraftr/common';
 import {
   BindingAddress,
   filterByTag,
-  hasTagName,
+  ANY_TAG_VALUE,
   includesTagValue,
   inject
 } from '@kraftr/context';
@@ -40,7 +40,7 @@ export class Sequence<Data> {
 
     const filter = filterByTag<DependentBindTags>({
       extensionFor: includesTagValue(this.chain),
-      group: hasTagName()
+      group: ANY_TAG_VALUE
     });
 
     const sorted = createDepSequence(filter, this.groups);

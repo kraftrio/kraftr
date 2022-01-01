@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BindingScope, createContext } from '..';
+import { BindingScope, createContext } from '../';
 import { useMetadata } from '../metadata';
 import { runInContext } from '../tests';
 
