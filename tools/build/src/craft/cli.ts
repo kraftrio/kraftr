@@ -1,6 +1,6 @@
 import { createCLI } from 'soly';
 import { loadConfigFromFile, PluginOption, UserConfig } from 'vite';
-import { build, serve } from './commands';
+import { build, serve, run } from './commands';
 import { CraftConfig, CraftPluginOption } from '.';
 import { findConfig } from './utils';
 
@@ -24,7 +24,8 @@ const CraftPlugin: CraftPluginOption = {
   commands: {
     build,
     serve,
-    dev: serve
+    dev: serve,
+    run
   }
 };
 
