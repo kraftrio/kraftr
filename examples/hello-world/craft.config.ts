@@ -2,7 +2,7 @@ import { defineConfig } from '@kraftr/build';
 import { dev } from '@kraftr/http-framework';
 
 export default defineConfig({
-  entries: ['./src/app'],
+  entries: ['./src/index.ts'],
   server: {
     port: 3000
   },

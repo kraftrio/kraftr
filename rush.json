@@ -72,7 +72,7 @@
     //   "shouldPublish": true
     // },
     {
-      "packageName": "hello-world-example",
+      "packageName": "hello-world",
       "projectFolder": "examples/hello-world",
       "shouldPublish": false
     }
