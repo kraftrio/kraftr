@@ -75,6 +75,11 @@
       "packageName": "hello-world",
       "projectFolder": "examples/hello-world",
       "shouldPublish": false
+    },
+    {
+      "packageName": "express-middleware",
+      "projectFolder": "examples/express-middleware",
+      "shouldPublish": false
     }
     // {
     //   "packageName": "@nemobile/backend",

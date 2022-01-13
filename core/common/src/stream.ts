@@ -8,13 +8,7 @@ export function isStream(stream: unknown): stream is Stream {
 }
 
 export function toStream(data: unknown) {
-  return new Readable({
-    objectMode: true,
-    read() {
-      this.push(data);
-      this.push(null);
-    }
-  });
+  return Readable.from([data], { objectMode: true });
 }
 
 export function isWritableStream(stream: unknown): stream is Writable {

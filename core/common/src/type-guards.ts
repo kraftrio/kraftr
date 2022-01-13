@@ -10,12 +10,16 @@ export function isAsyncIterable<T>(obj: unknown): obj is AsyncIterable<T> {
   );
 }
 
-export function isIterable<T>(obj: unknown): obj is AsyncIterable<T> {
+export function isSyncIterable<T>(obj: unknown): obj is AsyncIterable<T> {
   return (
     !!obj &&
     typeof obj === 'object' &&
     (obj as Iterable<unknown>)[Symbol.iterator] !== undefined
   );
+}
+
+export function isIterable<T>(obj: unknown): obj is AsyncIterable<T> {
+  return isAsyncIterable(obj) || isSyncIterable(obj);
 }
 
 /**
