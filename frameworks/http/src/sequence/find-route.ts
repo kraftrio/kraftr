@@ -1,7 +1,7 @@
 import { BindingAddress, inject, Middleware, provide } from '@kraftr/core';
-import { RestBindings } from '../bindings';
+import { HttpBindings } from '../bindings';
 import { HTTPMethod } from '../composition/utils';
-import { RestScope } from '../scopes';
+import { HttpScope } from '../scopes';
 import { createLogger } from '@kraftr/common';
 
 const logger = createLogger('kraftr:http-framework:sequences:find-route');
@@ -9,9 +9,9 @@ const logger = createLogger('kraftr:http-framework:sequences:find-route');
 export const findRoute: Middleware<void> = async (_, next) => {
   logger.debug('Running findRoute middleware');
 
-  const router = inject(RestBindings.Server.ROUTER);
-  const request = inject(RestBindings.Http.REQUEST);
-  const url = inject(RestBindings.Http.URL);
+  const router = inject(HttpBindings.Server.ROUTER);
+  const request = inject(HttpBindings.Request.INSTANCE);
+  const url = inject(HttpBindings.Request.URL);
 
   if (!request.method || !request.url) {
     logger.debug(request, 'method or url in request not found');
@@ -40,12 +40,12 @@ export const findRoute: Middleware<void> = async (_, next) => {
 
   const handlerFn = inject(bindAddress);
 
-  provide(RestBindings.Operation.HANDLER)
+  provide(HttpBindings.Operation.HANDLER)
     .constant()
-    .in(RestScope.REQUEST)
+    .in(HttpScope.REQUEST)
     .with(handlerFn);
 
-  provide(RestBindings.Http.PARAMS).constant().in(RestScope.REQUEST).with(params);
+  provide(HttpBindings.Request.PARAMS).constant().in(HttpScope.REQUEST).with(params);
 
   return next();
 };

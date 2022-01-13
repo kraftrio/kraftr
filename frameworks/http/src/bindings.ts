@@ -1,71 +1,65 @@
 /* c8 ignore start */
-import { BindingKey, Context, Metadata, Sequence } from '@kraftr/core';
+import { BindingKey, Context, Sequence, Metadata } from '@kraftr/core';
 import { HTTPVersion, Instance } from 'find-my-way';
-import { IncomingMessage, RequestListener, Server, ServerResponse } from 'node:http';
-import { Duplex as DuplexStream } from 'node:stream';
+import { IncomingMessage, Server, ServerResponse } from 'node:http';
+import { PassThrough } from 'node:stream';
 import { URL } from 'node:url';
 import { ControllerTags } from './template';
 import { HttpHeaders } from './types';
 
-export namespace RestBindings {
+export namespace HttpBindings {
   export namespace Server {
     export const INSTANCE = BindingKey.create<Server>(
-      'server.rest.bindings.server.instance'
-    );
-
-    export const HANDLER = BindingKey.create<RequestListener>(
-      'server.rest.bindings.server.handler'
+      'kraftr.http-framework.bindings.server.instance'
     );
     export const SEQUENCE = BindingKey.create<Sequence<void>>(
-      'server.rest.request-handler.sequence'
+      'kraftr.http-framework.bindings.server.sequence'
     );
     export const ROUTER = BindingKey.create<Instance<HTTPVersion.V2>>(
-      'server.rest.bindings.server.router'
+      'kraftr.http-framework.bindings.server.router'
     );
   }
-  export namespace Http {
-    export const REQUEST = BindingKey.create<IncomingMessage>(
-      'server.rest.bindings.http.request'
+  export namespace Request {
+    export const INSTANCE = BindingKey.create<IncomingMessage>(
+      'kraftr.http-framework.bindings.request.instance'
     );
-    export const RESPONSE = BindingKey.create<ServerResponse>(
-      'server.rest.bindings.http.response'
-    );
+    // http objects
+
+    // parsed objects
     export const HEADERS = BindingKey.create<HttpHeaders>(
-      'server.rest.bindings.http.headers'
+      'kraftr.http-framework.bindings.request.headers'
     );
-    export const URL = BindingKey.create<URL>('server.rest.bindings.http.url');
+    export const URL = BindingKey.create<URL>(
+      'kraftr.http-framework.bindings.request.url'
+    );
     export const PARAMS = BindingKey.create<Record<string, string | undefined>>(
-      'server.rest.operation.params'
-    );
-    export const CONTEXT = BindingKey.create<Context>(
-      'server.rest.bindings.http.context'
+      'kraftr.http-framework.bindings.request.params'
     );
   }
-  export namespace Sequences {}
+
+  export namespace Response {
+    // http objects
+    export const INSTANCE = BindingKey.create<ServerResponse>(
+      'kraftr.http-framework.bindings.response.instance'
+    );
+    export const STREAM = BindingKey.create<PassThrough>(
+      'kraftr.http-framework.bindings.response.stream'
+    );
+  }
 
   export namespace Operation {
-    export const RESPONSE_STREAM = BindingKey.create<
-      DuplexStream | AsyncIterable<unknown> | Iterable<unknown>
-    >('server.rest.operation.returnValue');
+    export const CONTEXT = BindingKey.create<Context>(
+      'kraftr.http-framework.bindings.http.context'
+    );
     export const HANDLER = BindingKey.create<() => unknown>(
-      'server.rest.operation.handler'
+      'kraftr.http-framework.operation.handler'
     );
   }
 }
 
-export namespace RestMetadata {
+export namespace HttpMetadata {
   export const CONTROLLER =
     BindingKey.create<Metadata<ControllerTags>>('rest.meta.controller');
-}
-
-export namespace RestConfig {
-  export const SUPPORTED_HEADERS = BindingKey.create<string[]>(
-    'server.rest.config.server.supported-headers'
-  );
-
-  export const SUPPORTED_METHODS = BindingKey.create<string[]>(
-    'server.rest.config.server.supported-headers'
-  );
 }
 
 /* c8 ignore stop */

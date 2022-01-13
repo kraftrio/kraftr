@@ -6,7 +6,7 @@ import { DependentBindTags } from './types';
 const logger = createLogger('kraftr:sequence:runner');
 
 export function createDepSequence(
-  filter: BindingFilter<DependentBindTags>,
+  filter: BindingFilter,
   defaultGroup: BindingAddress[] = []
 ) {
   const map = new Map<string, BindingAddress>();

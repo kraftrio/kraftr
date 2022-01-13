@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@kraftr/context",
+      "comment": "add some new methods and do some refactors",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@kraftr/context"
+}

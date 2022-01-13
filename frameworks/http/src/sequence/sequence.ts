@@ -1,5 +1,5 @@
 import { Sequence } from '@kraftr/core';
-import { RestTags } from '../tags';
+import { HttpTags } from '../tags';
 
 export namespace RestMiddlewareGroups {
   export const SEND_RESPONSE = 'send-response';
@@ -10,7 +10,7 @@ export namespace RestMiddlewareGroups {
 }
 
 export class HttpSequence extends Sequence<void> {
-  override readonly chain = RestTags.REST_SEQUENCE;
+  override readonly chain = HttpTags.REST_SEQUENCE;
   override groups = [
     RestMiddlewareGroups.SEND_RESPONSE,
     RestMiddlewareGroups.PARSE_REQUEST,

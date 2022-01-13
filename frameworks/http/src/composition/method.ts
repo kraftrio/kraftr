@@ -1,11 +1,11 @@
 import { useMetadata } from '@kraftr/core';
-import { RestMetadata } from '../bindings';
+import { HttpMetadata } from '../bindings';
 import { HTTPMethod } from './utils';
 
 export function defineMethod(method: HTTPMethod): void;
 export function defineMethod(method: string): void;
 
 export function defineMethod(method: string) {
-  const meta = useMetadata(RestMetadata.CONTROLLER);
+  const meta = useMetadata(HttpMetadata.CONTROLLER);
   meta.extend({ method });
 }

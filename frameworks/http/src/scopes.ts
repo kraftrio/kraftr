@@ -1,3 +1,3 @@
-export enum RestScope {
+export enum HttpScope {
   REQUEST = 'REQUEST'
 }

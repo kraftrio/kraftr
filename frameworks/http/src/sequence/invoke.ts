@@ -1,19 +1,38 @@
-import { createLogger, isReadableStream, isStream, toStream } from '@kraftr/common';
-import { inject, Middleware, provide } from '@kraftr/core';
+import {
+  createLogger,
+  isAsyncIterable,
+  isIterable,
+  isReadableStream,
+  isStream,
+  toStream
+} from '@kraftr/common';
+import { inject, Middleware } from '@kraftr/core';
 import { Readable } from 'node:stream';
-import { RestBindings } from '../bindings';
+import { HttpBindings } from '../bindings';
 import { HttpException } from '../http-errors';
 
 const logger = createLogger('kraftr:http-framework:sequences:find-route');
 
 export const invokeMiddleware: Middleware<void> = async () => {
-  const handler = inject(RestBindings.Operation.HANDLER);
+  const handler = inject(HttpBindings.Operation.HANDLER);
+  logger.debug('Invoking controller');
 
   const returnValue = await handler();
+  const responseStream = inject(HttpBindings.Response.STREAM);
+
+  if (
+    !Array.isArray(returnValue) &&
+    typeof returnValue !== 'string' &&
+    isIterable(returnValue)
+  ) {
+    logger.debug('Controller returned async iterable');
+    Readable.from(returnValue, { objectMode: true }).pipe(responseStream);
+    return;
+  }
 
   if (isReadableStream(returnValue)) {
     logger.debug('Controller returned readable stream');
-    provide(RestBindings.Operation.RESPONSE_STREAM).with(returnValue);
+    returnValue.pipe(responseStream);
     return;
   }
 
@@ -23,5 +42,7 @@ export const invokeMiddleware: Middleware<void> = async () => {
     throw new HttpException.InternalServerError();
   }
 
-  provide(RestBindings.Operation.RESPONSE_STREAM).with(toStream(returnValue));
+  logger.debug('Controller returned an object');
+
+  toStream(returnValue).pipe(responseStream);
 };

@@ -1,8 +1,8 @@
 import type { Return } from '@kraftr/errors';
-import { LockError } from '..';
 import { getContext } from '../context';
-import { ContextNotFound, KeyNotFound } from '../errors';
-import { Binding, BindingScope } from './binding';
+import { ContextNotFound, KeyNotFound, LockError } from '../errors';
+import { Binding } from './binding';
+import { BindingFilter } from './binding-filter';
 import type { BindingAddress } from './key-creation';
 
 export type InjectOptions = { optional?: boolean };
@@ -58,13 +58,10 @@ export function inject<ValueType>(
  * @public
  *
  */
-export function inject<ValueType, Options extends InjectOptions>(
+export function inject<ValueType>(
   key: BindingAddress<ValueType>,
-  options: Options
-): Return<
-  Options extends { optional: true } ? ValueType | undefined : ValueType,
-  KeyNotFound | ContextNotFound
->;
+  options: { optional: true }
+): ValueType | undefined;
 
 export function inject(key: BindingAddress, options?: InjectOptions) {
   const ctx = getContext();
@@ -209,42 +206,12 @@ export namespace inject {
   export function context() {
     return getContext();
   }
-}
 
-/**
- *
- * Behave similar to `provide()` but is used to reference internal properties in a bound value
- *
- * @example
- *
- * ```
- * import { provide, ref } from '@kraftr/context'
- *
- * function install() {
- *    const obj = { name: 'internalValue' }
- *    provide('key').with(obj)
- *
- *    const nameBind = ref('key', 'name')
- *
- *    assert.equal(nameBind.value(), 'internalValue')
- * }
- * ```
- *
- *
- * @param {BindingAddress} key bind key to get the associated value
- * @param property nested value of the bound value
- * @returns bind with property as source
- * @public
- *
- */
-export function ref<ValueType, Property extends keyof ValueType>(
-  key: BindingAddress<ValueType>,
-  property: Property
-): Binding<ValueType[Property]> {
-  return provide(`${key}.$${property}`)
-    .with(() => inject.deep(key, property))
-    .in(BindingScope.TRANSIENT)
-    .memoize() as Binding<ValueType[Property]>;
+  export function filtered<Tags extends Record<string, unknown>>(
+    filter: BindingFilter
+  ): Binding<unknown>[] {
+    return getContext().find(filter);
+  }
 }
 
 /**
@@ -278,7 +245,7 @@ export function provide<BoundValue>(
 
   if (options?.policy === undefined || options.policy === 'ALWAYS_CREATE') {
     binding = new Binding(key);
-    ctx.add(binding as Binding);
+    ctx.add(binding);
     return binding;
   }
 
@@ -286,7 +253,7 @@ export function provide<BoundValue>(
 
   if (!binding) {
     binding = new Binding(key);
-    ctx.add(binding as Binding);
+    ctx.add(binding);
   }
 
   return binding;

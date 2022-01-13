@@ -86,16 +86,19 @@ it('make a post request with a body', async () => {
 
   const fetch = makeFetch(server);
 
-  await fetch('/users', {
+  const result = await fetch('/users', {
     method: 'POST',
     body: JSON.stringify({ name: 'Jose' }),
     headers: {
       accept: 'application/json',
       'content-type': 'application/json'
     }
-  }).expect(200, {
+  });
+
+  expect(await result.json()).toEqual({
     name: 'Jose'
   });
+  expect(result.status).toEqual(200);
 
   expect(db).toEqual([{ name: 'Jose' }]);
 }, 20);

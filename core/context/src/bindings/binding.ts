@@ -1,83 +1,16 @@
+import { isFunction } from '@kraftr/common';
 import type { Return } from '@kraftr/errors';
 import EventEmitter from 'node:events';
 import { isPromise } from 'node:util/types';
 import { BindingAddress } from '../bindings';
 import { Context, getContext } from '../context';
 import { ContextNotFound, SourceNotDefined } from '../errors';
-import { isAny, isAnyObject, isBoolean, isString } from '../types';
-import { isFunction } from '../utils';
+import { BindingScope, BindingSource, BindingType } from './types';
 
-/**
- * Binding sources
- */
-export enum BindingType {
-  /**
-   * A fixed value
-   */
-  CONSTANT = 'Constant',
-  /**
-   * A function to get the value
-   */
-  FUNCTION = 'Function',
-  /**
-   * Class constructor
-   */
-  CLASS = 'Class'
-}
-
-export enum BindingScope {
-  TRANSIENT = 'Transient',
-  METADATA = 'Metadata',
-  SINGLETON = 'Singleton',
-  SERVER = 'Server',
-  APPLICATION = 'Application'
-}
-
-export type ConstantBindingSource<T> = {
-  type: BindingType.CONSTANT | BindingType.FUNCTION;
-  value: T;
-};
-export type DynamicValueBindingSource<T> = {
-  type: BindingType.FUNCTION;
-  value: () => T;
-};
-export type ClassBindingSource<T extends Object> = {
-  type: BindingType.CLASS;
-  value: new () => T;
-};
-export type EmptyBindingSource = {
-  type: BindingType.CONSTANT;
-  value: null;
-};
-
-export type BindingSource<T> =
-  | ConstantBindingSource<T>
-  | DynamicValueBindingSource<T>
-  | (T extends Object ? ClassBindingSource<T> : never)
-  | EmptyBindingSource;
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export interface TagMap<Shape = Record<string, unknown>> extends Map<string, unknown> {
-  delete(key: keyof Shape & string): boolean;
-  has(key: keyof Shape & string): boolean;
-  forEach(
-    callbackfn: (
-      value: Shape[keyof Shape],
-      key: keyof Shape & string,
-      map: TagMap<Shape>
-    ) => void,
-    thisArg?: unknown
-  ): void;
-  get<Key extends keyof Shape & string>(key: Key): Shape[Key];
-  set<Key extends keyof Shape & string>(key: Key, value: Shape[Key]): this;
-}
-
-export class Binding<
-  BoundValue = unknown,
-  Tags extends Record<string, unknown> = Record<string, unknown>
-> extends EventEmitter {
+export class Binding<BoundValue = unknown> extends EventEmitter {
   public scope: string = BindingScope.TRANSIENT;
-  public tagMap?: TagMap<Tags>;
+
+  public tagMap?: Map<string, unknown>;
 
   #memoized = false;
   #cache: WeakMap<Context, BoundValue> = new WeakMap();
@@ -101,7 +34,7 @@ export class Binding<
    * @param value - to bind to the key
    * @returns this
    */
-  with(value: BindingSource<BoundValue>['value']): this {
+  with(value: BindingSource<BoundValue>['value']): Return<this, Error> {
     if (isPromise(value)) {
       // Promises are a construct primarily intended for flow control:
       // In an algorithm with steps 1 and 2, we want to wait for the outcome
@@ -177,59 +110,19 @@ export class Binding<
     return this;
   }
 
-  tag<Key extends keyof Tags, Value extends isAny<Tags[Key], unknown, Tags[Key]>>(
-    key: Key,
-    value: isBoolean<Tags[Key], boolean | undefined, Value>
-  ): Binding<
-    BoundValue,
-    {
-      [key in Key | isString<keyof Tags, never, keyof Tags>]: (Tags &
-        Record<Key, Value>)[key];
-    }
-  >;
-
-  /**
-   * set to a provided key a value
-   * @param key
-   * @param value to set to key
-   */
-  tag<Key extends string, Value extends Tags[Key]>(
-    key: Key,
-    value: Value
-  ): Binding<
-    BoundValue,
-    {
-      [key in Key | isString<keyof Tags, never, keyof Tags>]: (Tags &
-        Record<Key, Value>)[key];
-    }
-  >;
-
-  /**
-   * Define this as true inside of tagMap
-   * @param key set this tag to true
-   */
-  tag<Key extends string>(
-    key: isAnyObject<Tags, Key, isBoolean<Tags[Key], Key, isAny<Tags[Key], Key, never>>>
-  ): Binding<
-    BoundValue,
-    {
-      [key in isAnyObject<Tags, Key, Key | keyof Tags>]: (Tags & Record<Key, true>)[key];
-    }
-  >;
-
-  tag(key: unknown, value?: unknown): unknown {
+  tag(key: string, value?: unknown): this {
     value = value === undefined ? true : value;
     if (!this.tagMap) {
       this.tagMap = new Map();
     }
-    this.tagMap.set(key as never, value as never);
-    this.emit('tag', key as never, value as never);
+    this.tagMap.set(key, value);
+    this.emit('tag', key, value);
 
     return this;
   }
 
-  apply<Bind>(template: (bind: Binding) => Bind): Bind {
-    return template(this as Binding);
+  apply<Bind>(template: (bind: this) => Bind): Bind {
+    return template(this);
   }
 
   /**
@@ -314,10 +207,7 @@ export class Binding<
     return resolutionCtx;
   }
 
-  override on(
-    eventName: 'tag',
-    listener: (key: keyof Tags, value: Tags[keyof Tags]) => void
-  ): this;
+  override on(eventName: 'tag', listener: (key: string, value: unknown) => void): this;
   override on(
     eventName: 'source' | 'value',
     listener: (value: BindingSource<BoundValue>['value']) => void
@@ -327,7 +217,7 @@ export class Binding<
     return super.on(eventName, listener);
   }
 
-  override emit(eventName: 'tag', key: keyof Tags, value: Tags[keyof Tags]): boolean;
+  override emit(eventName: 'tag', key: string, value: unknown): boolean;
   override emit(
     eventName: 'source' | 'value',
     value: BindingSource<BoundValue>['value']

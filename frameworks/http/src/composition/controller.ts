@@ -10,8 +10,7 @@ import {
   useMetadata
 } from '@kraftr/core';
 import { randomUUID } from 'node:crypto';
-import { RestScope } from '..';
-import { RestMetadata } from '../bindings';
+import { HttpMetadata } from '..';
 import { controllerTemplate } from '../template';
 
 export type RequestHandler = () => void;
@@ -44,7 +43,7 @@ export function useController(controller: ControllerBuilder): Return<void, Error
     .with(() =>
       createContext((ctx) => {
         ctx.name = `context controller: ${controllerName}`;
-        const meta = useMetadata(RestMetadata.CONTROLLER);
+        const meta = useMetadata(HttpMetadata.CONTROLLER);
 
         const handler = controller();
         if (!handler || typeof handler !== 'function') {

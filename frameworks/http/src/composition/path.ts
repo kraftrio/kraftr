@@ -1,6 +1,6 @@
 import { inject, Return, useMetadata } from '@kraftr/core';
 import { parse } from 'regexparam';
-import { RestMetadata, RestBindings } from '../bindings';
+import { HttpBindings, HttpMetadata } from '../bindings';
 import { defineMethod } from './method';
 import type { HTTPMethod, RecordBind, RouteParamsBinds } from './utils';
 
@@ -48,7 +48,7 @@ export function definePath(methodOrPath: string, mayPath?: string) {
   defineMethod(method);
 
   const { keys } = parse(path);
-  const meta = useMetadata(RestMetadata.CONTROLLER);
+  const meta = useMetadata(HttpMetadata.CONTROLLER);
   meta.extend({ path, parameters: [] });
 
   if (keys.length > 0) {
@@ -62,7 +62,7 @@ export function definePath(methodOrPath: string, mayPath?: string) {
       key,
       {
         get value() {
-          return inject.deep(RestBindings.Http.PARAMS, key);
+          return inject.deep(HttpBindings.Request.PARAMS, key);
         }
       }
     ])

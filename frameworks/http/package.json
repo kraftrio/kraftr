@@ -18,6 +18,7 @@
   "scripts": {
     "build": "craft build --silent",
     "build:watch": "craft build --silent --stub",
+    "stub": "craft build --silent --stub",
     "test": "vitest",
     "test:types": "tsc --noEmit"
   },

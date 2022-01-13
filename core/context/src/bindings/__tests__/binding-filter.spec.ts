@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { Binding } from '../binding';
 import { filterByTag, includesTagValue } from '../binding-filter';
 
@@ -7,15 +7,15 @@ type Tags = { controller: true; value: string[] };
 describe('filterByTag()', () => {
   it('filter by tag existence', () => {
     const filter = filterByTag<Tags>({ controller: true });
-    const bind = new Binding<unknown, Tags>('').tag('controller');
+    const bind = new Binding('').tag('controller');
 
     expect(filter(bind)).toBeTruthy();
   });
 
   it('filter by function', () => {
-    const filter = filterByTag<Tags>({ controller: (_, tag) => tag === 'controller' });
+    const filter = filterByTag<Tags>({ controller: includesTagValue(true) });
 
-    const bind = new Binding<unknown, Tags>('').tag('controller');
+    const bind = new Binding('').tag('controller');
 
     expect(filter(bind)).toBeTruthy();
   });
@@ -49,7 +49,7 @@ describe('integration', () => {
   it('filter by tag array values', () => {
     const filter = filterByTag<Tags>({ value: includesTagValue('const') });
 
-    const bind = new Binding<unknown, Tags>('').tag('value', ['const']);
+    const bind = new Binding('').tag('value', ['const']);
 
     expect(filter(bind)).toBeTruthy();
   });

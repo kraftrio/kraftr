@@ -14,14 +14,12 @@ export class Context extends EventEmitter<ContextEvents> {
     super();
   }
 
-  add(bind: Binding): void {
+  add(bind: Binding<any>): void {
     this.registry.set(bind.key.toString(), bind);
     this.emit('add', bind);
   }
 
-  find<Tags extends Record<string, unknown>>(
-    filter: BindingFilter<Tags>
-  ): Binding<unknown, Tags>[] {
+  find(filter: BindingFilter): Binding[] {
     const bindings: Binding[] = [];
     for (const bind of this.registry.values()) {
       if (filter(bind)) {
@@ -35,7 +33,7 @@ export class Context extends EventEmitter<ContextEvents> {
       ...parentBindings.filter(
         (p) => !bindings.some((c) => c.key.toString() === p.key.toString())
       )
-    ] as Binding<unknown, Tags>[];
+    ] as Binding[];
   }
 
   /**
@@ -89,7 +87,7 @@ export class Context extends EventEmitter<ContextEvents> {
    * the given binding
    * @param binding - Binding object
    */
-  getResolutionContext(binding: Readonly<Binding<unknown>>): Context | undefined {
+  getResolutionContext(binding: Binding): Context | undefined {
     switch (binding.scope) {
       case BindingScope.SINGLETON:
         return this.getOwnerContext(binding.key);
@@ -105,9 +103,7 @@ export class Context extends EventEmitter<ContextEvents> {
    * Get the owning context for a binding or its key
    * @param keyOrBinding - Binding object or key
    */
-  getOwnerContext(
-    keyOrBinding: BindingAddress | Readonly<Binding<unknown>>
-  ): Context | undefined {
+  getOwnerContext(keyOrBinding: BindingAddress | Binding): Context | undefined {
     const key: BindingAddress =
       typeof keyOrBinding === 'object' && 'key' in keyOrBinding
         ? keyOrBinding.key
@@ -130,11 +126,11 @@ export class Context extends EventEmitter<ContextEvents> {
   }
 
   get<ValueType>(key: BindingAddress<ValueType>): Binding<ValueType> | undefined {
-    const binding = this.registry.get(key.toString());
+    const binding = this.registry.get(key) as Binding<ValueType> | undefined;
 
     if (!binding && this.parent) {
-      return this.parent.get(key.toString());
+      return this.parent.get(key);
     }
-    return binding as Binding<ValueType>;
+    return binding;
   }
 }

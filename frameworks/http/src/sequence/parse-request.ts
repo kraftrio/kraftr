@@ -1,12 +1,12 @@
 import { inject, Middleware, provide } from '@kraftr/core';
 import { URL } from 'node:url';
-import { RestBindings } from '../bindings';
+import { HttpBindings } from '../bindings';
 import { HttpException } from '../http-errors';
-import { RestScope } from '../scopes';
+import { HttpScope } from '../scopes';
 import { MIMEType } from '../utils/mimetype';
 
 export const parseRequest: Middleware<void> = async (_, next) => {
-  const request = inject(RestBindings.Http.REQUEST);
+  const request = inject(HttpBindings.Request.INSTANCE);
 
   const contentType = MIMEType.parse(
     request.headers['content-type'] ?? 'application/json'
@@ -32,9 +32,9 @@ export const parseRequest: Middleware<void> = async (_, next) => {
 
   const url = new URL(request.url!, `http://${request.headers.host}`);
 
-  provide(RestBindings.Http.URL).in(RestScope.REQUEST).constant().with(url);
+  provide(HttpBindings.Request.URL).in(HttpScope.REQUEST).constant().with(url);
 
-  provide(RestBindings.Http.HEADERS).in(RestScope.REQUEST).constant().with({
+  provide(HttpBindings.Request.HEADERS).in(HttpScope.REQUEST).constant().with({
     contentType,
     accept
   });

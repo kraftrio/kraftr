@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@kraftr/common",
+      "comment": "abstract away common methods in this package",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@kraftr/common"
+}

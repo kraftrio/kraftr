@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@kraftr/core",
+      "comment": "add new packages and change components behavior",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@kraftr/core"
+}

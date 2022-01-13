@@ -1,13 +1,7 @@
-import {
-  Binding,
-  BindingScope,
-  closeContext,
-  openContext,
-  useMetadata
-} from '@kraftr/core';
+import { BindingScope, closeContext, openContext, useMetadata } from '@kraftr/core';
 import { afterEach, beforeEach, expect, it } from 'vitest';
 import { definePath } from '../..';
-import { RestMetadata } from '../../bindings';
+import { HttpMetadata } from '../../bindings';
 
 beforeEach(() => {
   openContext(BindingScope.METADATA);
@@ -16,7 +10,7 @@ afterEach(() => closeContext());
 it('create a metadata obj with a defined path', () => {
   definePath('/subscription');
 
-  const meta = useMetadata(RestMetadata.CONTROLLER);
+  const meta = useMetadata(HttpMetadata.CONTROLLER);
   expect(meta.data).toEqual({
     path: '/subscription',
     method: 'GET',
@@ -27,7 +21,7 @@ it('create a metadata obj with a defined path', () => {
 it('create a metadata obj with a path param', () => {
   definePath('/subscription/:id');
 
-  const meta = useMetadata(RestMetadata.CONTROLLER);
+  const meta = useMetadata(HttpMetadata.CONTROLLER);
   expect(meta.data).toEqual({
     path: '/subscription/:id',
     method: 'GET',
@@ -38,7 +32,7 @@ it('create a metadata obj with a path param', () => {
 it('create a metadata obj with a PATCH method', () => {
   definePath('PATCH', '/subscription/:id');
 
-  const meta = useMetadata(RestMetadata.CONTROLLER);
+  const meta = useMetadata(HttpMetadata.CONTROLLER);
   expect(meta.data).toEqual({
     path: '/subscription/:id',
     method: 'PATCH',
@@ -49,7 +43,7 @@ it('create a metadata obj with a PATCH method', () => {
 it('create a metadata obj with 2 path params', () => {
   definePath('PATCH', '/subscription/:id/:name');
 
-  const meta = useMetadata(RestMetadata.CONTROLLER);
+  const meta = useMetadata(HttpMetadata.CONTROLLER);
   expect(meta.data).toEqual({
     path: '/subscription/:id/:name',
     method: 'PATCH',

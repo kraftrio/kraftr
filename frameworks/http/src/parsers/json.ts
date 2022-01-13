@@ -1,11 +1,11 @@
 import destr from 'destr';
 import { Readable } from 'node:stream';
-import { HttpResponse } from '../http-errors';
+import { HttpException } from '../http-errors';
 import { through } from './utils';
 
 export namespace json {
-  export function deserialize(stream: Readable) {
-    const transform = through((chunk, _, cb) => {
+  export function deserialize() {
+    return through((chunk, _, cb) => {
       const value = chunk.toString('utf-8');
       const parsed = destr(value);
 
@@ -13,26 +13,22 @@ export namespace json {
       if (parsed !== value) {
         cb(null, parsed);
       } else {
-        cb(HttpResponse.UnprocessableEntity(), null);
+        cb(new HttpException.UnprocessableEntity(), null);
       }
     });
-
-    return stream.pipe(transform);
   }
 
   export function serialize(stream: Readable) {
     if (!stream) return stream;
 
     const transform = through((chunk, _, cb) => {
-      console.log(chunk);
-
       const parsed = JSON.stringify(chunk);
 
       // destr handle parsing error returning the same string
       if (parsed !== chunk) {
         cb(null, parsed);
       } else {
-        cb(HttpResponse.UnprocessableEntity(), null);
+        cb(new HttpException.UnprocessableEntity(), null);
       }
     });
 

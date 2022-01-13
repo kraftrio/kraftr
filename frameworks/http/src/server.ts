@@ -1,6 +1,7 @@
 import { BindingScope, Context, inject, provide, useContext } from '@kraftr/core';
 import { RequestListener, createServer as createHttpServer } from 'node:http';
-import { RestBindings, RestScope } from '.';
+import { HttpScope } from './scopes';
+import { HttpBindings } from './bindings';
 
 export function createListener(appContext: Context): RequestListener {
   const serverCtx = new Context('Server Context', appContext);
@@ -8,12 +9,12 @@ export function createListener(appContext: Context): RequestListener {
 
   return async (req, res) => {
     const requestCtx = new Context('Request Context', serverCtx);
-    requestCtx.scope = RestScope.REQUEST;
+    requestCtx.scope = HttpScope.REQUEST;
 
     return useContext(requestCtx, async () => {
-      const sequence = inject(RestBindings.Server.SEQUENCE);
-      provide(RestBindings.Http.REQUEST).with(req);
-      provide(RestBindings.Http.RESPONSE).with(res);
+      const sequence = inject(HttpBindings.Server.SEQUENCE);
+      provide(HttpBindings.Request.INSTANCE).with(req);
+      provide(HttpBindings.Response.INSTANCE).with(res);
 
       return sequence.execute();
     });

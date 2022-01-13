@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@kraftr/build",
+      "comment": "add new command and other features",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@kraftr/build"
+}

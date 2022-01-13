@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest run --reporter=dot",
+    "build": "",
     "dev": "craft dev"
   },
   "main": "src/index.ts",

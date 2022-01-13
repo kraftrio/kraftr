@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@kraftr/eslint-plugin",
+      "comment": "change some rules",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@kraftr/eslint-plugin"
+}

@@ -7,5 +7,9 @@ export default defineConfig({
     rollupOptions: {
       external: ['vitest']
     }
+  },
+  test: {
+    isolate: false,
+    environment: 'node'
   }
 });

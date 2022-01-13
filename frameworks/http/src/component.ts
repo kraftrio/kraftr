@@ -1,7 +1,9 @@
 /* c8 ignore start */
 import { BindingScope, component, filterByTag, inject, provide } from '@kraftr/core';
 import Router, { HTTPMethod, HTTPVersion } from 'find-my-way';
-import { RestBindings } from './bindings';
+import { PassThrough } from 'node:stream';
+import { HttpBindings } from './bindings';
+import { HttpScope } from './scopes';
 import {
   findRoute,
   HttpSequence,
@@ -14,7 +16,7 @@ import {
 import { RestTemplates } from './template';
 
 export const HttpComponent = component(() => {
-  provide(RestBindings.Server.SEQUENCE)
+  provide(HttpBindings.Server.SEQUENCE)
     .class()
     .in(BindingScope.SERVER)
     .with(HttpSequence);
@@ -39,7 +41,12 @@ export const HttpComponent = component(() => {
     .apply(RestTemplates.Sequence.INVOKE)
     .with(invokeMiddleware);
 
-  provide(RestBindings.Server.ROUTER)
+  provide(HttpBindings.Response.STREAM)
+    .in(HttpScope.REQUEST)
+    .with(() => new PassThrough({ objectMode: true }))
+    .dynamic();
+
+  provide(HttpBindings.Server.ROUTER)
     .dynamic()
     .in(BindingScope.SERVER)
     .with(() => {
