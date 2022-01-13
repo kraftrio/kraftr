@@ -35,6 +35,7 @@
     "build": "craft build --silent ./src/index.ts ./src/eslint.ts",
     "build:watch": "craft build --silent ./src/index.ts ./src/eslint.ts",
     "lint": "eslint **/*.ts --ext ts",
+    "test": "",
     "test:types": "tsc --noEmit"
   },
   "publishConfig": {
@@ -49,17 +50,17 @@
     "@typescript-eslint/types": "^5.1.0",
     "@typescript-eslint/typescript-estree": "^5.1.0",
     "deepmerge": "^4.2.2",
-    "json-schema": "^0.4.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-unicorn": "^38.0.1",
-    "tsutils": "^3.21.0",
     "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-unicorn": "^40.0.0",
+    "json-schema": "^0.4.0",
+    "tsutils": "^3.21.0",
     "typescript": "^4.5.2"
   },
   "license": "^MIT",
   "devDependencies": {
     "@kraftr/build": "workspace:^0.5.0",
-    "@types/eslint": "^7.28.2",
+    "@types/eslint": "^8.2.2",
     "@types/estree": "^0.0.50",
     "@types/node": "^16.11.7",
     "tslib": "^2.3.1"

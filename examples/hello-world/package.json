@@ -7,20 +7,21 @@
     "build:watch": "",
     "build": "",
     "stub": "",
+    "test": "",
     "dev": "craft dev"
   },
   "main": "src/index.ts",
   "dependencies": {
     "@kraftr/http-framework": "workspace:^0.1.0",
-    "listhen": "^0.2.5"
+    "listhen": "^0.2.6"
   },
   "devDependencies": {
     "@kraftr/build": "workspace:^0.5.0",
     "@kraftr/eslint-plugin": "workspace:^0.2.3",
     "@types/node": "^16.11.7",
-    "vitest": "latest",
+    "eslint": "^8.2.0",
     "supertest-fetch": "^1.5.0",
     "tslib": "^2.3.1",
-    "eslint": "^8.2.0"
+    "vitest": "latest"
   }
 }

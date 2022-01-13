@@ -19,7 +19,9 @@
     "build": "craft build --silent",
     "build:watch": "craft build --silent --stub",
     "stub": "craft build --silent --stub",
-    "test": "vitest",
+    "test": "npm run test:files & npm run test:types",
+    "test:watch": "vitest dev --reporter=dot",
+    "test:files": "vitest run --reporter=dot",
     "test:types": "tsc --noEmit"
   },
   "exports": {

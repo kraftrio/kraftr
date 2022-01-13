@@ -30,6 +30,17 @@
       "ignoreMissingScript": true,
       "ignoreDependencyOrder": true,
       "safeForSimultaneousRushProcesses": true
+    },
+    {
+      "name": "test",
+      "commandKind": "bulk",
+      "summary": "",
+      "incremental": true,
+      "watchForChanges": false,
+      "enableParallelism": true,
+      "ignoreMissingScript": false,
+      "ignoreDependencyOrder": true,
+      "safeForSimultaneousRushProcesses": true
     }
   ],
 
