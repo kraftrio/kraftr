@@ -12,13 +12,14 @@ export class Binding<BoundValue = unknown> extends EventEmitter {
 
   public tagMap?: Map<string, unknown>;
 
-  #memoized = false;
-  #cache: WeakMap<Context, BoundValue> = new WeakMap();
-  #source: BindingSource<BoundValue> = {
+  // JS private properties (#) has some performance penalty
+
+  private _cache: WeakMap<Context, BoundValue> = new WeakMap();
+  private _source: BindingSource<BoundValue> = {
     type: BindingType.CONSTANT,
     value: null
   };
-  #initialized = false;
+  private _initialized = false;
   isLocked = false;
 
   constructor(public key: BindingAddress<BoundValue>) {
@@ -26,7 +27,7 @@ export class Binding<BoundValue = unknown> extends EventEmitter {
   }
 
   get type() {
-    return this.#source.type;
+    return this._source.type;
   }
 
   /**
@@ -57,8 +58,8 @@ export class Binding<BoundValue = unknown> extends EventEmitter {
     }
     this.emit('source', value);
     this.emit('value', value);
-    this.#source.value = value;
-    this.#initialized = true;
+    this._source.value = value;
+    this._initialized = true;
 
     return this;
   }
@@ -68,7 +69,6 @@ export class Binding<BoundValue = unknown> extends EventEmitter {
    * @param value
    */
   memoize(value = true): this {
-    this.#memoized = value;
     return this;
   }
 
@@ -86,7 +86,7 @@ export class Binding<BoundValue = unknown> extends EventEmitter {
    * @returns this
    */
   constant(): this {
-    this.#source.type = BindingType.CONSTANT;
+    this._source.type = BindingType.CONSTANT;
     return this;
   }
 
@@ -96,7 +96,7 @@ export class Binding<BoundValue = unknown> extends EventEmitter {
    * @returns this
    */
   dynamic(): this {
-    this.#source.type = BindingType.FUNCTION;
+    this._source.type = BindingType.FUNCTION;
     return this;
   }
 
@@ -106,7 +106,7 @@ export class Binding<BoundValue = unknown> extends EventEmitter {
    * @returns this
    */
   class(): this {
-    this.#source.type = BindingType.CLASS;
+    this._source.type = BindingType.CLASS;
     return this;
   }
 
@@ -141,36 +141,34 @@ export class Binding<BoundValue = unknown> extends EventEmitter {
    * @returns bound value
    */
   value(): Return<BoundValue, SourceNotDefined | ContextNotFound> {
-    if (!this.#initialized) {
+    if (!this._initialized) {
       throw new SourceNotDefined(this.key);
     }
-    let sourceValue = this.#source.value as BoundValue;
+    let sourceValue = this._source.value as BoundValue;
 
-    if (this.#source.type === BindingType.CONSTANT) {
+    if (this._source.type === BindingType.CONSTANT) {
       return sourceValue;
     }
 
     const resolutionCtx = this.getResolutionContext();
 
-    let value = this.#cache.get(resolutionCtx);
+    let value = this._cache.get(resolutionCtx);
     if (this.scope !== BindingScope.TRANSIENT && value !== undefined) {
       return value;
     }
 
-    if (this.#source.type === BindingType.CLASS) {
-      value = new this.#source.value();
-    } else if (isFunction(this.#source.value)) {
-      value = this.#source.value();
+    if (this._source.type === BindingType.CLASS) {
+      value = new this._source.value();
+    } else if (isFunction(this._source.value)) {
+      value = this._source.value();
     } else {
       throw new TypeError(
-        `bind ${this.key} is type ${
-          this.#source.type
-        } but it's source is not callable/newable`
+        `bind ${this.key} is type ${this._source.type} but it's source is not callable/newable`
       );
     }
 
     if (this.scope !== BindingScope.TRANSIENT) {
-      this.#cache.set(resolutionCtx, value);
+      this._cache.set(resolutionCtx, value);
     }
 
     return value;
