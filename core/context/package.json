@@ -18,7 +18,7 @@
     "build": "craft build --silent",
     "build:watch": "craft build --silent --watch",
     "stub": "craft build --silent --stub",
-    "test": "npm run test:files & npm run test:types",
+    "test": "npm run test:files && npm run test:types",
     "test:watch": "vitest dev --reporter=dot",
     "test:files": "vitest run --reporter=dot",
     "test:types": "tsc --noEmit"
@@ -59,6 +59,7 @@
     "@kraftr/eslint-plugin": "workspace:^0.2.3",
     "@types/node": "^16.11.7",
     "c8": "^7.10.0",
+    "typescript": "^4.5.2",
     "eslint": "^8.2.0",
     "tslib": "^2.3.1",
     "vite": "^2.7.12",

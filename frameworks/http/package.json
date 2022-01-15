@@ -19,7 +19,7 @@
     "build": "craft build --silent",
     "build:watch": "craft build --silent --stub",
     "stub": "craft build --silent --stub",
-    "test": "npm run test:files & npm run test:types",
+    "test": "npm run test:files && npm run test:types",
     "test:watch": "vitest dev --reporter=dot",
     "test:files": "vitest run --reporter=dot",
     "test:types": "tsc --noEmit"
@@ -38,29 +38,18 @@
   "dependencies": {
     "@kraftr/common": "workspace:^0.1.0",
     "@kraftr/core": "workspace:^0.1.0",
-    "route-trie": "^3.0.0",
     "regexparam": "^2.0.0",
-    "split2": "^4.1.0",
     "find-my-way": "^5.1.0",
     "destr": "^1.1.0",
-    "json-stream-stringify": "^2.0.4",
     "@types/connect": "^3.4.35"
   },
   "devDependencies": {
     "@kraftr/build": "workspace:^0.5.0",
-    "@types/split2": "^3.2.1",
     "@kraftr/eslint-plugin": "workspace:^0.2.3",
-    "@types/debug": "^4.1.7",
     "@types/node": "^16.11.7",
-    "@types/qs": "^6.9.7",
     "supertest-fetch": "^1.5.0",
     "tslib": "^2.3.1",
     "vitest": "latest",
-    "eslint": "^8.2.0",
-    "benny": "^3.7.1",
-    "wayfarer": "^7.0.1",
-    "fast-router": "^1.0.5",
-    "routington": "^1.0.3",
-    "trouter": "^3.2.0"
+    "eslint": "^8.2.0"
   }
 }
