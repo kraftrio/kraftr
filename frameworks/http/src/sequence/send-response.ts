@@ -1,43 +1,32 @@
-import { createLogger } from '@kraftr/common';
+import { createLogger, through } from '@kraftr/common';
 import { inject, Middleware } from '@kraftr/core';
 import { STATUS_CODES } from 'node:http';
+import { TransformOptions } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { HttpBindings } from '../bindings';
 import { HttpException, HttpStatus } from '../http-errors';
-import { through } from '../parsers/utils';
+import { json } from '../parsers';
 
-export const fallbackToString = () =>
-  through((chunk, _, cb) =>
-    typeof chunk === 'string' || Buffer.isBuffer(chunk)
-      ? cb(null, chunk)
-      : cb(null, String(chunk))
-  );
+export const fallbackToString: TransformOptions['transform'] = (chunk, _, cb) =>
+  typeof chunk === 'string' || Buffer.isBuffer(chunk)
+    ? cb(null, chunk)
+    : cb(null, String(chunk));
 
 const logger = createLogger('kraftr:http-framework:sequence:send-response');
 
 export const sendResponse: Middleware<void> = async (_, next) => {
   const response = inject(HttpBindings.Response.INSTANCE);
-  const json = through((chunk, _, cb) => {
-    const parsed = JSON.stringify(chunk);
-
-    // destr handle parsing error returning the same string
-    if (parsed !== chunk) {
-      cb(null, parsed);
-    } else {
-      cb(new HttpException.UnprocessableEntity(), null);
-    }
-  });
 
   try {
     await next();
     const responseStream = inject(HttpBindings.Response.STREAM);
 
-    await pipeline(responseStream, json, fallbackToString(), response);
+    await pipeline(responseStream, json.serialize(), through(fallbackToString), response);
   } catch (error) {
     logger;
     if (error instanceof HttpException) {
       response.writeHead(error.statusCode, error.message);
-      return pipeline(error, json, fallbackToString(), response);
+      return pipeline(error, json.serialize(), through(fallbackToString), response);
     }
 
     if (error instanceof Error) {
@@ -53,16 +42,16 @@ export const sendResponse: Middleware<void> = async (_, next) => {
             statusCode: HttpStatus.InternalServerError
           }
         ],
-        json,
-        fallbackToString(),
+        json.serialize(),
+        through(fallbackToString),
         response
       );
     }
 
     return pipeline(
       [{ statusCode: HttpStatus.InternalServerError, message: 'Unknown Error' }],
-      json,
-      fallbackToString(),
+      json.serialize(),
+      through(fallbackToString),
       response
     );
   }

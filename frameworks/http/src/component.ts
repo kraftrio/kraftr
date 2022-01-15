@@ -1,4 +1,5 @@
 /* c8 ignore start */
+import { createLogger } from '@kraftr/common';
 import { BindingScope, component, filterByTag, inject, provide } from '@kraftr/core';
 import Router, { HTTPMethod, HTTPVersion } from 'find-my-way';
 import { PassThrough } from 'node:stream';
@@ -11,9 +12,11 @@ import {
   parseRequest,
   RestMiddlewareGroups,
   sendResponse,
-  serializerFinder
+  findParser
 } from './sequence';
 import { RestTemplates } from './template';
+
+let logger = createLogger('kraftr:http-framework:component');
 
 export const HttpComponent = component(() => {
   provide(HttpBindings.Server.SEQUENCE)
@@ -29,9 +32,9 @@ export const HttpComponent = component(() => {
     .apply(RestTemplates.Sequence.PARSE_REQUEST)
     .with(parseRequest);
 
-  provide(RestMiddlewareGroups.SERIALIZER_FINDER)
-    .apply(RestTemplates.Sequence.SERIALIZER_FINDER)
-    .with(serializerFinder);
+  // provide(RestMiddlewareGroups.SERIALIZER_FINDER)
+  //   .apply(RestTemplates.Sequence.SERIALIZER_FINDER)
+  //   .with(findParser);
 
   provide(RestMiddlewareGroups.FIND_ROUTE)
     .apply(RestTemplates.Sequence.FIND_ROUTE)
@@ -62,7 +65,12 @@ export const HttpComponent = component(() => {
         const method = bind.tagMap?.get('method');
         const path = bind.tagMap?.get('path');
 
-        router.on(method as HTTPMethod, path!, () => bind.key);
+        if (!method || !path || typeof path !== 'string' || typeof method !== 'string') {
+          logger.warn(bind.tagMap, `${bind.key} has no proper tags for controller`);
+          continue;
+        }
+
+        router.on(method as HTTPMethod, path, () => bind.key);
       }
       return router;
     });

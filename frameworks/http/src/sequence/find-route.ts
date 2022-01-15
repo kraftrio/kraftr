@@ -3,6 +3,7 @@ import { HttpBindings } from '../bindings';
 import { HTTPMethod } from '../composition/utils';
 import { HttpScope } from '../scopes';
 import { createLogger } from '@kraftr/common';
+import { HttpException } from '../http-errors';
 
 const logger = createLogger('kraftr:http-framework:sequences:find-route');
 
@@ -29,7 +30,7 @@ export const findRoute: Middleware<void> = async (_, next) => {
   if (!resolved) {
     logger.debug(`${method}: ${url.pathname} not found`);
 
-    return;
+    throw new HttpException.NotFound();
   }
 
   const handler = resolved.handler as () => BindingAddress<() => unknown>;

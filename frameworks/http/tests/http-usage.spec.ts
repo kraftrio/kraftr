@@ -72,6 +72,7 @@ it('make a post request with a body', async () => {
 
     return async () => {
       const user = await body.value;
+
       db.push(user);
       return user;
     };
