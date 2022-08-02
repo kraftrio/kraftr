@@ -13,7 +13,7 @@
     "@kraftr/model": "*",
     "@kraftr/repository": "*",
     "@kraftr/sequence": "*",
-    "debug": "4.3.2",
+    "debug": "4.3.4",
     "mongoose": "6.0.12",
     "ts-toolbelt": "9.6.0",
     "tslib": "2.3.1",
