@@ -2,6 +2,18 @@
   "name": "@kraftr/eslint-plugin",
   "entries": [
     {
+      "version": "0.4.0",
+      "tag": "@kraftr/eslint-plugin_v0.4.0",
+      "date": "Wed, 30 Mar 2022 16:36:02 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "change some rules"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.2.3",
       "tag": "@kraftr/eslint-plugin_v0.2.3",
       "date": "Thu, 25 Nov 2021 09:03:15 GMT",

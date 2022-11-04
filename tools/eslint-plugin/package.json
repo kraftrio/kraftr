@@ -1,6 +1,6 @@
 {
   "name": "@kraftr/eslint-plugin",
-  "version": "0.2.3",
+  "version": "0.4.0",
   "description": "",
   "files": [
     "dist/"
@@ -55,11 +55,11 @@
     "eslint-plugin-unicorn": "^40.0.0",
     "json-schema": "^0.4.0",
     "tsutils": "^3.21.0",
-    "typescript": "^4.5.2"
+    "typescript": "^4.6.2"
   },
   "license": "^MIT",
   "devDependencies": {
-    "@kraftr/build": "workspace:^0.5.0",
+    "@kraftr/build": "workspace:^0.6.0",
     "@types/eslint": "^8.2.2",
     "@types/estree": "^0.0.50",
     "@types/node": "^16.11.7",

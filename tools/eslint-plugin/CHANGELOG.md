@@ -1,6 +1,13 @@
 # Change Log - @kraftr/eslint-plugin
 
-This log was last generated on Thu, 25 Nov 2021 09:03:15 GMT and should not be manually modified.
+This log was last generated on Wed, 30 Mar 2022 16:36:02 GMT and should not be manually modified.
+
+## 0.4.0
+Wed, 30 Mar 2022 16:36:02 GMT
+
+### Minor changes
+
+- change some rules
 
 ## 0.2.3
 Thu, 25 Nov 2021 09:03:15 GMT
