@@ -5,7 +5,7 @@ import { TransformOptions } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { HttpBindings } from '../bindings';
 import { HttpException, HttpStatus } from '../http-errors';
-import { json } from '../parsers';
+import { serialize, deserialize } from '../parsers';
 
 export const fallbackToString: TransformOptions['transform'] = (chunk, _, cb) =>
   typeof chunk === 'string' || Buffer.isBuffer(chunk)
@@ -21,12 +21,14 @@ export const sendResponse: Middleware<void> = async (_, next) => {
     await next();
     const responseStream = inject(HttpBindings.Response.STREAM);
 
-    await pipeline(responseStream, json.serialize(), through(fallbackToString), response);
+    response.setHeader('Content-Type', 'application/json');
+
+    await pipeline(responseStream, serialize(), through(fallbackToString), response);
   } catch (error) {
-    logger;
     if (error instanceof HttpException) {
       response.writeHead(error.statusCode, error.message);
-      return pipeline(error, json.serialize(), through(fallbackToString), response);
+
+      return pipeline(error, serialize(), through(fallbackToString), response);
     }
 
     if (error instanceof Error) {
@@ -42,7 +44,7 @@ export const sendResponse: Middleware<void> = async (_, next) => {
             statusCode: HttpStatus.InternalServerError
           }
         ],
-        json.serialize(),
+        serialize(),
         through(fallbackToString),
         response
       );
@@ -50,7 +52,7 @@ export const sendResponse: Middleware<void> = async (_, next) => {
 
     return pipeline(
       [{ statusCode: HttpStatus.InternalServerError, message: 'Unknown Error' }],
-      json.serialize(),
+      serialize(),
       through(fallbackToString),
       response
     );

@@ -2,6 +2,18 @@
   "name": "@kraftr/build",
   "entries": [
     {
+      "version": "0.7.0",
+      "tag": "@kraftr/build_v0.7.0",
+      "date": "Fri, 04 Nov 2022 20:31:20 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Add a new preset for applications"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.6.0",
       "tag": "@kraftr/build_v0.6.0",
       "date": "Wed, 30 Mar 2022 16:35:01 GMT",

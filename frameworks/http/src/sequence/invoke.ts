@@ -19,6 +19,12 @@ export const invokeMiddleware: Middleware<void> = async () => {
 
   const returnValue = await handler();
   const responseStream = inject(HttpBindings.Response.STREAM);
+  if (returnValue === undefined || returnValue === null) {
+    const response = inject(HttpBindings.Response.INSTANCE);
+    response.statusCode = 204;
+    responseStream.end();
+    return;
+  }
 
   if (
     !Array.isArray(returnValue) &&

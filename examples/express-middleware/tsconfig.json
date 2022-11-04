@@ -1,4 +1,0 @@
-{
-  "extends": "@kraftr/build/shared/tsconfig.common.json",
-  "exclude": ["dist", "node_module"]
-}

@@ -1,4 +1,4 @@
-import { Test } from 'ts-toolbelt';
+import { Test } from '@kraftr/common';
 import { RouteParams } from '../src/types';
 
 const { checks, check } = Test;

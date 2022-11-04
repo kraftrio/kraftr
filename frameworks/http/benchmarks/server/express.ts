@@ -4,6 +4,6 @@ express()
   .get(
     '/status',
     // endpoint
-    (_, res) => res.end('ok')
+    (_, res) => res.json({ status: 'ok' })
   )
   .listen(3000);

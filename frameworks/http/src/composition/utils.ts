@@ -1,4 +1,3 @@
-import { Binding } from '@kraftr/core';
 import { RouteParams } from '../types';
 
 export type RecordBind<T> = {

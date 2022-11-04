@@ -1,0 +1,78 @@
+{
+  "name": "@kraftr/sequence",
+  "entries": [
+    {
+      "version": "0.1.3",
+      "tag": "@kraftr/sequence_v0.1.3",
+      "date": "Fri, 04 Nov 2022 20:31:20 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Remove the Sequence class to use a function"
+          },
+          {
+            "comment": "Refactor all the way to work with sequences"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@kraftr/common\" from `^0.2.1` to `^0.3.0`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/context\" from `^0.2.1` to `^0.2.2`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/build\" from `^0.6.0` to `^0.7.0`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/eslint-plugin\" from `^0.4.0` to `^0.4.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.2",
+      "tag": "@kraftr/sequence_v0.1.2",
+      "date": "Wed, 30 Mar 2022 16:36:02 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@kraftr/common\" from `^0.2.0` to `^0.2.1`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/context\" from `^0.2.0` to `^0.2.1`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/eslint-plugin\" from `^0.3.0` to `^0.4.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.1",
+      "tag": "@kraftr/sequence_v0.1.1",
+      "date": "Wed, 30 Mar 2022 16:35:01 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "refactor and clean up code"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@kraftr/common\" from `^0.1.0` to `^0.2.0`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/context\" from `^0.1.0` to `^0.2.0`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/build\" from `^0.5.0` to `^0.6.0`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/eslint-plugin\" from `^0.2.3` to `^0.3.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

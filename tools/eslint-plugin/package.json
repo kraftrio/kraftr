@@ -1,6 +1,6 @@
 {
   "name": "@kraftr/eslint-plugin",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "",
   "files": [
     "dist/"
@@ -59,7 +59,7 @@
   },
   "license": "^MIT",
   "devDependencies": {
-    "@kraftr/build": "workspace:^0.6.0",
+    "@kraftr/build": "workspace:^0.7.0",
     "@types/eslint": "^8.2.2",
     "@types/estree": "^0.0.50",
     "@types/node": "^16.11.7",

@@ -2,7 +2,7 @@
   "search.exclude": {
     "common/**": true,
     "**/.pnp.*": true,
-    "**/dist": true,
+    "**/dist": false,
     "**/node_modules": true
   },
   "eslint.workingDirectories": [
@@ -22,7 +22,7 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     ".vscode": true,
-    "**/dist": true,
+    "**/dist": false,
     "**/.*": true
   },
   "editor.formatOnSave": true,

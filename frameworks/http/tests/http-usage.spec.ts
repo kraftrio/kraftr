@@ -1,8 +1,8 @@
 import { createApp, useComponent } from '@kraftr/core';
-import { makeFetch } from 'supertest-fetch';
 import { expect, it } from 'vitest';
 import { controller, createServer, defineBody, definePath, useController } from '../src';
 import { HttpComponent } from '../src/component';
+import { makeFetch } from 'supertest-fetch';
 
 type User = { name: string };
 
@@ -12,8 +12,9 @@ it('returns 404 when route is not found', async () => {
   });
   const server = createServer(app);
   const fetch = makeFetch(server);
+
   await fetch('/missing-route').expect(404);
-}, 20);
+}, 50);
 
 it('call with GET to an existing endpoint and returns 200', async () => {
   const getUsers = controller(() => {
@@ -62,6 +63,56 @@ it('call GET to an existing endpoint with querystring and hash', async () => {
       accept: 'application/json'
     }
   }).expect(200);
+}, 20);
+
+it('return content type header', async () => {
+  const getUsers = controller(() => {
+    definePath('/users/');
+
+    return () => [{ name: 'Carlos' }];
+  });
+
+  const app = createApp(() => {
+    useComponent(HttpComponent);
+    useController(getUsers);
+  });
+
+  const server = createServer(app);
+
+  const fetch = makeFetch(server);
+  await fetch('/users/#site?name=Carlos', {
+    headers: {
+      accept: 'application/json'
+    }
+  })
+    .expect(200)
+    .expectHeader('Content-Type', 'application/json')
+    .expectBody([{ name: 'Carlos' }]);
+}, 20);
+
+it('returns an error when body is required but is missing', async () => {
+  const getUsers = controller(() => {
+    definePath('POST', '/users/');
+    const body = defineBody();
+    return () => body.value;
+  });
+
+  const app = createApp(() => {
+    useComponent(HttpComponent);
+    useController(getUsers);
+  });
+
+  const server = createServer(app);
+
+  const fetch = makeFetch(server);
+  await fetch('/users/#site?name=Carlos', {
+    method: 'POST',
+    headers: {
+      accept: 'application/json'
+    }
+  })
+    .expect(200)
+    .expectBody({});
 }, 20);
 
 it('make a post request with a body', async () => {
@@ -172,4 +223,4 @@ it('handle simultaneous calls', async () => {
   const requests = Array.from({ length: 20 }, () => fetch('/users').expect(200));
 
   await Promise.all(requests);
-}, 40);
+}, 60);

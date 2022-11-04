@@ -3,6 +3,8 @@ import { TransformOptions } from 'node:stream';
 import { HttpException } from '../http-errors';
 import { through } from '@kraftr/common';
 
+// application/json
+
 const stringifyFn: TransformOptions['transform'] = (chunk, _, cb) => {
   const parsed = JSON.stringify(chunk);
 
@@ -14,7 +16,7 @@ const stringifyFn: TransformOptions['transform'] = (chunk, _, cb) => {
   }
 };
 
-const parseFn: TransformOptions['transform'] = (chunk, _, cb) => {
+const parseFn: TransformOptions['transform'] = (chunk: Buffer, _, cb) => {
   const value = chunk.toString('utf-8');
   const parsed = destr(value);
 

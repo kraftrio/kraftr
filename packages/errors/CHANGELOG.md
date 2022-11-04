@@ -1,42 +1,44 @@
-# Change Log - @kraftr/eslint-plugin
+# Change Log - @kraftr/errors
 
 This log was last generated on Fri, 04 Nov 2022 20:31:20 GMT and should not be manually modified.
 
-## 0.4.1
-Fri, 04 Nov 2022 20:31:20 GMT
-
-_Version update only_
-
 ## 0.4.0
-Wed, 30 Mar 2022 16:36:02 GMT
+Fri, 04 Nov 2022 20:31:20 GMT
 
 ### Minor changes
 
-- change some rules
+- improve internal toolings
 
-## 0.2.3
+## 0.1.4
 Thu, 25 Nov 2021 09:03:15 GMT
 
 _Version update only_
 
-## 0.2.2
+## 0.1.3
+Wed, 17 Nov 2021 06:11:21 GMT
+
+### Patches
+
+- "Err" with one parameter should use it as msg
+
+## 0.1.2
 Wed, 17 Nov 2021 04:11:55 GMT
 
 _Version update only_
 
-## 0.2.1
+## 0.1.1
 Wed, 17 Nov 2021 04:11:47 GMT
 
 ### Patches
 
-- update package.json metadata
+- publish .d.ts files
 
 ## 0.3.0
 Tue, 16 Nov 2021 22:03:45 GMT
 
 ### Minor changes
 
-- rule to always specify when a function throw any error
+- some refactor and type improves
 
 ## 0.2.0
 Tue, 16 Nov 2021 21:58:12 GMT

@@ -1,6 +1,13 @@
 # Change Log - @kraftr/build
 
-This log was last generated on Wed, 30 Mar 2022 16:35:01 GMT and should not be manually modified.
+This log was last generated on Fri, 04 Nov 2022 20:31:20 GMT and should not be manually modified.
+
+## 0.7.0
+Fri, 04 Nov 2022 20:31:20 GMT
+
+### Minor changes
+
+- Add a new preset for applications
 
 ## 0.6.0
 Wed, 30 Mar 2022 16:35:01 GMT
