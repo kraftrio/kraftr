@@ -37,3 +37,9 @@ export function isPromiseLike<T>(value: T | Promise<T> | undefined): value is Pr
 export function isFunction(value: unknown): value is () => unknown {
   return typeof value === 'function';
 }
+
+export type isString<T, True, False = T> = string extends T ? True : False;
+
+export function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}

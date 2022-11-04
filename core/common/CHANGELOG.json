@@ -1,0 +1,37 @@
+{
+  "name": "@kraftr/common",
+  "entries": [
+    {
+      "version": "0.2.1",
+      "tag": "@kraftr/common_v0.2.1",
+      "date": "Wed, 30 Mar 2022 16:36:02 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@kraftr/eslint-plugin\" from `^0.3.0` to `^0.4.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.2.0",
+      "tag": "@kraftr/common_v0.2.0",
+      "date": "Wed, 30 Mar 2022 16:35:01 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "abstract away common methods in this package"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@kraftr/build\" from `^0.5.0` to `^0.6.0`"
+          },
+          {
+            "comment": "Updating dependency \"@kraftr/eslint-plugin\" from `^0.2.3` to `^0.3.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

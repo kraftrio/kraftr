@@ -19,7 +19,6 @@ export type AnyObject = Record<string, unknown>;
 export type isAnyObject<T, True, False = T> = AnyObject extends T ? True : False;
 export type isBoolean<T, True, False = T> = T extends boolean ? True : False;
 export type isAny<T, True, False = T> = unknown extends T ? True : False;
-export type isString<T, True, False = T> = string extends T ? True : False;
 
 /**
  * Representing a value or promise. This type represent results of
