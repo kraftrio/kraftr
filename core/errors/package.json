@@ -1,6 +1,6 @@
 {
   "name": "@kraftr/errors",
-  "version": "0.1.4",
+  "version": "0.3.0",
   "type": "module",
   "homepage": "https://github.com/kraftrio/kraftr",
   "repository": {
@@ -41,10 +41,10 @@
     "framework"
   ],
   "devDependencies": {
-    "@kraftr/build": "workspace:^0.5.0",
-    "@kraftr/eslint-plugin": "workspace:^0.2.3",
+    "@kraftr/build": "workspace:^0.6.0",
+    "@kraftr/eslint-plugin": "workspace:^0.4.0",
     "@types/node": "^16.11.7",
-    "typescript": "^4.5.2",
+    "typescript": "^4.6.2",
     "tslib": "^2.3.1",
     "eslint": "^8.2.0",
     "vitest": "latest"
