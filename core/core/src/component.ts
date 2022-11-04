@@ -21,9 +21,17 @@ export type AsyncComponent = {
  * @public
  * @param fn setup function for the component
  */
-export function component<T extends () => void | Promise<void>>(
+export function component<T extends () => Promise<void>>(
   fn: T
-): Return<T & Component, Error>;
+): Return<T & AsyncComponent, Error>;
+
+/**
+ * Make an object auto installable by `useComponent()`
+ *
+ * @public
+ * @param fn setup function for the component
+ */
+export function component<T extends () => void>(fn: T): Return<T & Component, Error>;
 
 /**
  * Make an object auto installable by `useComponent()`
@@ -88,11 +96,14 @@ export function isComponent(obj: unknown): obj is Component | AsyncComponent {
 
 async function load(folder: string) {
   const fullPath = path.resolve(folder);
+
   logger.debug(`loading components from ${fullPath}`);
   const files = await readdir(fullPath);
+
   for (const file of files) {
     const absPath = path.join(fullPath, file);
     const _module = await import(absPath);
+
     const _exports = Object.entries(_module);
 
     for (const [name, _export] of _exports) {
