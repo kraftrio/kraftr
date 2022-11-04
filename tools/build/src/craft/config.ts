@@ -3,12 +3,12 @@ import fg from 'fast-glob';
 import { loadPackageJSON } from 'local-pkg';
 import { isPromise } from 'node:util/types';
 import { Command } from 'soly';
-import { ConfigEnv, Plugin, UserConfig, UserConfigExport } from 'vite';
+import { ConfigEnv, PluginOption, UserConfig, UserConfigExport } from 'vite';
 
 type PackageJSON = Partial<typeof import('../../package.json')>;
 
 export type CraftPluginOption =
-  | (Plugin & {
+  | (PluginOption & {
       commands?: Record<string, (cmd: Command) => void>;
     })
   | false

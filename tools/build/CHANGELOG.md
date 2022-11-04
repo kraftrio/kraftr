@@ -1,6 +1,13 @@
 # Change Log - @kraftr/build
 
-This log was last generated on Thu, 25 Nov 2021 09:03:15 GMT and should not be manually modified.
+This log was last generated on Wed, 30 Mar 2022 16:35:01 GMT and should not be manually modified.
+
+## 0.6.0
+Wed, 30 Mar 2022 16:35:01 GMT
+
+### Minor changes
+
+- add new command and other features
 
 ## 0.5.0
 Thu, 25 Nov 2021 09:03:15 GMT

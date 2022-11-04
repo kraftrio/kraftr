@@ -2,6 +2,18 @@
   "name": "@kraftr/build",
   "entries": [
     {
+      "version": "0.6.0",
+      "tag": "@kraftr/build_v0.6.0",
+      "date": "Wed, 30 Mar 2022 16:35:01 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "add new command and other features"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.5.0",
       "tag": "@kraftr/build_v0.5.0",
       "date": "Thu, 25 Nov 2021 09:03:15 GMT",

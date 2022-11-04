@@ -1,3 +1,4 @@
+import { applicationPreset } from '../presets';
 import chalk from 'chalk';
 import { Command, path, string, z } from 'soly';
 import { createLogger, InlineConfig, mergeConfig } from 'vite';
@@ -10,7 +11,7 @@ const logger = createLogger('info', { prefix: 'craft' });
 export function build(cmd: Command) {
   const [entry, ...restEntries] = cmd.positionals(path().optional(), 0, 10);
   const { preset, mode, root, config } = cmd.named({
-    preset: z.enum(['lib', 'lib-perf']).default('lib'),
+    preset: z.enum(['lib', 'application']).default('lib'),
     mode: string().default('production'),
     root: path().default(process.cwd()),
     config: path().optional()
@@ -64,9 +65,11 @@ export function build(cmd: Command) {
     };
 
     if (!config.value || preset.value) {
+      const library = libraryPreset();
+      const application = applicationPreset();
       const userConfigExport = defineConfig({
         entries,
-        plugins: [preset.value === 'lib' ? libraryPreset() : null]
+        plugins: preset.value === 'lib' ? library : application
       });
 
       const localConfig = await (typeof userConfigExport === 'function'
