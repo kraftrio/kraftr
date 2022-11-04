@@ -1,5 +1,5 @@
-import { O } from 'ts-toolbelt';
-import { BindingAddress, BindingKey } from '../../context/src';
+import { O } from '@kraftr/common';
+import { BindingAddress, BindingKey } from '@kraftr/context';
 import { FieldDefinition, ModelDefinition, MonoOperation } from './model';
 
 export type FieldModifier<Meta extends Record<string, unknown>> = Meta;

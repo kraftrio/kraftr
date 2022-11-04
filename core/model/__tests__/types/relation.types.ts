@@ -1,5 +1,5 @@
 import { BindingAddress } from '@kraftr/context';
-import { Test } from 'ts-toolbelt';
+import { Test } from '@kraftr/common';
 import { Filter, FilterSingle, Include } from '../../src';
 import { ModelReference } from '../../src/model';
 

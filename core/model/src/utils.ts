@@ -1,4 +1,4 @@
-import { O } from 'ts-toolbelt';
+import { O } from '@kraftr/common';
 import { FieldDefinition } from '.';
 import { ModelDefinition } from './model';
 import { RelationModifier } from './modifiers';

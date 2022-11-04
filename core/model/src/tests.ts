@@ -1,4 +1,4 @@
-import { O } from 'ts-toolbelt';
+import { O } from '@kraftr/common';
 import { FieldDefinition, ModelDefinition } from '.';
 import merge from 'ts-deepmerge';
 

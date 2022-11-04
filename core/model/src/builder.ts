@@ -1,6 +1,6 @@
 import { ModelDefinition } from './model';
 import { Filter } from './filter';
-import merge from 'deepmerge';
+import merge from 'ts-deepmerge';
 
 export class QueryBuilder<
   Model extends ModelDefinition,

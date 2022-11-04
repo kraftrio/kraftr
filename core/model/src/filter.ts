@@ -1,5 +1,5 @@
-import { BindingAddress } from '@kraftr/context/src';
-import { O } from 'ts-toolbelt';
+import { O } from '@kraftr/common';
+import { BindingAddress } from '@kraftr/context';
 import {
   Hideable,
   ModelDefinition,

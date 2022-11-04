@@ -1,4 +1,4 @@
-import { C, U } from 'ts-toolbelt';
+import { C, U } from '@kraftr/common';
 import { SelectFields } from './utils';
 import { BindingAddress } from '@kraftr/context';
 

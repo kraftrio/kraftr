@@ -4,24 +4,24 @@
   "main": "./dist/index.umd.js",
   "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
-  "dependencies": {
-    "@kraftr/context": "*",
-    "ts-deepmerge": "1.1.0",
-    "ts-toolbelt": "9.6.0",
-    "tslib": "2.3.1",
-    "@rushstack/eslint-patch": "~1.0.8"
-  },
   "scripts": {
-    "build": "inx build",
-    "build:watch": "inx build",
-    "start": "inx"
+    "build": "craft build --silent",
+    "build:watch": "craft build --silent --watch",
+    "stub": "craft build --silent --stub",
+    "test": "npm run test:files && npm run test:types",
+    "test:watch": "vitest dev --reporter=dot",
+    "test:files": "vitest run --reporter=dot",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kraftr/common": "workspace:^0.2.1",
+    "@kraftr/context": "workspace:^0.2.1",
+    "ts-deepmerge": "^2.0.1"
   },
   "devDependencies": {
-    "@kraftr/eslint-plugin": "*",
-    "@kraftr/build": "*",
-    "@types/debug": "4.1.7",
-    "@types/jest": "27.0.2",
-    "@types/node": "16.10.3",
-    "eslint": "^7.0.0"
+    "@kraftr/eslint-plugin": "workspace:^0.4.0",
+    "@kraftr/build": "workspace:^0.6.0",
+    "@types/node": "^16.11.7",
+    "eslint": "^8.2.0"
   }
 }

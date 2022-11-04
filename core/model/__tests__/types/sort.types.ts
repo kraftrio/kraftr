@@ -1,4 +1,4 @@
-import { Test } from 'ts-toolbelt';
+import { Test } from '@kraftr/common';
 import { Sort } from '../../src';
 
 const { checks, check } = Test;
