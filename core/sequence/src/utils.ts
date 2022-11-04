@@ -1,15 +1,15 @@
 import { createLogger } from '@kraftr/common';
-import { BindingAddress, BindingFilter, inject } from '@kraftr/context';
+import { BindingAddress, BindingFilter, inject, provide } from '@kraftr/context';
 import { sortListOfGroups } from './sorter';
-import { DependentBindTags } from './types';
 
 const logger = createLogger('kraftr:sequence:runner');
 
-export function createDepSequence(
+export function orderMiddlewares(
   filter: BindingFilter,
   defaultGroup: BindingAddress[] = []
 ) {
   const map = new Map<string, BindingAddress>();
+
   const binds = inject.filtered(filter);
 
   logger.debug(`Found ${binds.length} binds`);
@@ -21,15 +21,15 @@ export function createDepSequence(
   for (const bind of binds) {
     if (!bind.tagMap) continue;
 
-    const group = bind.tagMap.get('group');
+    const group = bind.tagMap.get('group') as string;
 
     if (!group) continue;
     map.set(group, bind.key);
-    const groupsBefore = bind.tagMap.get('upstream') ?? [];
+    const groupsBefore = (bind.tagMap.get('upstream') ?? []) as string[];
 
     groupsBefore.forEach((d) => ordersFromDependencies.push([d, group]));
 
-    const groupsAfter = bind.tagMap.get('downstream') ?? [];
+    const groupsAfter = (bind.tagMap.get('downstream') ?? []) as string[];
     groupsAfter.forEach((d) => ordersFromDependencies.push([group, d]));
   }
 

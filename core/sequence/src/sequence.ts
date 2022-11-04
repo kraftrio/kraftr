@@ -1,62 +1,60 @@
-import { createLogger } from '@kraftr/common';
+import { createLogger, F } from '@kraftr/common';
 import {
-  BindingAddress,
-  filterByTag,
   ANY_TAG_VALUE,
+  BindingAddress,
+  BindingKey,
+  filterByTag,
   includesTagValue,
-  inject
+  inject,
+  provide
 } from '@kraftr/context';
-import { DependentBindTags, ExecutableMiddleware, Middleware, NextFn } from './types';
-import { createDepSequence } from './utils';
+import { DependentBindTags, Middleware, NextFn, Sequence } from './types';
+import { orderMiddlewares } from './utils';
 
 const logger = createLogger('kraftr:sequence:runner');
 
-export class Sequence<Data> {
-  public chain: BindingAddress = 'Sequence';
-  public groups: BindingAddress[] = [];
+function runMiddleware(
+  addresses: BindingAddress<Middleware>[],
+  next: NextFn = () => {},
+  start: number = 0
+): Promise<void> | void {
+  const address = addresses[start];
 
-  async run(data: Data, next: NextFn<Data>): Promise<Data> {
-    return next(await this.execute(data));
-  }
+  if (!address) return next();
 
-  private executeFn<Data>(
-    [address, ...nextAddresses]: BindingAddress[],
-    fallback: Data
-  ): NextFn<Data> {
-    if (!address) return async (data) => data;
+  const middleware = inject(address);
 
-    return async (data?: Data) => {
-      const sequenceFn = toSequenceFn(inject<ExecutableMiddleware<Data>>(address));
+  logger.debug('running middleware', address);
 
-      return sequenceFn(
-        data ?? fallback,
-        this.executeFn(nextAddresses, data ?? fallback)
-      );
-    };
-  }
-
-  execute(initialData: Data): Promise<Data> {
-    logger.debug(`Running chain ${this.chain}`);
-
-    const filter = filterByTag<DependentBindTags>({
-      extensionFor: includesTagValue(this.chain),
-      group: ANY_TAG_VALUE
-    });
-
-    const sorted = createDepSequence(filter, this.groups);
-
-    const executor = this.executeFn(sorted, initialData);
-
-    return executor(initialData) as Promise<Data>;
-  }
+  return middleware(() => runMiddleware(addresses, next, start + 1));
 }
 
-export function toSequenceFn<Data>(
-  fnOrSeq?: ExecutableMiddleware<Data>
-): Middleware<Data> {
-  if (!fnOrSeq) {
-    return (data, next) => next(data);
-  }
+export function createSequence<T extends BindingAddress>(
+  chain: BindingAddress,
+  defaultGroups?: T[]
+): Sequence<T> {
+  logger.debug('Creating sequence %s', chain);
 
-  return 'run' in fnOrSeq ? fnOrSeq.run.bind(fnOrSeq) : fnOrSeq;
+  const filter = filterByTag<DependentBindTags>({
+    extensionFor: includesTagValue(chain),
+    group: ANY_TAG_VALUE
+  });
+
+  const fn = ((next) => {
+    const sortedAddresses = orderMiddlewares(filter, defaultGroups);
+    logger.debug('sorted addresses %o', sortedAddresses);
+
+    return runMiddleware(sortedAddresses, next);
+  }) as Sequence;
+
+  fn.provide = (group, middleware, streams) => {
+    provide(BindingKey.generate())
+      .tag('group', group)
+      .tag('extensionFor', chain)
+      .tag('upstream', streams?.upstream ?? [])
+      .tag('downstream', streams?.downstream ?? [])
+      .with(middleware);
+  };
+
+  return fn;
 }

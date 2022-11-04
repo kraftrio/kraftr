@@ -1,6 +1,7 @@
 import { closeContext, inject, openContext, provide } from '@kraftr/context';
-import { Middleware, Sequence } from '../';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { createSequence } from '../sequence';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { Middleware } from '../types';
 
 describe('integration sequence with context', () => {
   afterEach(() => {
@@ -11,119 +12,77 @@ describe('integration sequence with context', () => {
   });
 
   it('collect one middleware from the context', async () => {
-    class TestSequence extends Sequence<string> {
-      override chain = 'test-sequence';
-      override groups = ['group'];
-    }
-    const sequence = new TestSequence();
+    const sequence = createSequence('test-sequence', ['group']);
+    const middleware: Middleware = () => {
+      provide('value').with('return');
+    };
+    sequence.provide('group', middleware);
 
-    provide<Middleware<string>>('key')
-      .with((_, next) => next('return')) // noop
-      .tag('extensionFor', 'test-sequence')
-      .tag('group', 'group');
+    await sequence();
 
-    const result = await sequence.execute('');
-
-    expect(result).toEqual('return');
+    expect(inject('value')).toEqual('return');
   });
 
   it('run every function in the sequence', async () => {
-    class TestSequence extends Sequence<string> {
-      override chain = 'test-chain';
-      override groups = ['a', 'b', 'c'];
-    }
+    const sequence = createSequence('test-chain', ['a', 'b', 'c']);
+    const a = vi.fn((next) => next());
+    const b = vi.fn((next) => next());
+    const c = vi.fn((next) => next());
 
-    const sequence = new TestSequence();
+    sequence.provide('a', a);
+    sequence.provide('b', b);
+    sequence.provide('c', c);
 
-    provide<Middleware<string>>('fnc')
-      .tag('group', 'c')
-      .tag('extensionFor', 'test-chain')
-      .with(async (s: string, next) => {
-        s = await next(s + 'c');
-        return s;
-      });
+    await sequence();
 
-    provide<Middleware<string>>('fnb')
-      .tag('group', 'b')
-      .tag('extensionFor', 'test-chain')
-      .with(async (s: string, next) => {
-        s = await next(s + 'b');
-        return s;
-      });
-
-    provide<Middleware<string>>('fna')
-      .tag('group', 'a')
-      .tag('extensionFor', 'test-chain')
-      .with(async (s: string, next) => {
-        s = await next(s + 'a');
-        return s;
-      });
-
-    const result = await sequence.execute('');
-
-    expect(result).toEqual('abc');
+    expect(a).toHaveBeenCalledOnce();
+    expect(b).toHaveBeenCalledOnce();
+    expect(c).toHaveBeenCalledOnce();
   });
 
-  it('allow run nested sequences from the context', async () => {
-    class MainSequence extends Sequence<string> {
-      override chain = 'main-chain';
-      override groups = ['post-processor'];
-    }
-    class UppercaseSequence extends Sequence<string> {
-      override chain = 'upper-chain';
-      override groups = ['uppercase'];
-    }
-    provide<Sequence<string>>('main-seq').class().with(MainSequence);
-    provide<Sequence<string>>('upper-seq').class().with(UppercaseSequence);
+  it('allow run nested sequences', async () => {
+    provide('text').with('this is a message with c');
 
-    const mainSequence = inject<Sequence<string>>('main-seq');
-    const upperSequence = inject<Sequence<string>>('upper-seq');
+    const stringProcessor = createSequence('stringProcessor', [
+      'toUpperCase',
+      'replacer'
+    ]);
+    const replacer = createSequence('replacer', ['aTob', 'cToe']);
 
-    provide<Middleware<string>>('fn-upper')
-      .tag('group', 'upper')
-      .tag('extensionFor', 'upper-chain')
-      .with((s: string, next) => next(s.toUpperCase()));
+    stringProcessor.provide('toUpperCase', (next) => {
+      const text = inject<string>('text');
 
-    provide<Middleware<string>>('fn-inverse')
-      .tag('group', 'inverse')
-      .tag('extensionFor', 'upper-chain')
-      .tag('upstream', ['upper'])
-      .with((s: string, next) => next([...s].reverse().join('')));
+      provide('text').with(text.toUpperCase());
+      next();
+    });
+    stringProcessor.provide('replacer', replacer);
 
-    provide<Sequence<string>>('seq-upper')
-      .tag('group', 'post-processor')
-      .tag('extensionFor', 'main-chain')
-      .with(upperSequence);
+    replacer.provide('aTob', (next) => {
+      const text = inject<string>('text');
 
-    provide<Middleware<string>>('fn-final')
-      .tag('group', 'final-word')
-      .tag('extensionFor', 'main-chain')
-      .tag('downstream', ['post-processor'])
-      .with((s: string, next) => next(s + 'final word'));
+      provide('text').with(text.replace('A', 'B'));
+      next();
+    });
+    replacer.provide('cToe', (next) => {
+      const text = inject<string>('text');
 
-    const result = await mainSequence.execute('this is the ');
+      provide('text').with(text.replace('C', 'E'));
+      next();
+    });
 
-    expect(result).toEqual('DROW LANIF EHT SI SIHT');
+    stringProcessor();
+
+    expect(inject('text')).toEqual('THIS IS B MESSAGE WITH E');
   });
 
   it('collect sequence from context even if no one group is defined', async () => {
-    class TestSequence extends Sequence<string> {
-      override chain = 'test-chain';
-      override groups = [];
-    }
+    const sequence = createSequence('test-sequence');
 
-    const sequence = new TestSequence();
+    const middleware = vi.fn();
+    sequence.provide('b', middleware);
 
-    provide<Middleware<string>>('fnb')
-      .tag('group', 'b')
-      .tag('extensionFor', 'test-chain')
-      .with(async (s: string, next) => {
-        s = await next(s + 'abc');
-        return s;
-      });
+    sequence();
 
-    const result = await sequence.execute('');
-
-    expect(result).toEqual('abc');
+    expect(middleware).toHaveBeenCalledOnce();
   });
 });

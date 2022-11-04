@@ -9,25 +9,33 @@ export type DependentBindTags = {
   downstream?: BindingAddress[];
 } & ExtensionPointTags;
 
-export type NextFn<Data = unknown> = (data: Data) => Promise<Data>;
+export type NextFn = () => Promise<void> | void;
 
-export type Middleware<Data = unknown> = (
-  data: Data,
-  next: NextFn<Data>
-) => Promise<Data>;
+export type Middleware = (next: NextFn) => Promise<void> | void;
 
-export type ExecutableMiddleware<Data = unknown> =
-  | Middleware<Data>
-  | { run: Middleware<Data> };
+export interface Sequence<Groups extends string = string> extends Middleware {
+  (): Promise<void> | void;
 
-export type MiddlewareAddress<Data> = BindingAddress<ExecutableMiddleware<Data>>;
+  provide(
+    group: Groups,
+    middleware: Sequence | Middleware,
+    streams?: MiddlewareStreams
+  ): void;
+  provide(
+    group: string,
+    middleware: Sequence | Middleware,
+    streams?: MiddlewareStreams
+  ): void;
+}
 
-export type MiddlewareStreams<Data> = {
-  downstream?: MiddlewareAddress<Data>[];
-  upstream?: MiddlewareAddress<Data>[];
+export type MiddlewareAddress = BindingAddress<Sequence>;
+
+export type MiddlewareStreams = {
+  downstream?: MiddlewareAddress[];
+  upstream?: MiddlewareAddress[];
 };
 
-export type SequenceOptions<Data> = {
+export type SequenceOptions = {
   group: string;
-  ex: ExecutableMiddleware<Data>;
-} & MiddlewareStreams<Data>;
+  ex: Sequence;
+} & MiddlewareStreams;
