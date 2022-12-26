@@ -79,7 +79,7 @@
     "soly": "^1.1.0",
     "typescript": "^4.6.2",
     "vite": "^3.0.0",
-    "vite-tsconfig-paths": "~3.3.17"
+    "vite-tsconfig-paths": "~3.5.0"
   },
   "devDependencies": {
     "@kraftr/eslint-plugin": "^0.2.3",
