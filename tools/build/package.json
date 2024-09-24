@@ -73,7 +73,7 @@
     "jiti": "^1.12.9",
     "local-pkg": "^0.4.0",
     "ora": "^6.0.1",
-    "rollup": "~2.63.0",
+    "rollup": "~3.29.5",
     "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-license": "^2.6.0",
     "soly": "^1.1.0",
